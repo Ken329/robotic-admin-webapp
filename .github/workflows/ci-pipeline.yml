@@ -1,0 +1,25 @@
+name: Robotic Admin Webapp CI Pipeline
+
+on:
+  push:
+    branches: ["uat", "master"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login Docker Hub
+        env:
+          DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
+          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+
+      - name: Build the Docker image
+        run: docker build -t kenliau0329/robotic-admin-webapp .
+
+      - name: Push to Docker Hub
+        run: docker push kenliau0329/robotic-admin-webapp:latest

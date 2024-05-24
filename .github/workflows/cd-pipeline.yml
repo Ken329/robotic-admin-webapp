@@ -1,0 +1,21 @@
+name: Robotic Admin Webapp CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["Robotic Admin Webapp CI Pipeline"]
+    types:
+      - completed
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - name: Pull Docker Image
+        run: sudo docker pull kenliau0329/robotic-admin-webapp:latest
+
+      - name: Remote the existing container
+        run: sudo docker rm -f robotic-admin-webapp || true
+
+      - name: Run new docker container
+        run: sudo docker run -d -p 3002:8080 --name robotic-admin-webapp kenliau0329/robotic-admin-webapp
