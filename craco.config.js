@@ -4,7 +4,7 @@ const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 dotenv.config();
 
-const ENV = process.env.DEPLOY_ENV || "development";
+const ENV = process.env.DEPLOY_ENV || "uat";
 const result = dotenv.config({ path: `./config/.env.${ENV}` });
 
 if (result.error) {
