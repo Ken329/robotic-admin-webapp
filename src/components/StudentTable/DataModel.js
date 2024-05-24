@@ -22,11 +22,8 @@ import {
   Grid,
   VStack,
   Spinner,
-  Tooltip,
-  Icon,
   Select,
 } from "@chakra-ui/react";
-import { InfoOutlineIcon } from "@chakra-ui/icons";
 import {
   useApproveStudentMutation,
   useRejectStudentMutation,
@@ -162,7 +159,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                   }}
                   validationSchema={signUpSchema}
                 >
-                  {({ handleSubmit, errors, touched }) => (
+                  {({ handleSubmit, values, errors, touched }) => (
                     <form onSubmit={handleSubmit}>
                       <VStack spacing={4} align="flex-start">
                         <FormControl
@@ -186,24 +183,21 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                             isInvalid={errors.race && touched.race}
                             w="100%"
                           >
-                            <FormLabel htmlFor="race">
-                              Race
-                              <Tooltip label="Options: Malay/Indian/Chinese/Others">
-                                <Icon
-                                  as={InfoOutlineIcon}
-                                  ml={"5px"}
-                                  color={"orange"}
-                                />
-                              </Tooltip>
-                            </FormLabel>
+                            <FormLabel htmlFor="race">Race</FormLabel>
                             <Field
-                              as={Input}
+                              as={Select}
                               id="race"
                               name="race"
-                              type="text"
+                              placeholder="Select Student race"
                               variant="filled"
                               isReadOnly={isReadOnly}
-                            />
+                            >
+                              <option value="Malay">Malay</option>
+                              <option value="Chinese">Chinese</option>
+                              <option value="Indian">Indian</option>
+                              <option value="Others">Others</option>
+                            </Field>
+
                             <FormErrorMessage>{errors.race}</FormErrorMessage>
                           </FormControl>
 
@@ -215,29 +209,25 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                           >
                             <FormLabel htmlFor="nationality">
                               Nationality
-                              <Tooltip label="Options: malaysia/others">
-                                <Icon
-                                  as={InfoOutlineIcon}
-                                  ml={"5px"}
-                                  color={"orange"}
-                                />
-                              </Tooltip>
                             </FormLabel>
                             <Field
-                              as={Input}
+                              as={Select}
                               id="nationality"
                               name="nationality"
-                              type="text"
+                              placeholder="Select student nationality"
                               variant="filled"
                               isReadOnly={isReadOnly}
-                            />
+                            >
+                              <option value="malaysia">Malaysian</option>
+                              <option value="others">Others</option>
+                            </Field>
                             <FormErrorMessage>
                               {errors.nationality}
                             </FormErrorMessage>
                           </FormControl>
                         </Grid>
 
-                        {studentData?.nationality === "malaysia" ? (
+                        {values.nationality === "malaysia" ? (
                           <FormControl
                             isInvalid={errors.nric && touched.nric}
                             w="100%"
@@ -279,13 +269,16 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                           >
                             <FormLabel htmlFor="gender">Gender</FormLabel>
                             <Field
-                              as={Input}
+                              as={Select}
                               id="gender"
                               name="gender"
-                              type="text"
+                              placeholder="Select student gender"
                               variant="filled"
                               isReadOnly={isReadOnly}
-                            />
+                            >
+                              <option value="male">Male</option>
+                              <option value="female">Female</option>
+                            </Field>
                             <FormErrorMessage>{errors.gender}</FormErrorMessage>
                           </FormControl>
                           <FormControl
@@ -364,13 +357,22 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                           >
                             <FormLabel htmlFor="size">T-Shirt Size</FormLabel>
                             <Field
-                              as={Input}
+                              as={Select}
                               id="size"
                               name="size"
-                              type="text"
+                              placeholder="Select T-Shirt size"
                               variant="filled"
                               isReadOnly={isReadOnly}
-                            />
+                            >
+                              <option value="4XS">4XS</option>
+                              <option value="3XS">3XS</option>
+                              <option value="2XS">2XS</option>
+                              <option value="XS">XS</option>
+                              <option value="S">S</option>
+                              <option value="M">M</option>
+                              <option value="L">L</option>
+                              <option value="XL">XL</option>
+                            </Field>
                             <FormErrorMessage>{errors.size}</FormErrorMessage>
                           </FormControl>
                         </Grid>
@@ -446,22 +448,19 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                         >
                           <FormLabel htmlFor="relationship">
                             Relationship to student
-                            <Tooltip label="Options: father/mother/others">
-                              <Icon
-                                as={InfoOutlineIcon}
-                                ml={"5px"}
-                                color={"orange"}
-                              />
-                            </Tooltip>
                           </FormLabel>
                           <Field
-                            as={Input}
+                            as={Select}
                             id="relationship"
                             name="relationship"
-                            type="text"
+                            placeholder="Select relationship to student"
                             variant="filled"
                             isReadOnly={isReadOnly}
-                          />
+                          >
+                            <option value="father">Father</option>
+                            <option value="mother">Mother</option>
+                            <option value="others">Legal Guardian</option>
+                          </Field>
                           <FormErrorMessage>
                             {errors.relationship}
                           </FormErrorMessage>

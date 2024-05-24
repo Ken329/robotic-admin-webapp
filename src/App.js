@@ -33,7 +33,8 @@ const router = createBrowserRouter(
         <Route path="centres" element={<Centres />} />
       </Route>
     </Route>
-  )
+  ),
+  { basename: "/admin" }
 );
 
 const App = () => {
