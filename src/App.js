@@ -1,40 +1,43 @@
 import React from "react";
 import {
-  createBrowserRouter,
-  createRoutesFromElements,
   Route,
   RouterProvider,
+  createBrowserRouter,
+  createRoutesFromElements,
 } from "react-router-dom";
 
-import AuthLayout from "./components/Layout/AuthLayout";
-import PrivateRoute from "./components/PrivateRoute";
-import IndexPage from "./pages/IndexPage";
-import LoginPage from "./pages/LoginPage";
-import LogoutPage from "./pages/LogoutPage";
-import Dashboard from "./pages/Dashboard";
-import ForgotPassword from "./pages/ForgotPassword";
-import Students from "./pages/Students";
 import Centres from "./pages/Centres";
+import Students from "./pages/Students";
+import LoginPage from "./pages/LoginPage";
+import IndexPage from "./pages/IndexPage";
+import Dashboard from "./pages/Dashboard";
+import LogoutPage from "./pages/LogoutPage";
+import ForgotPassword from "./pages/ForgotPassword";
+import PrivateRoute from "./components/PrivateRoute";
+import AuthLayout from "./components/Layout/AuthLayout";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
       <Route element={<AuthLayout />}>
-        <Route index element={<IndexPage />} />
-        <Route path="login" element={<LoginPage />} />
-        <Route path="forgot-password" element={<ForgotPassword />} />
-        <Route path="logout" element={<LogoutPage />} />
+        <Route exact path="/admin" element={<IndexPage />} />
+        <Route exact path="/admin/login" element={<LoginPage />} />
+        <Route
+          exact
+          path="/admin/forgot-password"
+          element={<ForgotPassword />}
+        />
+        <Route exact path="/admin/logout" element={<LogoutPage />} />
       </Route>
 
       {/* protected routes */}
       <Route element={<PrivateRoute />}>
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="students" element={<Students />} />
-        <Route path="centres" element={<Centres />} />
+        <Route exact path="/admin/dashboard" element={<Dashboard />} />
+        <Route exact path="/admin/students" element={<Students />} />
+        <Route exact path="/admin/centres" element={<Centres />} />
       </Route>
     </Route>
-  ),
-  { basename: "/admin" }
+  )
 );
 
 const App = () => {
