@@ -20,21 +20,17 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
       <Route element={<AuthLayout />}>
-        <Route exact path="/admin" element={<IndexPage />} />
-        <Route exact path="/admin/login" element={<LoginPage />} />
-        <Route
-          exact
-          path="/admin/forgot-password"
-          element={<ForgotPassword />}
-        />
-        <Route exact path="/admin/logout" element={<LogoutPage />} />
+        <Route index element={<IndexPage />} />
+        <Route exact path="/login" element={<LoginPage />} />
+        <Route exact path="/forgot-password" element={<ForgotPassword />} />
+        <Route exact path="/logout" element={<LogoutPage />} />
       </Route>
 
       {/* protected routes */}
       <Route element={<PrivateRoute />}>
-        <Route exact path="/admin/dashboard" element={<Dashboard />} />
-        <Route exact path="/admin/students" element={<Students />} />
-        <Route exact path="/admin/centres" element={<Centres />} />
+        <Route exact path="/dashboard" element={<Dashboard />} />
+        <Route exact path="/students" element={<Students />} />
+        <Route exact path="/centres" element={<Centres />} />
       </Route>
     </Route>
   )
