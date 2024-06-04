@@ -1,24 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { saveToken } from "../../redux/slices/app";
 import { Flex, Spinner } from "@chakra-ui/react";
 import userpool from "../../utils/userpool";
 import Layout from "../Layout/MainLayout";
 
 const PrivateRoute = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [isReady, setIsReady] = useState(false);
 
+  const user = userpool.getCurrentUser();
   const authTokens = JSON.parse(localStorage.getItem("token"));
 
   useEffect(() => {
-    const user = userpool.getCurrentUser();
-    const authTokens = JSON.parse(localStorage.getItem("token"));
     if (user && authTokens?.accessToken) {
+      dispatch(saveToken(authTokens?.accessToken));
       setIsReady(true);
     } else {
       navigate("/logout", { replace: true });
     }
-  }, [authTokens]);
+  }, [user, authTokens]);
 
   if (!isReady) {
     return (

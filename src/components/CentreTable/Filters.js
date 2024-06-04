@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import { useCreateCentreMutation } from "../../redux/slices/centre/api";
 import NodeRSA from "node-rsa";
 import PropTypes from "prop-types";
 import {
@@ -29,11 +30,7 @@ import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useFormik } from "formik";
 import { FiSearch, FiPlus } from "react-icons/fi";
 import { createCentreSchema, verifySchema } from "../../utils/validationSchema";
-import {
-  generatePublicKey,
-  createCentreAccount,
-  verifyOtp,
-} from "../../services/auth";
+import { generatePublicKey, verifyOtp } from "../../services/auth";
 
 const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
   const taskName =
@@ -43,8 +40,7 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
   const [loading, setLoading] = useState(false);
   const [centreId, setCentreId] = useState("");
   const [isVerify, setIsVerify] = useState(false);
-
-  const token = JSON.parse(localStorage.getItem("token"));
+  const [createCentre] = useCreateCentreMutation();
 
   const performRSAEncryption = async (payload, actions) => {
     try {
@@ -74,10 +70,8 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
           ...values,
           password: encryptedPassword,
         };
-        const response = await createCentreAccount(
-          updatedValues,
-          token?.accessToken
-        );
+        const response = await createCentre(updatedValues).unwrap();
+
         if (response?.success) {
           setCentreId(response?.data?.id);
           setLoading(false);

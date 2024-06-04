@@ -1,8 +1,19 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
-import { makeSelectUserRole } from "../../redux/slices/app/selector";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  makeSelectToken,
+  makeSelectUserRole,
+} from "../../redux/slices/app/selector";
+import { makeSelectLevelsData } from "../../redux/slices/students/selector";
+import {
+  useApproveStudentMutation,
+  useRejectStudentMutation,
+  useUpdateStudentMutation,
+  useGetStudentLevelsQuery,
+} from "../../redux/slices/students/api";
+import { saveLevelsData } from "../../redux/slices/students";
 import { Formik, Field } from "formik";
 import {
   Modal,
@@ -16,43 +27,41 @@ import {
   Input,
   Button,
   Heading,
-  HStack,
   Stack,
+  HStack,
   Flex,
   Grid,
   VStack,
   Spinner,
   Select,
 } from "@chakra-ui/react";
-import {
-  useApproveStudentMutation,
-  useRejectStudentMutation,
-} from "../../redux/slices/app/api";
 import Spin from "../Spin";
-import { getUserById, getLevel } from "../../services/auth";
+import { getUserById } from "../../services/auth";
 import { signUpSchema } from "../../utils/validationSchema";
+import { USER_ROLE, STUDENT_STATUS } from "../../utils/constants";
 
 const DataModal = ({ isOpen, onClose, rowData }) => {
+  const dispatch = useDispatch();
   const role = useSelector(makeSelectUserRole());
+  const token = useSelector(makeSelectToken());
+  const levels = useSelector(makeSelectLevelsData());
   const [studentData, setStudentData] = useState({});
   const [loading, setLoading] = useState(true);
-  const [levels, setLevels] = useState([]);
-
-  const token = JSON.parse(localStorage.getItem("token"));
+  const [isEdit, setIsEdit] = useState(false);
+  const { data } = useGetStudentLevelsQuery();
 
   const [approveStudent, { isLoading: approveLoading }] =
     useApproveStudentMutation();
   const [rejectStudent, { isLoading: rejectLoading }] =
     useRejectStudentMutation();
+  const [updateStudent, { isLoading: updateLoading }] =
+    useUpdateStudentMutation();
 
-  const fetchLevels = async () => {
-    try {
-      const response = await getLevel();
-      setLevels(response);
-    } catch (error) {
-      toast.error(error.message);
+  useEffect(() => {
+    if (data?.data) {
+      dispatch(saveLevelsData(data?.data));
     }
-  };
+  }, [data]);
 
   const handleApprove = async (values) => {
     try {
@@ -92,22 +101,58 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
     }
   };
 
-  const isReadOnly = useMemo(() => {
-    if (role === "admin") {
-      return studentData?.status !== "pending admin";
-    } else if (role === "center") {
-      return studentData?.status !== "pending center";
+  const handleUpdate = async (values) => {
+    try {
+      const payload = {};
+      Object.keys(values).forEach((key) => {
+        if (values[key] !== studentData[key]) {
+          payload[key] = values[key];
+        }
+      });
+
+      const response = await updateStudent({
+        id: studentData.id,
+        body: payload,
+      });
+
+      if (response.data.success) {
+        toast.success(response.data.message);
+        setIsEdit(false);
+        onClose();
+      }
+    } catch (error) {
+      toast.error(error.message);
     }
-    return true;
-  }, [role, studentData?.status]);
+  };
+
+  const isReadOnly = useMemo(() => {
+    if (
+      role === USER_ROLE.ADMIN &&
+      studentData?.status === STUDENT_STATUS.PENDING_ADMIN
+    ) {
+      return false;
+    } else if (
+      role === USER_ROLE.CENTER &&
+      studentData?.status === STUDENT_STATUS.PENDING_CENTER
+    ) {
+      return false;
+    } else if (
+      role === USER_ROLE.ADMIN &&
+      studentData?.status === STUDENT_STATUS.APPROVED &&
+      isEdit
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  }, [role, studentData?.status, isEdit]);
 
   useEffect(() => {
     if (isOpen) {
       const fetchStudentData = async () => {
         setLoading(true);
-        fetchLevels();
         try {
-          const response = await getUserById(rowData?.id, token?.accessToken);
+          const response = await getUserById(rowData?.id, token);
           setStudentData(response);
         } catch (error) {
           toast.error(error.message);
@@ -155,7 +200,11 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                     level: studentData?.level || "",
                   }}
                   onSubmit={(values) => {
-                    handleApprove(values);
+                    if (studentData?.status === STUDENT_STATUS.APPROVED) {
+                      handleUpdate(values);
+                    } else {
+                      handleApprove(values);
+                    }
                   }}
                   validationSchema={signUpSchema}
                 >
@@ -504,8 +553,38 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                           </FormErrorMessage>
                         </FormControl>
 
-                        {!isReadOnly && (
-                          <Flex>
+                        {studentData?.status === STUDENT_STATUS.APPROVED &&
+                          role === USER_ROLE.ADMIN && (
+                            <>
+                              {isEdit ? (
+                                <HStack spacing={4} w={"100%"}>
+                                  <Button type="submit" colorScheme="green">
+                                    {updateLoading ? (
+                                      <Spinner size="sm" color="white" />
+                                    ) : (
+                                      "Submit"
+                                    )}
+                                  </Button>
+                                  <Button
+                                    colorScheme="red"
+                                    onClick={() => setIsEdit(false)}
+                                  >
+                                    Cancel
+                                  </Button>
+                                </HStack>
+                              ) : (
+                                <Button
+                                  colorScheme="blue"
+                                  onClick={() => setIsEdit(true)}
+                                >
+                                  Edit
+                                </Button>
+                              )}
+                            </>
+                          )}
+                        {studentData?.status !== STUDENT_STATUS.APPROVED &&
+                          studentData?.status !== STUDENT_STATUS.REJECTED &&
+                          !isReadOnly && (
                             <HStack spacing={4} w={"100%"}>
                               <Button type="submit" colorScheme="green">
                                 {approveLoading ? (
@@ -522,8 +601,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                                 )}
                               </Button>
                             </HStack>
-                          </Flex>
-                        )}
+                          )}
                       </VStack>
                     </form>
                   )}

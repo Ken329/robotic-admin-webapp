@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import { useSelector } from "react-redux";
+import { makeSelectUserRole } from "../../redux/slices/app/selector";
 import {
   getCoreRowModel,
   useReactTable,
@@ -23,12 +25,19 @@ import {
   Tr,
   Th,
   Td,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  IconButton,
 } from "@chakra-ui/react";
+import { USER_ROLE } from "../../utils/constants";
 import Filters from "./Filters";
 import { FiSliders } from "react-icons/fi";
 import { ArrowDownIcon, ArrowUpIcon } from "@chakra-ui/icons";
+import { BiDotsHorizontalRounded } from "react-icons/bi";
 
-const columns = [
+const createColumns = (role) => [
   {
     accessorKey: "name",
     header: "Name",
@@ -54,7 +63,7 @@ const columns = [
   {
     accessorKey: "status",
     header: "Status",
-    size: 200,
+    size: 100,
     cell: (props) => {
       const status = props.getValue();
       let color;
@@ -100,25 +109,45 @@ const columns = [
     accessorKey: "actions",
     header: "Actions",
     size: 100,
-    cell: ({ openModal, ...props }) => (
-      <Flex justifyContent="center">
-        <Button
-          colorScheme="teal"
-          size={"sm"}
-          onClick={() => {
-            openModal(props.row.original);
-          }}
-        >
-          View
-        </Button>
+    cell: ({ openModal, openAchievementsModal, ...props }) => (
+      <Flex justifyContent="center" gap="10px">
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            aria-label="Options"
+            icon={<BiDotsHorizontalRounded />}
+            variant="solid"
+            size="md"
+          />
+          <MenuList>
+            <MenuItem
+              onClick={() => {
+                openModal(props.row.original);
+              }}
+            >
+              View
+            </MenuItem>
+            {role === USER_ROLE.ADMIN && (
+              <MenuItem
+                onClick={() => {
+                  openAchievementsModal(props.row.original);
+                }}
+              >
+                Achievements
+              </MenuItem>
+            )}
+          </MenuList>
+        </Menu>
       </Flex>
     ),
   },
 ];
 
-const DataTable = ({ tableData, openModal }) => {
+const DataTable = ({ tableData, openModal, openAchievementsModal }) => {
+  const role = useSelector(makeSelectUserRole());
   const [data, setData] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
+  const columns = createColumns(role);
   const table = useReactTable({
     data,
     columns,
@@ -196,6 +225,7 @@ const DataTable = ({ tableData, openModal }) => {
                       {flexRender(cell.column.columnDef.cell, {
                         ...cell.getContext(),
                         openModal,
+                        openAchievementsModal,
                       })}
                     </Td>
                   ))}
@@ -231,6 +261,7 @@ const DataTable = ({ tableData, openModal }) => {
 DataTable.propTypes = {
   tableData: PropTypes.array.isRequired,
   openModal: PropTypes.func.isRequired,
+  openAchievementsModal: PropTypes.func.isRequired,
 };
 
 export default DataTable;

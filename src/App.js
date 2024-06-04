@@ -8,6 +8,7 @@ import {
 
 import Centres from "./pages/Centres";
 import Students from "./pages/Students";
+import Achievements from "./pages/Achievements";
 import LoginPage from "./pages/LoginPage";
 import IndexPage from "./pages/IndexPage";
 import Dashboard from "./pages/Dashboard";
@@ -31,6 +32,7 @@ const router = createBrowserRouter(
         <Route exact path="/dashboard" element={<Dashboard />} />
         <Route exact path="/students" element={<Students />} />
         <Route exact path="/centres" element={<Centres />} />
+        <Route exact path="/achievements" element={<Achievements />} />
       </Route>
     </Route>
   )
