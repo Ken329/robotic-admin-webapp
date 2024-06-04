@@ -2,8 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   userData: {},
-  students: [],
-  centres: [],
+  token: null,
 };
 
 const appSlice = createSlice({
@@ -13,19 +12,16 @@ const appSlice = createSlice({
     saveUserData(state, action) {
       state.userData = action.payload;
     },
-    saveStudentList(state, action) {
-      state.students = action.payload;
-    },
-    saveCentreList(state, action) {
-      state.centres = action.payload;
+    saveToken(state, action) {
+      state.token = action.payload;
     },
     resetApp(state) {
       state.userData = null;
+      state.token = null;
       localStorage.removeItem("token");
     },
   },
 });
 
-export const { saveUserData, saveStudentList, saveCentreList, resetApp } =
-  appSlice.actions;
+export const { saveUserData, saveToken, resetApp } = appSlice.actions;
 export default appSlice.reducer;

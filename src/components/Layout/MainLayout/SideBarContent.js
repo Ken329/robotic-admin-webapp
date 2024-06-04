@@ -22,6 +22,7 @@ const SidebarContent = ({ onClose, ...props }) => {
         { name: "Dashboard", icon: FiHome, path: "/dashboard" },
         { name: "Students", icon: FiUser, path: "/students" },
         { name: "Centres", icon: FiUser, path: "/centres" },
+        { name: "Achievements", icon: FiUser, path: "/achievements" },
       ];
     } else if (userRole === "center") {
       return [

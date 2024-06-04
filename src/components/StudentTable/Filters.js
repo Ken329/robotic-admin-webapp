@@ -1,8 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
-import { makeSelectUserRole } from "../../redux/slices/app/selector";
 import PropTypes from "prop-types";
+import { useSelector, useDispatch } from "react-redux";
+import { makeSelectUserRole } from "../../redux/slices/app/selector";
+import {
+  useGetStudentLevelsQuery,
+  useCreateStudentLevelMutation,
+  useDeleteStudentLevelMutation,
+} from "../../redux/slices/students/api";
+import { saveLevelsData } from "../../redux/slices/students";
+import { makeSelectLevelsData } from "../../redux/slices/students/selector";
 import {
   HStack,
   Button,
@@ -27,29 +34,25 @@ import {
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import { createLevelSchema } from "../../utils/validationSchema";
-import { createNewLevel, getLevel, deleteLevel } from "../../services/auth";
 import { FiSearch, FiPlus } from "react-icons/fi";
 import FilterPopover from "./FilterPopover";
 
 const Filters = ({ columnFilters, setColumnFilters }) => {
-  const taskName = columnFilters.find((f) => f.id === "fullName")?.value || "";
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [levels, setLevels] = useState([]);
+  const dispatch = useDispatch();
   const role = useSelector(makeSelectUserRole());
+  const levels = useSelector(makeSelectLevelsData());
+  const taskName = columnFilters.find((f) => f.id === "name")?.value || "";
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { data, refetch } = useGetStudentLevelsQuery();
+  const [createStudentLevel, { isLoading: createLevelIsLoading }] =
+    useCreateStudentLevelMutation();
+  const [deleteStudentLevel] = useDeleteStudentLevelMutation();
 
-  console.log(levels);
-
-  const token = JSON.parse(localStorage.getItem("token"));
-
-  const fetchLevels = async () => {
-    try {
-      const centerData = await getLevel();
-      setLevels(centerData);
-    } catch (error) {
-      toast.error(error.message);
+  useEffect(() => {
+    if (data?.data) {
+      dispatch(saveLevelsData(data?.data));
     }
-  };
+  }, [data]);
 
   const createLevelFormik = useFormik({
     initialValues: {
@@ -63,7 +66,6 @@ const Filters = ({ columnFilters, setColumnFilters }) => {
 
   const openModal = () => {
     setIsModalOpen(true);
-    fetchLevels();
   };
 
   const closeModal = () => {
@@ -71,29 +73,28 @@ const Filters = ({ columnFilters, setColumnFilters }) => {
   };
 
   const handleCreateLevel = async (values, actions) => {
-    setLoading(true);
     try {
-      const response = await createNewLevel(values, token?.accessToken);
+      const response = await createStudentLevel(values).unwrap();
       if (response?.success) {
-        setLoading(false);
-        closeModal();
         toast.success("Sucessfully created level");
         actions.resetForm();
+        refetch();
       }
     } catch (error) {
-      setLoading(false);
-      toast.error(error);
+      toast.error(error?.data?.message);
       actions.resetForm();
     }
   };
 
   const handleDeleteLevel = async (id) => {
     try {
-      await deleteLevel(id, token?.accessToken);
-      setLevels((prev) => prev.filter((level) => level.id !== id));
-      toast.success("Successfully deleted level");
+      const response = await deleteStudentLevel(id).unwrap();
+      if (response?.success) {
+        toast.success("Successfully deleted level");
+        refetch();
+      }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error?.data?.message);
     }
   };
 
@@ -106,6 +107,7 @@ const Filters = ({ columnFilters, setColumnFilters }) => {
           value,
         })
     );
+
   return (
     <HStack mb={6} spacing={3}>
       <InputGroup size={"sm"} maxW={"12rem"}>
@@ -119,7 +121,7 @@ const Filters = ({ columnFilters, setColumnFilters }) => {
           borderWidth={1.5}
           borderColor="grey"
           value={taskName}
-          onChange={(e) => onFilterChange("fullName", e.target.value)}
+          onChange={(e) => onFilterChange("name", e.target.value)}
         />
       </InputGroup>
       <FilterPopover
@@ -171,7 +173,7 @@ const Filters = ({ columnFilters, setColumnFilters }) => {
                           flex="1"
                         />
                         <Button type="submit" colorScheme="green">
-                          {loading ? (
+                          {createLevelIsLoading ? (
                             <Spinner size="sm" color="white" />
                           ) : (
                             "Submit"
@@ -185,7 +187,7 @@ const Filters = ({ columnFilters, setColumnFilters }) => {
                   </FormControl>
                 </VStack>
                 <VStack align="start" w="100%" spacing={4} mt={4}>
-                  {levels.map((level) => (
+                  {levels?.map((level) => (
                     <Flex
                       key={level.id}
                       w="100%"

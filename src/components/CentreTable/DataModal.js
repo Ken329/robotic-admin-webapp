@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
+import { useSelector } from "react-redux";
+import { makeSelectToken } from "../../redux/slices/app/selector";
 import { Formik, Field } from "formik";
 import {
   Modal,
@@ -21,17 +23,16 @@ import Spin from "../Spin";
 import { getUserById } from "../../services/auth";
 
 const DataModal = ({ isOpen, onClose, rowData }) => {
+  const token = useSelector(makeSelectToken());
   const [centreData, setCentreData] = useState({});
   const [loading, setLoading] = useState(true);
-
-  const token = JSON.parse(localStorage.getItem("token"));
 
   useEffect(() => {
     if (isOpen) {
       const fetchCentreData = async () => {
         setLoading(true);
         try {
-          const response = await getUserById(rowData?.id, token?.accessToken);
+          const response = await getUserById(rowData?.id, token);
           setCentreData(response);
         } catch (error) {
           toast.error(error.message);

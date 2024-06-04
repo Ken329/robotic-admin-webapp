@@ -8,37 +8,8 @@ export const appApi = baseApiSlice.injectEndpoints({
           url: "/user",
         }),
       }),
-      getStudentList: builder.query({
-        query: () => ({
-          url: "/user/students",
-        }),
-      }),
-      getCentresList: builder.query({
-        query: () => ({
-          url: "/user/centers",
-        }),
-      }),
-      approveStudent: builder.mutation({
-        query: ({ id, body }) => ({
-          url: `/user/${id}/approve`,
-          method: "POST",
-          body: body,
-        }),
-      }),
-      rejectStudent: builder.mutation({
-        query: ({ id }) => ({
-          url: `/user/${id}/reject`,
-          method: "POST",
-        }),
-      }),
     };
   },
 });
 
-export const {
-  useGetCentresListQuery,
-  useGetUserDataQuery,
-  useGetStudentListQuery,
-  useApproveStudentMutation,
-  useRejectStudentMutation,
-} = appApi;
+export const { useGetUserDataQuery } = appApi;
