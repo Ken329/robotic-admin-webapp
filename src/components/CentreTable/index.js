@@ -51,7 +51,7 @@ const columns = [
   {
     accessorKey: "status",
     header: "Status",
-    size: 200,
+    size: 100,
     cell: (props) => {
       const status = props.getValue();
       let color;

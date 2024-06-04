@@ -33,14 +33,14 @@ const LoginPage = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const user = userpool.getCurrentUser();
   const authTokens = JSON.parse(localStorage.getItem("token"));
 
   useEffect(() => {
-    const user = userpool.getCurrentUser();
     if (user && authTokens?.accessToken) {
       navigate("/dashboard", { replace: true });
     }
-  }, [userpool, authTokens]);
+  }, [user, authTokens]);
 
   const initAuth = async (cognitoToken) => {
     const tokenPayload = await generateAccessToken(cognitoToken);
