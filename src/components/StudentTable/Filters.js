@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 import { useSelector, useDispatch } from "react-redux";
 import { makeSelectUserRole } from "../../redux/slices/app/selector";
@@ -36,9 +35,11 @@ import { useFormik } from "formik";
 import { createLevelSchema } from "../../utils/validationSchema";
 import { FiSearch, FiPlus } from "react-icons/fi";
 import FilterPopover from "./FilterPopover";
+import useCustomToast from "../CustomToast";
 
 const Filters = ({ columnFilters, setColumnFilters }) => {
   const dispatch = useDispatch();
+  const toast = useCustomToast();
   const role = useSelector(makeSelectUserRole());
   const levels = useSelector(makeSelectLevelsData());
   const taskName = columnFilters.find((f) => f.id === "name")?.value || "";
@@ -76,12 +77,22 @@ const Filters = ({ columnFilters, setColumnFilters }) => {
     try {
       const response = await createStudentLevel(values).unwrap();
       if (response?.success) {
-        toast.success("Sucessfully created level");
+        toast({
+          title: "Student Level",
+          description: "Sucessfully created level",
+          status: "success",
+        });
+
         actions.resetForm();
         refetch();
       }
     } catch (error) {
-      toast.error(error?.data?.message);
+      toast({
+        title: "Student Level",
+        description: error?.data?.message,
+        status: "error",
+      });
+
       actions.resetForm();
     }
   };
@@ -90,11 +101,20 @@ const Filters = ({ columnFilters, setColumnFilters }) => {
     try {
       const response = await deleteStudentLevel(id).unwrap();
       if (response?.success) {
-        toast.success("Successfully deleted level");
+        toast({
+          title: "Student Level",
+          description: "Successfully deleted level",
+          status: "success",
+        });
+
         refetch();
       }
     } catch (error) {
-      toast.error(error?.data?.message);
+      toast({
+        title: "Student Level",
+        description: error?.data?.message,
+        status: "error",
+      });
     }
   };
 

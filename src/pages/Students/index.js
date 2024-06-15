@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Heading, Flex } from "@chakra-ui/react";
-import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { makeSelectUserRole } from "../../redux/slices/app/selector";
 import { useGetStudentListQuery } from "../../redux/slices/students/api";
@@ -11,9 +10,11 @@ import DataTable from "../../components/StudentTable";
 import DataModal from "../../components/StudentTable/DataModel";
 import AchievementsModal from "../../components/StudentTable/AchievementsModal";
 import { USER_ROLE } from "../../utils/constants";
+import useCustomToast from "../../components/CustomToast";
 
 const Students = () => {
   const dispatch = useDispatch();
+  const toast = useCustomToast();
   const role = useSelector(makeSelectUserRole());
   const { data, isLoading, isError, refetch } = useGetStudentListQuery();
   const studentData = useSelector(makeSelectStudentData());
@@ -25,7 +26,11 @@ const Students = () => {
     if (!isLoading && !isError && data) {
       dispatch(saveStudentsData(data?.data?.data));
     } else if (isError) {
-      toast.error("Error getting student list");
+      toast({
+        title: "Student",
+        description: "Error getting student list",
+        status: "error",
+      });
     }
   }, [data, isLoading, isError, dispatch]);
 

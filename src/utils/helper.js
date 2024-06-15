@@ -1,11 +1,3 @@
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  const day = date.getDate().toString().padStart(2, "0");
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const year = date.getFullYear();
-  return `${month}/${day}/${year}`;
-};
-
 const createImage = (url) =>
   new Promise((resolve, reject) => {
     const image = new Image();
@@ -64,4 +56,12 @@ const dataURLtoFile = (dataurl, filename) => {
   return new File([u8arr], filename, { type: mime });
 };
 
-export { formatDate, cropImage, dataURLtoFile };
+const formatDate = (value) => {
+  const date = new Date(value);
+  const day = date.getDate();
+  const month = date.toLocaleString("en-US", { month: "long" });
+  const year = date.getFullYear();
+  return `${day} ${month} ${year}`;
+};
+
+export { cropImage, dataURLtoFile, formatDate };

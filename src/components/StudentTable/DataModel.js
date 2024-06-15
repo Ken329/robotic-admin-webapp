@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -39,9 +38,11 @@ import Spin from "../Spin";
 import { getUserById } from "../../services/auth";
 import { signUpSchema } from "../../utils/validationSchema";
 import { USER_ROLE, STUDENT_STATUS } from "../../utils/constants";
+import useCustomToast from "../CustomToast";
 
 const DataModal = ({ isOpen, onClose, rowData }) => {
   const dispatch = useDispatch();
+  const toast = useCustomToast();
   const role = useSelector(makeSelectUserRole());
   const token = useSelector(makeSelectToken());
   const levels = useSelector(makeSelectLevelsData());
@@ -78,11 +79,20 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
       });
 
       if (response.data.success) {
-        toast.success(response.data.message);
+        toast({
+          title: "Student",
+          description: response?.data?.message,
+          status: "success",
+        });
+
         onClose();
       }
     } catch (error) {
-      toast.error(error);
+      toast({
+        title: "Student",
+        description: error,
+        status: "error",
+      });
     }
   };
 
@@ -93,11 +103,20 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
       });
 
       if (response.data.success) {
-        toast.success(response.data.message);
+        toast({
+          title: "Student",
+          description: response?.data?.message,
+          status: "success",
+        });
+
         onClose();
       }
     } catch (error) {
-      toast.error(error);
+      toast({
+        title: "Student",
+        description: error,
+        status: "error",
+      });
     }
   };
 
@@ -116,12 +135,21 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
       });
 
       if (response.data.success) {
-        toast.success(response.data.message);
+        toast({
+          title: "Student",
+          description: response?.data?.message,
+          status: "success",
+        });
+
         setIsEdit(false);
         onClose();
       }
     } catch (error) {
-      toast.error(error.message);
+      toast({
+        title: "Student",
+        description: error?.message,
+        status: "error",
+      });
     }
   };
 
@@ -155,7 +183,11 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
           const response = await getUserById(rowData?.id, token);
           setStudentData(response);
         } catch (error) {
-          toast.error(error.message);
+          toast({
+            title: "Student",
+            description: error?.message,
+            status: "error",
+          });
         } finally {
           setLoading(false);
         }
@@ -190,6 +222,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                     contact: studentData?.contact || "",
                     race: studentData?.race || "",
                     moeEmail: studentData?.moeEmail || "",
+                    personalEmail: studentData?.personalEmail || "",
                     school: studentData?.school || "",
                     nationality: studentData?.nationality || "",
                     parentName: studentData?.parentName || "",
@@ -198,6 +231,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                     parentContact: studentData?.parentContact || "",
                     size: studentData?.size || "",
                     level: studentData?.level || "",
+                    roboticId: studentData?.roboticId || "",
                   }}
                   onSubmit={(values) => {
                     if (studentData?.status === STUDENT_STATUS.APPROVED) {
@@ -379,6 +413,28 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                           <FormErrorMessage>{errors.moeEmail}</FormErrorMessage>
                         </FormControl>
 
+                        <FormControl
+                          isInvalid={
+                            errors.personalEmail && touched.personalEmail
+                          }
+                          w="100%"
+                        >
+                          <FormLabel htmlFor="personalEmail">
+                            Personal Email
+                          </FormLabel>
+                          <Field
+                            as={Input}
+                            id="personalEmail"
+                            name="personalEmail"
+                            type="text"
+                            variant="filled"
+                            isReadOnly={isReadOnly}
+                          />
+                          <FormErrorMessage>
+                            {errors.personalEmail}
+                          </FormErrorMessage>
+                        </FormControl>
+
                         <Grid templateColumns="repeat(2, 1fr)" gap={4} w="100%">
                           <FormControl
                             isInvalid={errors.contact && touched.contact}
@@ -440,6 +496,25 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                             isReadOnly={true}
                           />
                           <FormErrorMessage>{errors.center}</FormErrorMessage>
+                        </FormControl>
+
+                        <FormControl
+                          isInvalid={errors.roboticId && touched.roboticId}
+                          w="100%"
+                        >
+                          <FormLabel htmlFor="roboticId">Student ID</FormLabel>
+                          <Field
+                            as={Input}
+                            id="roboticId"
+                            name="roboticId"
+                            type="text"
+                            variant="filled"
+                            isReadOnly={isReadOnly}
+                          />
+
+                          <FormErrorMessage>
+                            {errors.roboticId}
+                          </FormErrorMessage>
                         </FormControl>
 
                         <FormControl

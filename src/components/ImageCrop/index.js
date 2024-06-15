@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 import {
   Modal,
@@ -12,8 +11,10 @@ import {
 } from "@chakra-ui/react";
 import Cropper from "react-easy-crop";
 import { cropImage } from "../../utils/helper";
+import useCustomToast from "../CustomToast";
 
 const ImageCrop = ({ open, image, onComplete, onClose }) => {
+  const toast = useCustomToast();
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
@@ -42,7 +43,11 @@ const ImageCrop = ({ open, image, onComplete, onClose }) => {
       );
       onComplete(croppedImageDataURL);
     } catch (error) {
-      toast.error("Error cropping image:", error);
+      toast({
+        title: "ImageCrop",
+        description: "Error cropping image",
+        status: "error",
+      });
     }
   };
 
