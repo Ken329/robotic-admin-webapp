@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 import {
   useGetAchievementListQuery,
@@ -19,6 +18,7 @@ import {
   Checkbox,
   Text,
 } from "@chakra-ui/react";
+import useCustomToast from "../CustomToast";
 import Spin from "../Spin";
 
 const AchievementsModal = ({ isOpen, onClose, rowData }) => {
@@ -29,6 +29,7 @@ const AchievementsModal = ({ isOpen, onClose, rowData }) => {
       skip: !isOpen,
     }
   );
+  const toast = useCustomToast();
   const [assignAchievement] = useAssignAchievementMutation();
   const [achievements, setAchievements] = useState([]);
   const [selectedAchievements, setSelectedAchievements] = useState([]);
@@ -75,11 +76,19 @@ const AchievementsModal = ({ isOpen, onClose, rowData }) => {
       const response = await assignAchievement(payload);
 
       if (response?.data?.success) {
-        toast.success("Successfully assigned achievement(s)");
+        toast({
+          title: "Achievement(s)",
+          description: "Successfully assigned achievement(s)",
+          status: "success",
+        });
       }
       onClose();
     } catch (error) {
-      toast.error("Error updating user achievements:", error);
+      toast({
+        title: "Achievement(s)",
+        description: error,
+        status: "error",
+      });
     }
   };
 

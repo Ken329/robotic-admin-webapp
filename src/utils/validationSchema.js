@@ -40,6 +40,7 @@ const signUpSchema = Yup.object().shape({
     ),
   race: Yup.string().required("Race is required"),
   moeEmail: Yup.string().optional().email("Invalid email address"),
+  personalEmail: Yup.string().optional().email("Invalid email address"),
   school: Yup.string().required("School is required"),
   nationality: Yup.string().required("Nationality is required"),
   parentName: Yup.string().required("Parent Name is required"),
@@ -58,6 +59,7 @@ const signUpSchema = Yup.object().shape({
     ),
   size: Yup.string().required("T-Shirt size is required"),
   level: Yup.string().required("Level is required"),
+  roboticId: Yup.string().required("Student ID is required"),
 });
 
 const verifySchema = Yup.object().shape({

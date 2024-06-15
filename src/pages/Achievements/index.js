@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Flex,
@@ -35,10 +34,12 @@ import { makeSelectAchievementsData } from "../../redux/slices/achievements/sele
 import { getAchievementImage } from "../../services/helper";
 import Layout from "../../components/Layout/MainLayout";
 import ImageCrop from "../../components/ImageCrop";
-import { dataURLtoFile } from "../../utils/helper";
+import { dataURLtoFile, formatDate } from "../../utils/helper";
+import useCustomToast from "../../components/CustomToast";
 
 const Achievements = () => {
   const dispatch = useDispatch();
+  const toast = useCustomToast();
   const token = useSelector(makeSelectToken());
   const { data, isLoading, isError, refetch } = useGetAchievementListQuery();
   const achievements = useSelector(makeSelectAchievementsData());
@@ -64,7 +65,12 @@ const Achievements = () => {
             const imageObjectURL = URL.createObjectURL(imageBlob);
             return { ...achievement, imageUrl: imageObjectURL };
           } catch (error) {
-            toast.error("Error fetching image", error);
+            toast({
+              title: "Achievements",
+              description: `Error fetching image: ${error}`,
+              status: "error",
+            });
+
             return achievement;
           }
         })
@@ -77,7 +83,11 @@ const Achievements = () => {
     } else if (!isLoading && !isError && data) {
       dispatch(saveAchievementsData(null));
     } else if (isError) {
-      toast.error("Error getting achievement list");
+      toast({
+        title: "Achievements",
+        description: "Error getting achievement list",
+        status: "error",
+      });
     }
   }, [data, isLoading, isError]);
 
@@ -111,21 +121,33 @@ const Achievements = () => {
         const response = await updateAchievement(updateAchievementPayload);
 
         if (response?.data?.success) {
-          toast.success(response?.data?.message);
+          toast({
+            title: "Achievements",
+            description: response?.data?.message,
+            status: "success",
+          });
         }
       } else {
         const response = await createAchievement({
           formData,
-        });
+        }).unwrap();
 
-        if (response?.data?.success) {
-          toast.success(response?.data?.message);
+        if (response?.success) {
+          toast({
+            title: "Achievements",
+            description: response?.message,
+            status: "success",
+          });
         }
       }
       refetch();
       onClose();
     } catch (error) {
-      toast.error("Error uploading achievement", error);
+      toast({
+        title: "Achievements",
+        description: `Failed to create achievement`,
+        status: "error",
+      });
     }
   };
 
@@ -143,11 +165,19 @@ const Achievements = () => {
     try {
       const response = await deleteAchievement(id).unwrap();
       if (response?.success) {
-        toast.success(response?.message);
+        toast({
+          title: "Achievements",
+          description: response?.message,
+          status: "success",
+        });
         refetch();
       }
     } catch (error) {
-      toast.error(error?.data?.message);
+      toast({
+        title: "Achievements",
+        description: error?.data?.message,
+        status: "error",
+      });
     }
   };
 
@@ -212,8 +242,15 @@ const Achievements = () => {
                 <Text fontSize="sm" mb={2}>
                   {achievement.description}
                 </Text>
-                <Text fontSize="sm" color="gray.500">
-                  {achievement.date}
+                <Text
+                  fontSize={{
+                    base: "xs",
+                    md: "sm",
+                    lg: "sm",
+                  }}
+                  color="gray.500"
+                >
+                  {formatDate(achievement?.createdAt) || ""}
                 </Text>
                 <Flex
                   display="flex"

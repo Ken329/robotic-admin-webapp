@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import { makeSelectToken } from "../../redux/slices/app/selector";
@@ -19,10 +18,12 @@ import {
   Flex,
   VStack,
 } from "@chakra-ui/react";
+import useCustomToast from "../CustomToast";
 import Spin from "../Spin";
 import { getUserById } from "../../services/auth";
 
 const DataModal = ({ isOpen, onClose, rowData }) => {
+  const toast = useCustomToast();
   const token = useSelector(makeSelectToken());
   const [centreData, setCentreData] = useState({});
   const [loading, setLoading] = useState(true);
@@ -35,7 +36,11 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
           const response = await getUserById(rowData?.id, token);
           setCentreData(response);
         } catch (error) {
-          toast.error(error.message);
+          toast({
+            title: "Centre",
+            description: error.message,
+            status: "error",
+          });
         } finally {
           setLoading(false);
         }
