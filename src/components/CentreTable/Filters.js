@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
 import { useCreateCentreMutation } from "../../redux/slices/centre/api";
 import NodeRSA from "node-rsa";
 import PropTypes from "prop-types";
@@ -31,8 +30,10 @@ import { useFormik } from "formik";
 import { FiSearch, FiPlus } from "react-icons/fi";
 import { createCentreSchema, verifySchema } from "../../utils/validationSchema";
 import { generatePublicKey, verifyOtp } from "../../services/auth";
+import useCustomToast from "../CustomToast";
 
 const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
+  const toast = useCustomToast();
   const taskName =
     columnFilters.find((f) => f.id === "centerName")?.value || "";
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -53,7 +54,11 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
     } catch (error) {
       setLoading(false);
       actions.resetForm();
-      toast.error(error);
+      toast({
+        title: "Centre",
+        description: error,
+        status: "error",
+      });
     }
   };
 
@@ -81,7 +86,11 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
       }
     } catch (error) {
       setLoading(false);
-      toast.error(error);
+      toast({
+        title: "Centre",
+        description: error,
+        status: "error",
+      });
       actions.resetForm();
     }
   };
@@ -97,7 +106,11 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
       const response = await verifyOtp(payload);
       if (response?.success) {
         setLoading(false);
-        toast.success("Sucessfully registered account!");
+        toast({
+          title: "Centre",
+          description: "Sucessfully registered account!",
+          status: "success",
+        });
         refetch();
         closeModal();
         actions.resetForm();
@@ -105,7 +118,11 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
       }
     } catch (error) {
       setLoading(false);
-      toast.error(error);
+      toast({
+        title: "Centre",
+        description: error,
+        status: "error",
+      });
       actions.resetForm();
     }
   };
