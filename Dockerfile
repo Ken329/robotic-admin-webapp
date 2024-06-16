@@ -5,7 +5,8 @@ WORKDIR /tmp/app
 
 COPY . .
 ARG DEPLOY_ENV
-ENV NODE_ENV=${DEPLOY_ENV}
+ENV DEPLOY_ENV=${DEPLOY_ENV}
+ENV NODE_ENV=production
 
 RUN npm ci
 RUN npm run build
