@@ -19,7 +19,7 @@ const PrivateRoute = () => {
       dispatch(saveToken(authTokens?.accessToken));
       setIsReady(true);
     } else {
-      navigate("/logout", { replace: true });
+      navigate("/admin/logout", { replace: true });
     }
   }, [user, authTokens]);
 
