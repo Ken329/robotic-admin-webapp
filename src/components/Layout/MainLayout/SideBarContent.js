@@ -19,15 +19,15 @@ const SidebarContent = ({ onClose, ...props }) => {
   const getLinkItems = (userRole) => {
     if (userRole === "admin") {
       return [
-        { name: "Dashboard", icon: FiHome, path: "/dashboard" },
-        { name: "Students", icon: FiUser, path: "/students" },
-        { name: "Centres", icon: FiUser, path: "/centres" },
-        { name: "Achievements", icon: FiUser, path: "/achievements" },
+        { name: "Dashboard", icon: FiHome, path: "/admin/dashboard" },
+        { name: "Students", icon: FiUser, path: "/admin/students" },
+        { name: "Centres", icon: FiUser, path: "/admin/centres" },
+        { name: "Achievements", icon: FiUser, path: "/admin/achievements" },
       ];
     } else if (userRole === "center") {
       return [
-        { name: "Dashboard", icon: FiHome, path: "/dashboard" },
-        { name: "Students", icon: FiUser, path: "/students" },
+        { name: "Dashboard", icon: FiHome, path: "/admin/dashboard" },
+        { name: "Students", icon: FiUser, path: "/admin/students" },
       ];
     } else {
       return [];
