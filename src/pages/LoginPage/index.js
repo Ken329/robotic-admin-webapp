@@ -38,7 +38,7 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (user && authTokens?.accessToken) {
-      navigate("/dashboard", { replace: true });
+      navigate("/admin/dashboard", { replace: true });
     }
   }, [user, authTokens]);
 
@@ -47,9 +47,9 @@ const LoginPage = () => {
     if (tokenPayload) {
       localStorage.setItem("token", JSON.stringify(tokenPayload));
       setLoading(false);
-      navigate("/dashboard", { replace: true });
+      navigate("/admin/dashboard", { replace: true });
     } else {
-      navigate("/logout", { replace: true });
+      navigate("/admin/logout", { replace: true });
     }
   };
 
@@ -141,7 +141,7 @@ const LoginPage = () => {
         )}
       </Formik>
       <Flex justifyContent="center" w="100%" mt={"15px"}>
-        <Link href="/forgot-password" color={"blue.500"}>
+        <Link href="/admin/forgot-password" color={"blue.500"}>
           Forgot Password?
         </Link>
       </Flex>

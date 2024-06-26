@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "The robotic admin portal",
+  "homepage": "/admin",
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
     "@chakra-ui/react": "^2.8.2",
@@ -16,6 +17,7 @@
     "@testing-library/user-event": "^13.5.0",
     "amazon-cognito-identity-js": "^5.2.10",
     "axios": "^1.6.8",
+    "dotenv": "^16.4.5",
     "formik": "^2.4.5",
     "framer-motion": "^11.0.15",
     "lodash": "^4.17.21",
@@ -64,7 +66,6 @@
     ]
   },
   "devDependencies": {
-    "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.34.1"
   }
