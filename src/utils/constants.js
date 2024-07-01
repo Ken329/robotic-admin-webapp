@@ -9,3 +9,9 @@ export const USER_ROLE = {
   ADMIN: "admin",
   CENTER: "center",
 };
+
+export const categoryMap = {
+  general: { label: "General", colorScheme: "blue" },
+  exercise: { label: "Exercise", colorScheme: "green" },
+  competition: { label: "Competition", colorScheme: "orange" },
+};

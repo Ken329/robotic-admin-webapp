@@ -1,11 +1,25 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
+  useGetAllBlogTypesQuery,
+  useGetAllCategoriesQuery,
+  useCreatePostMutation,
+  useUpdatePostMutation,
+  useGetPostByIdQuery,
+} from "../../redux/slices/posts/api";
+import { useGetStudentLevelsQuery } from "../../redux/slices/students/api";
+import {
+  Box,
   Heading,
   Flex,
   FormControl,
   FormLabel,
   Input,
+  Text,
+  Select,
   Button,
+  Checkbox,
+  CheckboxGroup,
   useDisclosure,
   Modal,
   ModalOverlay,
@@ -18,44 +32,151 @@ import {
 import Layout from "../../components/Layout/MainLayout";
 import ReactQuill, { Quill } from "react-quill";
 import QuillResizeImage from "quill-resize-image";
-import "react-quill/dist/quill.bubble.css";
 import "react-quill/dist/quill.snow.css";
 import useCustomToast from "../../components/CustomToast";
+import CoverImage from "./CoverImage";
 
 Quill.register("modules/resize", QuillResizeImage);
 
 const CreatePost = () => {
   const toast = useCustomToast();
-  const [editorContent, setEditorContent] = useState("");
-  const [title, setTitle] = useState("");
-  const [coverImage, setCoverImage] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [isBtnDisabled, setIsBtnDisabled] = useState(true);
-  const [imageUrl, setImageUrl] = useState("");
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const isEditMode = !!id;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const quillRef = useRef(null);
 
-  const post = () => {
-    console.log(title);
-    console.log(editorContent);
-    console.log(coverImage);
-    setLoading(false);
+  const [title, setTitle] = useState("");
+  const [coverImage, setCoverImage] = useState(null);
+  const [description, setDescription] = useState("");
+  const [blogType, setBlogType] = useState("");
+  const [category, setCategory] = useState("");
+  const [editorContent, setEditorContent] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
+  const [sendTo, setSendTo] = useState(["ALL"]);
+  const [sendToOptions, setSendToOptions] = useState([]);
+  const [blogTypes, setBlogTypes] = useState([]);
+  const [blogCategories, setBlogCategories] = useState([]);
+  const [initialCoverImage, setInitialCoverImage] = useState("");
+
+  const { data: blogTypeData } = useGetAllBlogTypesQuery();
+  const { data: blogCategoryData } = useGetAllCategoriesQuery();
+  const { data: studentLevels } = useGetStudentLevelsQuery();
+  const { data: postData, isSuccess: isPostLoaded } = useGetPostByIdQuery(id, {
+    skip: !isEditMode,
+    refetchOnMountOrArgChange: true,
+  });
+  const [createPost] = useCreatePostMutation();
+  const [updatePost] = useUpdatePostMutation();
+
+  useEffect(() => {
+    if (blogTypeData) setBlogTypes(blogTypeData.data);
+    if (blogCategoryData) setBlogCategories(blogCategoryData.data);
+  }, [blogTypeData, blogCategoryData]);
+
+  useEffect(() => {
+    if (studentLevels) {
+      setSendToOptions([
+        "ALL",
+        ...studentLevels.data.map((level) => level.name),
+      ]);
+    }
+  }, [studentLevels]);
+
+  useEffect(() => {
+    if (isPostLoaded && postData.success) {
+      const post = postData.data;
+      setTitle(post.title);
+      setDescription(post.description);
+      setCategory(post.category);
+      setBlogType(post.type);
+      setEditorContent(post.content);
+      setSendTo(post.assigned.split(", "));
+      setInitialCoverImage(post.url);
+      setCoverImage({ url: post.url });
+    }
+  }, [postData, isPostLoaded]);
+
+  const validatePostData = () => {
+    return (
+      title &&
+      editorContent &&
+      (coverImage || initialCoverImage) &&
+      blogType &&
+      category &&
+      description &&
+      sendTo.length > 0
+    );
   };
 
-  const handleSubmit = (e) => {
+  const handleSendToChange = (value) => {
+    setSendTo(value.includes("ALL") ? ["ALL"] : value);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    post();
+
+    if (!validatePostData()) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields.",
+        status: "error",
+      });
+      setLoading(false);
+      return;
+    }
+
+    const postPayload = {
+      title,
+      description,
+      category,
+      type: blogType,
+      assigned: sendTo.join(", "),
+      content: editorContent,
+    };
+
+    if (coverImage && coverImage.fileId) {
+      postPayload.coverImage = coverImage.fileId;
+    }
+
+    try {
+      if (isEditMode) {
+        await updatePost({ id, ...postPayload }).unwrap();
+        toast({
+          title: "Post Updated",
+          description: "Your post has been updated successfully.",
+          status: "success",
+        });
+      } else {
+        await createPost(postPayload).unwrap();
+        toast({
+          title: "Post Created",
+          description: "Your post has been created successfully.",
+          status: "success",
+        });
+      }
+
+      navigate("/dashboard");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: `There was an error ${
+          isEditMode ? "updating" : "creating"
+        } the post: ${error.message}`,
+        status: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleImageInsert = () => {
     try {
       if (imageUrl) {
-        console.log(imageUrl);
         const quill = quillRef.current.getEditor();
-        console.log(quill);
         const range = quill.getSelection();
-        console.log(range);
         if (range) {
           quill.insertEmbed(range.index, "image", imageUrl);
         } else {
@@ -63,7 +184,7 @@ const CreatePost = () => {
         }
         toast({
           title: "Create Post",
-          description: `Image uploaded successfully`,
+          description: "Image uploaded successfully",
           status: "success",
         });
 
@@ -79,14 +200,6 @@ const CreatePost = () => {
     }
   };
 
-  useEffect(() => {
-    if (title && editorContent && coverImage) {
-      setIsBtnDisabled(false);
-    } else {
-      setIsBtnDisabled(true);
-    }
-  }, [editorContent, title, coverImage]);
-
   const modules = {
     toolbar: {
       container: [
@@ -99,9 +212,7 @@ const CreatePost = () => {
         ["link", "image", "video"],
         ["clean"],
       ],
-      handlers: {
-        image: onOpen,
-      },
+      handlers: { image: onOpen },
     },
     resize: {
       displayStyles: {
@@ -113,93 +224,153 @@ const CreatePost = () => {
     },
   };
 
-  console.log(editorContent);
+  const handleCoverImageSelect = (url, fileId) => {
+    setCoverImage({ url, fileId });
+  };
 
   return (
     <Layout isLoading={loading}>
-      <Flex minH={"100vh"} gap={6} flexWrap={"wrap"}>
+      <Flex minH="100vh" gap={6} flexWrap="wrap">
         <form onSubmit={handleSubmit} style={{ flex: "1 1 45%" }}>
-          <Flex
-            gap={6}
-            boxShadow={"lg"}
-            p={4}
-            flexDir={"column"}
-            width={"100%"}
-          >
-            <Heading textAlign={"center"}>Create Post</Heading>
+          <Flex gap={6} boxShadow="lg" p={4} flexDir="column" width="100%">
+            <Heading textAlign="center">
+              {isEditMode ? "Edit Post" : "Create Post"}
+            </Heading>
             <FormControl isRequired>
               <FormLabel>Title:</FormLabel>
               <Input
+                value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 type="text"
-                name="title"
                 placeholder="Post title"
               />
             </FormControl>
             <FormControl isRequired>
               <FormLabel>Cover Photo: (landscape)</FormLabel>
+              <CoverImage onCoverImageSelect={handleCoverImageSelect} />
+              {(coverImage || initialCoverImage) && (
+                <Box width="100%" height="300px" overflow="hidden" mb={2}>
+                  <img
+                    src={(coverImage && coverImage.url) || initialCoverImage}
+                    alt="Cover"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </Box>
+              )}
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Description:</FormLabel>
               <Input
-                onChange={(e) => setCoverImage(e.target.files[0])}
-                type="file"
-                accept="image/*"
-                name="cover image"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                type="text"
+                placeholder="Post description"
               />
             </FormControl>
             <FormControl isRequired>
-              <FormLabel>Content: </FormLabel>
+              <FormLabel>Type:</FormLabel>
+              <Select
+                value={blogType}
+                placeholder="Post type"
+                onChange={(e) => setBlogType(e.target.value)}
+              >
+                {blogTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Category:</FormLabel>
+              <Select
+                value={category}
+                placeholder="Post category"
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                {blogCategories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl>
+              <FormLabel>Send To:</FormLabel>
+              <CheckboxGroup value={sendTo} onChange={handleSendToChange}>
+                <Flex flexWrap="wrap" gap={4}>
+                  {sendToOptions.map((option) => (
+                    <Checkbox key={option} value={option}>
+                      {option}
+                    </Checkbox>
+                  ))}
+                </Flex>
+              </CheckboxGroup>
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Content:</FormLabel>
               <ReactQuill
                 ref={quillRef}
-                modules={modules}
-                theme="snow"
                 value={editorContent}
                 onChange={setEditorContent}
+                theme="snow"
+                modules={modules}
+                style={{ minHeight: "300px" }}
               />
             </FormControl>
-            <Button type="submit" name="submit" disabled={isBtnDisabled}>
-              Save
+            <Button type="submit" colorScheme="blue" isFullWidth>
+              {isEditMode ? "Update Post" : "Create Post"}
             </Button>
           </Flex>
         </form>
-        <Flex
-          p={4}
-          flexDir={"column"}
-          boxShadow={"lg"}
-          style={{ flex: "1 1 45%" }}
-          gap={3}
-        >
-          <Heading textAlign={"center"}>Preview</Heading>
-          <Heading textAlign={"center"} fontSize="xl">
-            {title}
-          </Heading>
-          {coverImage && (
-            <img
-              src={URL.createObjectURL(coverImage)}
-              alt="Cover"
-              style={{ maxWidth: "100%", marginBottom: "10px" }}
-            />
-          )}
-          <div
-            className="preview-content"
-            dangerouslySetInnerHTML={{ __html: editorContent }}
-            style={{
-              whiteSpace: "pre-wrap",
-              padding: "10px",
-              border: "1px solid #ddd",
-              backgroundColor: "#f9f9f9",
-              borderRadius: "8px",
-              marginTop: "10px",
-            }}
-          />
+
+        {/* Preview Section */}
+        <Flex flexDir="column" flex="1 1 45%" boxShadow="lg" p={4}>
+          <Heading textAlign="center">Preview</Heading>
+          <Box mb={4}>
+            {(coverImage || initialCoverImage) && (
+              <Box width="100%" height="300px" overflow="hidden" mb={2}>
+                <img
+                  src={(coverImage && coverImage.url) || initialCoverImage}
+                  alt="Cover"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              </Box>
+            )}
+          </Box>
+          <Box>
+            <Heading size="lg" mb={4}>
+              {title}
+            </Heading>
+            <Text mb={4}>
+              <strong>Description:</strong> {description}
+            </Text>
+            <Text mb={4}>
+              <strong>Category:</strong> {category}
+            </Text>
+            <Text mb={4}>
+              <strong>Type:</strong> {blogType}
+            </Text>
+            <Box dangerouslySetInnerHTML={{ __html: editorContent }} />
+          </Box>
         </Flex>
 
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Insert Image URL</ModalHeader>
+            <ModalHeader>Enter Image URL</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <FormControl>
-                <FormLabel>Image URL</FormLabel>
+                <FormLabel>Image URL:</FormLabel>
                 <Input
                   type="url"
                   value={imageUrl}
@@ -210,7 +381,7 @@ const CreatePost = () => {
             </ModalBody>
             <ModalFooter>
               <Button colorScheme="blue" mr={3} onClick={handleImageInsert}>
-                Insert
+                Insert Image
               </Button>
               <Button variant="ghost" onClick={onClose}>
                 Cancel
