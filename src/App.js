@@ -35,13 +35,13 @@ const router = createBrowserRouter(
 
       {/* protected routes */}
       <Route element={<PrivateRoute />}>
-        <Route exact path="/dashboard" element={<Dashboard />} />
-        <Route exact path="/students" element={<Students />} />
-        <Route exact path="/centres" element={<Centres />} />
-        <Route exact path="/achievements" element={<Achievements />} />
-        <Route path="/createPost" element={<CreatePost />} />
-        <Route path="/createPost/:id" element={<CreatePost />} />
-        <Route exact path="/post/:id" element={<Post />} />
+        <Route exact path="/admin/dashboard" element={<Dashboard />} />
+        <Route exact path="/admin/students" element={<Students />} />
+        <Route exact path="/admin/centres" element={<Centres />} />
+        <Route exact path="/admin/achievements" element={<Achievements />} />
+        <Route path="/admin/createPost" element={<CreatePost />} />
+        <Route path="/admin/createPost/:id" element={<CreatePost />} />
+        <Route exact path="/admin/post/:id" element={<Post />} />
       </Route>
     </Route>
   )
