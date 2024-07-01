@@ -54,7 +54,7 @@ const ForgotPassword = () => {
     setLoading(true);
     resetPasswordWithOTP(currentEmail, newPassword, otp)
       .then(() => {
-        navigate("/login");
+        navigate("/admin/login");
       })
       .catch((err) => {
         setError(err);
@@ -180,7 +180,7 @@ const ForgotPassword = () => {
       )}
       <Flex justifyContent="center" alignItems="center" w="100%" mt={"15px"}>
         <ArrowBackIcon mr={1} color={"blue.500"} />
-        <Link href="/login" color={"blue.500"}>
+        <Link href="/admin/login" color={"blue.500"}>
           Back to Login
         </Link>
       </Flex>

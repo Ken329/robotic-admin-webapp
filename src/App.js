@@ -23,10 +23,14 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
       <Route element={<AuthLayout />}>
-        <Route index element={<IndexPage />} />
-        <Route exact path="/login" element={<LoginPage />} />
-        <Route exact path="/forgot-password" element={<ForgotPassword />} />
-        <Route exact path="/logout" element={<LogoutPage />} />
+        <Route exact path="/admin" element={<IndexPage />} />
+        <Route exact path="/admin/login" element={<LoginPage />} />
+        <Route
+          exact
+          path="/admin/forgot-password"
+          element={<ForgotPassword />}
+        />
+        <Route exact path="/admin/logout" element={<LogoutPage />} />
       </Route>
 
       {/* protected routes */}

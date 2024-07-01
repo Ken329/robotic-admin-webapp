@@ -29,14 +29,14 @@ const LogoutPage = () => {
     dispatch(appApi.util.resetApiState());
     dispatch(resetApp());
     setIsLoading(false);
-    navigate("/login", { replace: true });
+    navigate("/admin/login", { replace: true });
   };
 
   useEffect(() => {
     if (token) {
       handleLogout();
     } else {
-      navigate("/login", { replace: true });
+      navigate("/admin/login", { replace: true });
     }
   }, [token]);
 

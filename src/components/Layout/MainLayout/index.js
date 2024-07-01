@@ -33,7 +33,7 @@ const Layout = ({ children, isLoading }) => {
   const onOpen = () => setIsOpen(true);
 
   const onLogout = () => {
-    navigate("/logout");
+    navigate("/admin/logout");
   };
 
   return (
