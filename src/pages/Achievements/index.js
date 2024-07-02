@@ -114,8 +114,7 @@ const Achievements = () => {
       if (selectedAchievement) {
         const updateAchievementPayload = {
           id: selectedAchievement.id,
-          title: title,
-          description: description,
+          formData: formData,
         };
 
         const response = await updateAchievement(updateAchievementPayload);
@@ -140,8 +139,10 @@ const Achievements = () => {
           });
         }
       }
-      refetch();
-      onClose();
+      const refetchedData = await refetch();
+      if (refetchedData.data) {
+        onClose();
+      }
     } catch (error) {
       toast({
         title: "Achievements",
@@ -267,12 +268,14 @@ const Achievements = () => {
                     aria-label="Edit Achievement"
                     icon={<EditIcon />}
                     size="sm"
+                    colorScheme="blue"
                     onClick={() => handleEdit(achievement)}
                   />
                   <IconButton
                     aria-label="Delete Achievement"
                     icon={<DeleteIcon />}
                     size="sm"
+                    colorScheme="red"
                     onClick={() => handleDelete(achievement.id)}
                   />
                 </Flex>
@@ -305,16 +308,12 @@ const Achievements = () => {
                 />
               </FormControl>
               <FormControl mb={4}>
-                {!selectedAchievement && (
-                  <>
-                    <FormLabel>Image</FormLabel>
-                    <Input
-                      type="file"
-                      onChange={handleImageUpload}
-                      accept="image/*"
-                    />
-                  </>
-                )}
+                <FormLabel>Image</FormLabel>
+                <Input
+                  type="file"
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                />
                 {imagePreview && (
                   <Box mt={2}>
                     <FormLabel>Preview</FormLabel>

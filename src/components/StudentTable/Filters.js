@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useSelector, useDispatch } from "react-redux";
-import { makeSelectUserRole } from "../../redux/slices/app/selector";
+import {
+  makeSelectToken,
+  makeSelectUserRole,
+} from "../../redux/slices/app/selector";
 import {
   useGetStudentLevelsQuery,
   useCreateStudentLevelMutation,
@@ -33,14 +36,16 @@ import {
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import { createLevelSchema } from "../../utils/validationSchema";
-import { FiSearch, FiPlus } from "react-icons/fi";
+import { FiSearch, FiPlus, FiDownload } from "react-icons/fi";
 import FilterPopover from "./FilterPopover";
 import useCustomToast from "../CustomToast";
+import { exportToExcel } from "../../services/helper";
 
 const Filters = ({ columnFilters, setColumnFilters }) => {
   const dispatch = useDispatch();
   const toast = useCustomToast();
   const role = useSelector(makeSelectUserRole());
+  const token = useSelector(makeSelectToken());
   const levels = useSelector(makeSelectLevelsData());
   const taskName = columnFilters.find((f) => f.id === "name")?.value || "";
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -149,15 +154,26 @@ const Filters = ({ columnFilters, setColumnFilters }) => {
         setColumnFilters={setColumnFilters}
       />
       {role === "admin" && (
-        <Button
-          colorScheme="teal"
-          variant="solid"
-          size="sm"
-          leftIcon={<FiPlus />}
-          onClick={openModal}
-        >
-          New Level
-        </Button>
+        <Flex gap={"10px"}>
+          <Button
+            colorScheme="teal"
+            variant="solid"
+            size="sm"
+            leftIcon={<FiPlus />}
+            onClick={openModal}
+          >
+            New Level
+          </Button>
+          <Button
+            colorScheme="blue"
+            variant="solid"
+            size="sm"
+            leftIcon={<FiDownload />}
+            onClick={() => exportToExcel(token)}
+          >
+            Export
+          </Button>
+        </Flex>
       )}
       <Modal isOpen={isModalOpen} onClose={closeModal} size="xl">
         <ModalOverlay />
