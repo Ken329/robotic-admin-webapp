@@ -16,4 +16,28 @@ const getAchievementImage = async (url, token) => {
   }
 };
 
-export { getAchievementImage };
+const exportToExcel = async (token) => {
+  try {
+    const response = await axios.get(
+      `${process.env.REACT_APP_BASE_API}/file/excel`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        responseType: "blob",
+      }
+    );
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "steamcupplus_students.xlsx"); // Set the file name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export { getAchievementImage, exportToExcel };

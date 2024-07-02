@@ -28,13 +28,10 @@ export const achievementsApi = baseApiSlice.injectEndpoints({
         }),
       }),
       updateAchievement: builder.mutation({
-        query: ({ title, description, id }) => ({
+        query: ({ id, formData }) => ({
           url: `/achievement/${id}`,
           method: "PUT",
-          body: {
-            title: title,
-            description: description,
-          },
+          body: formData,
         }),
       }),
       assignAchievement: builder.mutation({
