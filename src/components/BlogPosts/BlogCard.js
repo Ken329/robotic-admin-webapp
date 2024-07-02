@@ -43,7 +43,7 @@ const BlogCard = ({ blog, handleDelete }) => {
   });
 
   const handleEditClick = () => {
-    navigate(`/createPost/${blog.id}`);
+    navigate(`/admin/createPost/${blog.id}`);
   };
 
   const handleDeleteClick = () => {
@@ -145,7 +145,7 @@ const BlogCard = ({ blog, handleDelete }) => {
         <Button
           size={{ base: "xs", md: "sm", lg: "sm" }}
           colorScheme="blue"
-          onClick={() => navigate(`/post/${blog?.id}`)}
+          onClick={() => navigate(`/admin/post/${blog?.id}`)}
         >
           Read More
         </Button>

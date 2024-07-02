@@ -76,7 +76,7 @@ const Dashboard = () => {
         variant="solid"
         size="sm"
         leftIcon={<FiPlus />}
-        onClick={() => navigate("/createPost")}
+        onClick={() => navigate("/admin/createPost")}
         flex="1"
       >
         New Post

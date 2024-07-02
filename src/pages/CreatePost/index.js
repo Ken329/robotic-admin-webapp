@@ -54,7 +54,7 @@ const CreatePost = () => {
   const [editorContent, setEditorContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
-  const [sendTo, setSendTo] = useState(["ALL"]);
+  const [sendTo, setSendTo] = useState(["All"]);
   const [sendToOptions, setSendToOptions] = useState([]);
   const [blogTypes, setBlogTypes] = useState([]);
   const [blogCategories, setBlogCategories] = useState([]);
@@ -78,7 +78,7 @@ const CreatePost = () => {
   useEffect(() => {
     if (studentLevels) {
       setSendToOptions([
-        "ALL",
+        "All",
         ...studentLevels.data.map((level) => level.name),
       ]);
     }
@@ -111,7 +111,7 @@ const CreatePost = () => {
   };
 
   const handleSendToChange = (value) => {
-    setSendTo(value.includes("ALL") ? ["ALL"] : value);
+    setSendTo(value.includes("All") ? ["All"] : value);
   };
 
   const handleSubmit = async (e) => {
@@ -158,7 +158,7 @@ const CreatePost = () => {
         });
       }
 
-      navigate("/dashboard");
+      navigate("/admin/dashboard");
     } catch (error) {
       toast({
         title: "Error",

@@ -39,7 +39,7 @@ const Post = () => {
     <Layout isLoading={isLoading}>
       <Container maxW="container.md">
         <Button
-          onClick={() => navigate("/dashboard")}
+          onClick={() => navigate("/admin/dashboard")}
           leftIcon={<ArrowBackIcon />}
           mb="4"
         >
