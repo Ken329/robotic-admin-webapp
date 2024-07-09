@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import parse from "html-react-parser";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGetPostByIdQuery } from "../../redux/slices/posts/api";
 import {
@@ -14,7 +15,6 @@ import {
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import useCustomToast from "../../components/CustomToast";
 import Layout from "../../components/Layout/MainLayout";
-import "./Quill.css";
 
 const Post = () => {
   const navigate = useNavigate();
@@ -95,12 +95,7 @@ const Post = () => {
           <VStack spacing="2" alignItems="flex-start" mb="4">
             <Heading fontSize="2xl">{blog?.title}</Heading>
           </VStack>
-          <Box className="ql-editor-container">
-            <Box
-              className="ql-editor"
-              dangerouslySetInnerHTML={{ __html: blog?.content }}
-            />
-          </Box>
+          <Box className="ql-editor">{parse(`${blog?.content}`)}</Box>
         </Box>
       </Container>
     </Layout>
