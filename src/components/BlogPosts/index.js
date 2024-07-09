@@ -63,8 +63,8 @@ const BlogList = ({ blogs, handleDelete }) => {
   return (
     <Box m={{ base: "5%", md: "5%", lg: "2%" }}>
       <Flex
-        direction={{ base: "column", md: "row" }}
-        alignItems={{ base: "stretch", md: "center" }}
+        direction={{ base: "column", md: "row", lg: "row" }}
+        alignItems={{ base: "stretch", md: "center", lg: "center" }}
         mb={4}
         gap={4}
       >
@@ -81,34 +81,38 @@ const BlogList = ({ blogs, handleDelete }) => {
             _focus={{ boxShadow: "outline" }}
           />
         </InputGroup>
-        <Select
-          onChange={handleCategoryChange}
-          bg="white"
-          flex="1"
-          borderRadius="md"
-          boxShadow="sm"
-          _focus={{ boxShadow: "outline" }}
-        >
-          <option value="all">All</option>
-          {[...new Set(blogs.map((blog) => blog.category))].map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
-        </Select>
-        <Select
-          onChange={handleSortChange}
-          bg="white"
-          flex="1"
-          borderRadius="md"
-          boxShadow="sm"
-          _focus={{ boxShadow: "outline" }}
-          value={sortBy}
-        >
-          <option value="newest">Newest</option>
-          <option value="oldest">Oldest</option>
-          <option value="mostViewed">Most Viewed</option>
-        </Select>
+        <Flex direction={{ base: "rown", md: 0, lg: 0 }} gap={4}>
+          <Select
+            onChange={handleCategoryChange}
+            bg="white"
+            flex="1"
+            borderRadius="md"
+            boxShadow="sm"
+            _focus={{ boxShadow: "outline" }}
+          >
+            <option value="all">All</option>
+            {[...new Set(blogs.map((blog) => blog.category))].map(
+              (category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              )
+            )}
+          </Select>
+          <Select
+            onChange={handleSortChange}
+            bg="white"
+            flex="1"
+            borderRadius="md"
+            boxShadow="sm"
+            _focus={{ boxShadow: "outline" }}
+            value={sortBy}
+          >
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="mostViewed">Most Viewed</option>
+          </Select>
+        </Flex>
       </Flex>
       <Heading as="h3" size="lg" mb="10px">
         Latest Posts

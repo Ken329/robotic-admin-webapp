@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import parse from "html-react-parser";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   useGetAllBlogTypesQuery,
@@ -359,7 +360,7 @@ const CreatePost = () => {
             <Text mb={4}>
               <strong>Type:</strong> {blogType}
             </Text>
-            <Box dangerouslySetInnerHTML={{ __html: editorContent }} />
+            <Box className="ql-editor">{parse(`${editorContent}`)}</Box>
           </Box>
         </Flex>
 

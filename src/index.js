@@ -5,6 +5,7 @@ import store from "./redux/store";
 import { Provider } from "react-redux";
 import theme from "./utils/theme";
 import App from "./App";
+import "./pages/Post/Quill.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
