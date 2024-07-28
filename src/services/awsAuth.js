@@ -59,3 +59,20 @@ export const resetPasswordWithOTP = (Email, newPassword, otp) => {
     });
   });
 };
+
+export const resendVerificationOtp = (Email) => {
+  return new Promise((resolve, reject) => {
+    const user = new CognitoUser({
+      Username: Email,
+      Pool: userpool,
+    });
+
+    user.resendConfirmationCode((err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
