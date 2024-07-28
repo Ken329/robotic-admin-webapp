@@ -18,6 +18,8 @@ import LogoutPage from "./pages/LogoutPage";
 import ForgotPassword from "./pages/ForgotPassword";
 import PrivateRoute from "./components/PrivateRoute";
 import AuthLayout from "./components/Layout/AuthLayout";
+import Verify from "./pages/Verify";
+import Maintenance from "./pages/Maintenance";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -26,7 +28,9 @@ const router = createBrowserRouter(
         <Route index element={<IndexPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="forgot-password" element={<ForgotPassword />} />
+        <Route path="verify" element={<Verify />} />
         <Route path="logout" element={<LogoutPage />} />
+        <Route path="maintenance" element={<Maintenance />} />
       </Route>
 
       {/* protected routes */}

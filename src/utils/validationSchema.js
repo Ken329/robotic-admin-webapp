@@ -66,6 +66,12 @@ const verifySchema = Yup.object().shape({
   code: Yup.string().required("otp is required"),
 });
 
+const emailSchema = Yup.object().shape({
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+});
+
 const forgotPasswordSchema = Yup.object().shape({
   email: Yup.string()
     .email("Invalid email address")
@@ -108,6 +114,7 @@ export {
   loginSchema,
   signUpSchema,
   verifySchema,
+  emailSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
   createCentreSchema,
