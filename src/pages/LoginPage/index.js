@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import SteamCupLogo from "../../assets/images/STEAM Cup+.png";
 import {
   Box,
@@ -26,15 +27,34 @@ import { authenticate } from "../../services/awsAuth";
 import userpool from "../../utils/userpool";
 import { loginSchema } from "../../utils/validationSchema";
 import { generateAccessToken } from "../../services/auth";
+import useCustomToast from "../../components/CustomToast";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const toast = useCustomToast();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const user = userpool.getCurrentUser();
   const authTokens = JSON.parse(localStorage.getItem("token"));
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_API}/maintenance`)
+      .then((response) => {
+        if (response?.data?.data !== null) {
+          navigate("/admin/maintenance");
+        }
+      })
+      .catch((error) => {
+        toast({
+          title: "Maintenance",
+          description: error.message,
+          status: "error",
+        });
+      });
+  }, [navigate]);
 
   useEffect(() => {
     if (user && authTokens?.accessToken) {
@@ -143,6 +163,11 @@ const LoginPage = () => {
       <Flex justifyContent="center" w="100%" mt={"15px"}>
         <Link href="/admin/forgot-password" color={"blue.500"}>
           Forgot Password?
+        </Link>
+      </Flex>
+      <Flex justifyContent="center" w="100%" mt={"15px"}>
+        <Link href="/admin/verify" color={"blue.500"}>
+          Verify Email
         </Link>
       </Flex>
     </Box>

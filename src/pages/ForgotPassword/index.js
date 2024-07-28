@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import {
   Box,
   Button,
@@ -24,14 +25,33 @@ import {
   forgotPasswordSchema,
   resetPasswordSchema,
 } from "../../utils/validationSchema";
+import useCustomToast from "../../components/CustomToast";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
+  const toast = useCustomToast();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [currentEmail, setCurrentEmail] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [step, setStep] = useState(1);
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_API}/maintenance`)
+      .then((response) => {
+        if (response?.data?.data !== null) {
+          navigate("/admin/maintenance");
+        }
+      })
+      .catch((error) => {
+        toast({
+          title: "Maintenance",
+          description: error.message,
+          status: "error",
+        });
+      });
+  }, [navigate]);
 
   const handleForgotPassword = ({ email }) => {
     setError(null);
