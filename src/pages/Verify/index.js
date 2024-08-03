@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import SteamCupLogo from "../../assets/images/STEAM Cup+.png";
 import {
   Flex,
@@ -25,6 +24,7 @@ import { verifySchema, emailSchema } from "../../utils/validationSchema";
 import { verifyOtp } from "../../services/auth";
 import { resendVerificationOtp } from "../../services/awsAuth";
 import useCustomToast from "../../components/CustomToast";
+import { useMaintenanceCheckQuery } from "../../redux/slices/app/api";
 
 const Verify = () => {
   const navigate = useNavigate();
@@ -33,23 +33,21 @@ const Verify = () => {
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
+  const {
+    data: maintenanceData,
+    isLoading: maintenanceIsLoading,
+    isError: maintenanceIsError,
+  } = useMaintenanceCheckQuery();
 
   useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_BASE_API}/maintenance`)
-      .then((response) => {
-        if (response?.data?.data !== null) {
-          navigate("/admin/maintenance");
-        }
-      })
-      .catch((error) => {
-        toast({
-          title: "Maintenance",
-          description: error.message,
-          status: "error",
-        });
-      });
-  }, [navigate]);
+    if (
+      !maintenanceIsLoading &&
+      !maintenanceIsError &&
+      maintenanceData?.data !== null
+    ) {
+      navigate("/admin/maintenance");
+    }
+  }, [maintenanceData, maintenanceIsLoading, maintenanceIsError]);
 
   const handleSendVerificationCode = async (values, actions) => {
     setError(null);

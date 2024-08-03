@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { makeSelectToken } from "../../redux/slices/app/selector";
 import { appApi } from "../../redux/slices/app/api";
@@ -10,6 +10,7 @@ import userpool from "../../utils/userpool";
 
 const LogoutPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const hasLoggedOut = useRef(false);
@@ -36,9 +37,12 @@ const LogoutPage = () => {
     if (token) {
       handleLogout();
     } else {
-      navigate("/admin/login", { replace: true });
+      navigate("/admin/login", {
+        replace: true,
+        state: { unauthorized: location?.state?.unauthorized ? true : false },
+      });
     }
-  }, [token]);
+  }, [token, location]);
 
   return isLoading ? <Spin /> : null;
 };

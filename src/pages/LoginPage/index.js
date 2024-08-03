@@ -1,7 +1,5 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useNavigate, useLocation } from "react-router-dom";
 import SteamCupLogo from "../../assets/images/STEAM Cup+.png";
 import {
   Box,
@@ -28,9 +26,11 @@ import userpool from "../../utils/userpool";
 import { loginSchema } from "../../utils/validationSchema";
 import { generateAccessToken } from "../../services/auth";
 import useCustomToast from "../../components/CustomToast";
+import { useMaintenanceCheckQuery } from "../../redux/slices/app/api";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const toast = useCustomToast();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
@@ -39,37 +39,49 @@ const LoginPage = () => {
   const user = userpool.getCurrentUser();
   const authTokens = JSON.parse(localStorage.getItem("token"));
 
+  const {
+    data: maintenanceData,
+    isLoading: maintenanceIsLoading,
+    isError: maintenanceIsError,
+  } = useMaintenanceCheckQuery();
+
   useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_BASE_API}/maintenance`)
-      .then((response) => {
-        if (response?.data?.data !== null) {
-          navigate("/admin/maintenance");
-        }
-      })
-      .catch((error) => {
-        toast({
-          title: "Maintenance",
-          description: error.message,
-          status: "error",
-        });
-      });
-  }, [navigate]);
+    if (
+      !maintenanceIsLoading &&
+      !maintenanceIsError &&
+      maintenanceData?.data !== null
+    ) {
+      navigate("/admin/maintenance");
+    }
+  }, [maintenanceData, maintenanceIsLoading, maintenanceIsError]);
 
   useEffect(() => {
     if (user && authTokens?.accessToken) {
       navigate("/admin/dashboard", { replace: true });
     }
-  }, [user, authTokens]);
+    if (location?.state?.unauthorized) {
+      toast({
+        title: "Unauthorized Access",
+        description: "You are not authorized to login.",
+        status: "error",
+      });
+      location.state.unauthorized = false;
+    }
+  }, [user, authTokens, location]);
 
   const initAuth = async (cognitoToken) => {
-    const tokenPayload = await generateAccessToken(cognitoToken);
-    if (tokenPayload) {
-      localStorage.setItem("token", JSON.stringify(tokenPayload));
+    try {
+      const tokenPayload = await generateAccessToken(cognitoToken);
+      if (tokenPayload) {
+        localStorage.setItem("token", JSON.stringify(tokenPayload));
+        setLoading(false);
+        navigate("/admin/dashboard", { replace: true });
+      } else {
+        navigate("/admin/logout", { replace: true });
+      }
+    } catch (error) {
+      setError(error);
       setLoading(false);
-      navigate("/admin/dashboard", { replace: true });
-    } else {
-      navigate("/admin/logout", { replace: true });
     }
   };
 
