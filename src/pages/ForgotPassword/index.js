@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import SteamCupLogo from "../../assets/images/STEAM Cup+.png";
 import {
   Box,
   Button,
@@ -17,6 +17,7 @@ import {
   InputGroup,
   InputRightElement,
   Link,
+  Image,
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon, ArrowBackIcon } from "@chakra-ui/icons";
 import { Formik, Field } from "formik";
@@ -25,33 +26,31 @@ import {
   forgotPasswordSchema,
   resetPasswordSchema,
 } from "../../utils/validationSchema";
-import useCustomToast from "../../components/CustomToast";
+import { useMaintenanceCheckQuery } from "../../redux/slices/app/api";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
-  const toast = useCustomToast();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [currentEmail, setCurrentEmail] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [step, setStep] = useState(1);
 
+  const {
+    data: maintenanceData,
+    isLoading: maintenanceIsLoading,
+    isError: maintenanceIsError,
+  } = useMaintenanceCheckQuery();
+
   useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_BASE_API}/maintenance`)
-      .then((response) => {
-        if (response?.data?.data !== null) {
-          navigate("/admin/maintenance");
-        }
-      })
-      .catch((error) => {
-        toast({
-          title: "Maintenance",
-          description: error.message,
-          status: "error",
-        });
-      });
-  }, [navigate]);
+    if (
+      !maintenanceIsLoading &&
+      !maintenanceIsError &&
+      maintenanceData?.data !== null
+    ) {
+      navigate("/admin/maintenance");
+    }
+  }, [maintenanceData, maintenanceIsLoading, maintenanceIsError]);
 
   const handleForgotPassword = ({ email }) => {
     setError(null);
@@ -87,6 +86,9 @@ const ForgotPassword = () => {
   return (
     <Box bg="white" p={6} rounded="md" w={80} alignItems="center">
       <Flex align="center" justify="center" p="10px">
+        <Image src={SteamCupLogo} alt="SteamCup Logo" width={36} />
+      </Flex>
+      <Flex align="center" justify="center" p="10px">
         <Text fontSize="24px" fontWeight="500">
           Forgot Password
         </Text>
@@ -111,7 +113,7 @@ const ForgotPassword = () => {
             <form onSubmit={handleSubmit}>
               <VStack spacing={4} align="flex-start">
                 <Text fontSize="14px" fontWeight="500">
-                  Please enter your email below and we&apos;ll send you a
+                  Please enter your login email below and we&apos;ll send you a
                   verification code to reset your password.
                 </Text>
 
