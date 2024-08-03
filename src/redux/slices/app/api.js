@@ -8,8 +8,13 @@ export const appApi = baseApiSlice.injectEndpoints({
           url: "/user",
         }),
       }),
+      maintenanceCheck: builder.query({
+        query: () => ({
+          url: "/maintenance",
+        }),
+      }),
     };
   },
 });
 
-export const { useGetUserDataQuery } = appApi;
+export const { useGetUserDataQuery, useMaintenanceCheckQuery } = appApi;

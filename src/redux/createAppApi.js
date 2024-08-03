@@ -4,9 +4,13 @@ import { resetApp } from "./slices/app";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.REACT_APP_BASE_API,
-  prepareHeaders: (headers) => {
-    const accessToken = JSON.parse(localStorage.getItem("token")).accessToken;
-    headers.set("Authorization", `Bearer ${accessToken}`);
+  prepareHeaders: (headers, { endpoint }) => {
+    // Check if this request should skip the token
+    const skipToken = endpoint === "maintenanceCheck";
+    if (!skipToken) {
+      const accessToken = JSON.parse(localStorage.getItem("token")).accessToken;
+      headers.set("Authorization", `Bearer ${accessToken}`);
+    }
     return headers;
   },
 });

@@ -23,6 +23,13 @@ const Layout = ({ children, isLoading }) => {
 
   useEffect(() => {
     if (!isUserLoading && !isError && data) {
+      const role = data?.data?.role;
+      if (role === "student") {
+        navigate("/admin/logout", {
+          replace: true,
+          state: { unauthorized: true },
+        });
+      }
       dispatch(saveUserData(data?.data));
     } else if (isError) {
       onLogout();
