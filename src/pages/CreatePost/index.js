@@ -165,7 +165,7 @@ const CreatePost = () => {
         title: "Error",
         description: `There was an error ${
           isEditMode ? "updating" : "creating"
-        } the post: ${error.message}`,
+        } the post.`,
         status: "error",
       });
     } finally {
