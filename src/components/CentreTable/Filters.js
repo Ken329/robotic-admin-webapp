@@ -88,7 +88,7 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
       setLoading(false);
       toast({
         title: "Centre",
-        description: error,
+        description: error?.data?.message,
         status: "error",
       });
       actions.resetForm();
