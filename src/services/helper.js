@@ -40,4 +40,28 @@ const exportToExcel = async (token) => {
   }
 };
 
-export { getAchievementImage, exportToExcel };
+const exportCompetitionToExcel = async (token, competitionId, fileName) => {
+  try {
+    const response = await axios.get(
+      `${process.env.REACT_APP_BASE_API}/file/excel/${competitionId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        responseType: "blob",
+      }
+    );
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `${fileName}.xlsx`); // Set the file name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export { getAchievementImage, exportToExcel, exportCompetitionToExcel };
