@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
-import { makeSelectToken } from "../../redux/slices/app/selector";
+import {
+  makeSelectToken,
+  makeSelectUserRole,
+} from "../../redux/slices/app/selector";
+import { useUpdateCentreMutation } from "../../redux/slices/centre/api";
 import { Formik, Field } from "formik";
 import {
   Modal,
@@ -17,16 +21,25 @@ import {
   Stack,
   Flex,
   VStack,
+  HStack,
+  Button,
+  Spinner,
 } from "@chakra-ui/react";
 import useCustomToast from "../CustomToast";
 import Spin from "../Spin";
 import { getUserById } from "../../services/auth";
+import { USER_ROLE, CENTRE_STATUS } from "../../utils/constants";
 
 const DataModal = ({ isOpen, onClose, rowData }) => {
   const toast = useCustomToast();
+  const role = useSelector(makeSelectUserRole());
   const token = useSelector(makeSelectToken());
   const [centreData, setCentreData] = useState({});
   const [loading, setLoading] = useState(true);
+  const [isEdit, setIsEdit] = useState(false);
+
+  const [updateCentre, { isLoading: updateLoading }] =
+    useUpdateCentreMutation();
 
   useEffect(() => {
     if (isOpen) {
@@ -49,6 +62,50 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
       fetchCentreData();
     }
   }, [rowData, isOpen]);
+
+  const isReadOnly = useMemo(() => {
+    if (
+      role === USER_ROLE.ADMIN &&
+      centreData?.status === CENTRE_STATUS.APPROVED &&
+      isEdit
+    ) {
+      return false;
+    }
+    return true;
+  }, [role, centreData, isEdit]);
+
+  const handleUpdate = async (values) => {
+    try {
+      const payload = {};
+      Object.keys(values).forEach((key) => {
+        if (values[key] !== centreData[key]) {
+          payload[key] = values[key];
+        }
+      });
+
+      const response = await updateCentre({
+        id: centreData.centerId,
+        body: payload,
+      }).unwrap();
+
+      if (response.success) {
+        toast({
+          title: "Centre",
+          description: response?.message,
+          status: "success",
+        });
+
+        setIsEdit(false);
+        onClose();
+      }
+    } catch (error) {
+      toast({
+        title: "Centre",
+        description: error?.data?.message,
+        status: "error",
+      });
+    }
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
@@ -74,7 +131,9 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                     status: centreData?.status || "",
                   }}
                   onSubmit={(values) => {
-                    () => console.log(values);
+                    if (centreData?.status === CENTRE_STATUS.APPROVED) {
+                      handleUpdate(values);
+                    }
                   }}
                 >
                   {({ handleSubmit, errors, touched }) => (
@@ -91,7 +150,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                             name="name"
                             type="text"
                             variant="filled"
-                            isReadOnly={true}
+                            isReadOnly={isReadOnly}
                           />
                           <FormErrorMessage>{errors.name}</FormErrorMessage>
                         </FormControl>
@@ -107,7 +166,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                             name="location"
                             type="text"
                             variant="filled"
-                            isReadOnly={true}
+                            isReadOnly={isReadOnly}
                           />
                           <FormErrorMessage>{errors.location}</FormErrorMessage>
                         </FormControl>
@@ -124,6 +183,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                             type="text"
                             variant="filled"
                             isReadOnly={true}
+                            disabled={!isReadOnly}
                           />
                           <FormErrorMessage>{errors.email}</FormErrorMessage>
                         </FormControl>
@@ -140,6 +200,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                             type="text"
                             variant="filled"
                             isReadOnly={true}
+                            disabled={!isReadOnly}
                           />
                           <FormErrorMessage>{errors.id}</FormErrorMessage>
                         </FormControl>
@@ -156,9 +217,40 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                             type="text"
                             variant="filled"
                             isReadOnly={true}
+                            disabled={!isReadOnly}
                           />
                           <FormErrorMessage>{errors.status}</FormErrorMessage>
                         </FormControl>
+
+                        {centreData?.status === CENTRE_STATUS.APPROVED &&
+                          role === USER_ROLE.ADMIN && (
+                            <>
+                              {isEdit ? (
+                                <HStack spacing={4} w={"100%"}>
+                                  <Button type="submit" colorScheme="green">
+                                    {updateLoading ? (
+                                      <Spinner size="sm" color="white" />
+                                    ) : (
+                                      "Submit"
+                                    )}
+                                  </Button>
+                                  <Button
+                                    colorScheme="red"
+                                    onClick={() => setIsEdit(false)}
+                                  >
+                                    Cancel
+                                  </Button>
+                                </HStack>
+                              ) : (
+                                <Button
+                                  colorScheme="blue"
+                                  onClick={() => setIsEdit(true)}
+                                >
+                                  Edit
+                                </Button>
+                              )}
+                            </>
+                          )}
                       </VStack>
                     </form>
                   )}

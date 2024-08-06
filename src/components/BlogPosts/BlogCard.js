@@ -3,7 +3,10 @@ import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { useSelector } from "react-redux";
-import { makeSelectUserRole } from "../../redux/slices/app/selector";
+import {
+  makeSelectUserRole,
+  makeSelectToken,
+} from "../../redux/slices/app/selector";
 import {
   Box,
   Image,
@@ -26,11 +29,14 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/react";
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import { categoryMap, USER_ROLE } from "../../utils/constants";
+import { FiDownload } from "react-icons/fi";
+import { categoryMap, USER_ROLE, POST_TYPE } from "../../utils/constants";
+import { exportCompetitionToExcel } from "../../services/helper";
 
 const BlogCard = ({ blog, handleDelete }) => {
   const navigate = useNavigate();
   const role = useSelector(makeSelectUserRole());
+  const token = useSelector(makeSelectToken());
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const category = categoryMap[blog.category] || {
@@ -41,6 +47,10 @@ const BlogCard = ({ blog, handleDelete }) => {
   const timeAgo = formatDistanceToNow(new Date(blog.createdAt), {
     addSuffix: true,
   });
+
+  const handleExportData = () => {
+    exportCompetitionToExcel(token, blog?.id, blog?.title);
+  };
 
   const handleEditClick = () => {
     navigate(`/admin/createPost/${blog.id}`);
@@ -73,6 +83,16 @@ const BlogCard = ({ blog, handleDelete }) => {
           opacity="0"
           _hover={{ opacity: "1" }}
         >
+          {blog?.category === POST_TYPE.COMPETITION && (
+            <IconButton
+              size="sm"
+              colorScheme="blue"
+              aria-label="Export Data"
+              icon={<FiDownload />}
+              onClick={handleExportData}
+              Export
+            />
+          )}
           <IconButton
             size="sm"
             colorScheme="blue"

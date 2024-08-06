@@ -10,57 +10,69 @@ const loginSchema = Yup.object().shape({
     .required("Password is required"),
 });
 
-const signUpSchema = Yup.object().shape({
-  fullName: Yup.string().required("Full Name is required"),
-  dob: Yup.string().required("Date of Birth is required"),
-  gender: Yup.string().required("Gender is required"),
-  center: Yup.string().required("Center is required"),
-  nric: Yup.string().when("nationality", {
-    is: (nationality) => nationality === "malaysia",
-    then: (schema) =>
-      schema
-        .required("My Kad / NRIC is required")
-        .matches(
-          /^(?:\d{6}-\d{2}-\d{4}|\*{6}-\*{2}-\d{4})$/,
-          "Invalid My Kad / NRIC"
-        ),
-    otherwise: (schema) => schema,
-  }),
-  passport: Yup.string().when("nationality", {
-    is: (nationality) => nationality !== "malaysia",
-    then: (schema) => schema.required("Passport is required"),
-    otherwise: (schema) => schema,
-  }),
-  contact: Yup.string()
-    .trim()
-    .optional()
-    .matches(
-      /^(\+?6?01)[02-46-9]-*[0-9]{7}$|^(\+?6?01)[1]-*[0-9]{8}$/,
-      "Invalid phone number. Please use a valid Malaysian phone number."
+const createSignUpSchema = (userRole) => {
+  return Yup.object().shape({
+    fullName: Yup.string().required("Full Name is required"),
+    dob: Yup.string().required("Date of Birth is required"),
+    gender: Yup.string().required("Gender is required"),
+    center: Yup.string().required("Center is required"),
+    nric: Yup.string().when("nationality", {
+      is: (nationality) => nationality === "malaysia",
+      then: (schema) =>
+        schema
+          .required("My Kad / NRIC is required")
+          .matches(
+            /^(?:\d{6}-\d{2}-\d{4}|\*{6}-\*{2}-\d{4})$/,
+            "Invalid My Kad / NRIC"
+          ),
+      otherwise: (schema) => schema,
+    }),
+    passport: Yup.string().when("nationality", {
+      is: (nationality) => nationality !== "malaysia",
+      then: (schema) => schema.required("Passport is required"),
+      otherwise: (schema) => schema,
+    }),
+    contact: Yup.string()
+      .trim()
+      .optional()
+      .matches(
+        /^(\+?6?01)[02-46-9]-*[0-9]{7}$|^(\+?6?01)[1]-*[0-9]{8}$/,
+        "Invalid phone number. Please use a valid Malaysian phone number."
+      ),
+    race: Yup.string().required("Race is required"),
+    moeEmail: Yup.string().optional().email("Invalid email address"),
+    personalEmail: Yup.string().optional().email("Invalid email address"),
+    school: Yup.string().required("School is required"),
+    nationality: Yup.string().required("Nationality is required"),
+    parentName: Yup.string().required("Parent Name is required"),
+    relationship: Yup.string().required(
+      "Parent/Guardian relationship is required"
     ),
-  race: Yup.string().required("Race is required"),
-  moeEmail: Yup.string().optional().email("Invalid email address"),
-  personalEmail: Yup.string().optional().email("Invalid email address"),
-  school: Yup.string().required("School is required"),
-  nationality: Yup.string().required("Nationality is required"),
-  parentName: Yup.string().required("Parent Name is required"),
-  relationship: Yup.string().required(
-    "Parent/Guardian relationship is required"
-  ),
-  parentEmail: Yup.string()
-    .email("Invalid email address")
-    .required("Parent email is required"),
-  parentContact: Yup.string()
-    .trim()
-    .required("Parent contact number is required")
-    .matches(
-      /^(\+?6?01)[02-46-9]-*[0-9]{7}$|^(\+?6?01)[1]-*[0-9]{8}$/,
-      "Invalid phone number. Please use a valid Malaysian phone number."
-    ),
-  size: Yup.string().required("T-Shirt size is required"),
-  level: Yup.string().required("Level is required"),
-  roboticId: Yup.string().required("Student ID is required"),
-});
+    parentEmail: Yup.string()
+      .email("Invalid email address")
+      .required("Parent email is required"),
+    parentContact: Yup.string()
+      .trim()
+      .required("Parent contact number is required")
+      .matches(
+        /^(\+?6?01)[02-46-9]-*[0-9]{7}$|^(\+?6?01)[1]-*[0-9]{8}$/,
+        "Invalid phone number. Please use a valid Malaysian phone number."
+      ),
+    size: Yup.string().required("T-Shirt size is required"),
+    level: Yup.string().required("Level is required"),
+    roboticId: Yup.string().when([], {
+      is: () => userRole === "admin",
+      then: (schema) => schema.required("Student ID is required"),
+      otherwise: (schema) => schema.optional(),
+    }),
+    joinedDate: Yup.string()
+      .matches(
+        /^(\d{2})\/(\d{2})\/(\d{4})$/,
+        "Invalid date format. Use DD/MM/YYYY"
+      )
+      .required("Joined Date is required"),
+  });
+};
 
 const verifySchema = Yup.object().shape({
   code: Yup.string().required("otp is required"),
@@ -112,7 +124,7 @@ const createLevelSchema = Yup.object().shape({
 
 export {
   loginSchema,
-  signUpSchema,
+  createSignUpSchema,
   verifySchema,
   emailSchema,
   forgotPasswordSchema,
