@@ -56,14 +56,11 @@ const columns = [
       const status = props.getValue();
       let color;
       switch (status) {
-        case "Not Assign":
-          color = "red";
-          break;
-        case "Assigned":
-          color = "green";
+        case "approved":
+          color = "green.600";
           break;
         default:
-          color = "blue";
+          color = "black";
       }
       return (
         <Flex justifyContent="center">
@@ -72,7 +69,8 @@ const columns = [
             px={2}
             py={2}
             borderRadius={"10px"}
-            colorScheme={color}
+            color="white"
+            backgroundColor={color}
           >
             {status}
           </Badge>
