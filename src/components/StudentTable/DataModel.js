@@ -36,7 +36,7 @@ import {
 } from "@chakra-ui/react";
 import Spin from "../Spin";
 import { getUserById } from "../../services/auth";
-import { signUpSchema } from "../../utils/validationSchema";
+import { createSignUpSchema } from "../../utils/validationSchema";
 import { USER_ROLE, STUDENT_STATUS } from "../../utils/constants";
 import useCustomToast from "../CustomToast";
 
@@ -50,6 +50,8 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
   const [loading, setLoading] = useState(true);
   const [isEdit, setIsEdit] = useState(false);
   const { data } = useGetStudentLevelsQuery();
+
+  const signUpSchema = createSignUpSchema(role);
 
   const [approveStudent, { isLoading: approveLoading }] =
     useApproveStudentMutation();
@@ -76,12 +78,12 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
       const response = await approveStudent({
         id: studentData.id,
         body: payload,
-      });
+      }).unwrap();
 
-      if (response.data.success) {
+      if (response.success) {
         toast({
           title: "Student",
-          description: response?.data?.message,
+          description: response?.message,
           status: "success",
         });
 
@@ -90,7 +92,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
     } catch (error) {
       toast({
         title: "Student",
-        description: error,
+        description: error?.data?.message,
         status: "error",
       });
     }
@@ -232,6 +234,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                     size: studentData?.size || "",
                     level: studentData?.level || "",
                     roboticId: studentData?.roboticId || "",
+                    joinedDate: studentData?.joinedDate || "",
                   }}
                   onSubmit={(values) => {
                     if (studentData?.status === STUDENT_STATUS.APPROVED) {
@@ -496,6 +499,26 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                             isReadOnly={true}
                           />
                           <FormErrorMessage>{errors.center}</FormErrorMessage>
+                        </FormControl>
+
+                        <FormControl
+                          isInvalid={errors.joinedDate && touched.joinedDate}
+                          w="100%"
+                        >
+                          <FormLabel htmlFor="joinedDate">
+                            Joined Date
+                          </FormLabel>
+                          <Field
+                            as={Input}
+                            id="joinedDate"
+                            name="joinedDate"
+                            type="text"
+                            variant="filled"
+                            isReadOnly={isReadOnly}
+                          />
+                          <FormErrorMessage>
+                            {errors.joinedDate}
+                          </FormErrorMessage>
                         </FormControl>
 
                         <FormControl

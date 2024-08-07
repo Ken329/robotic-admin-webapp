@@ -15,8 +15,19 @@ export const centresApi = baseApiSlice.injectEndpoints({
           body: payload,
         }),
       }),
+      updateCentre: builder.mutation({
+        query: ({ id, body }) => ({
+          url: `/center/${id}`,
+          method: "PUT",
+          body: body,
+        }),
+      }),
     };
   },
 });
 
-export const { useGetCentresListQuery, useCreateCentreMutation } = centresApi;
+export const {
+  useGetCentresListQuery,
+  useCreateCentreMutation,
+  useUpdateCentreMutation,
+} = centresApi;
