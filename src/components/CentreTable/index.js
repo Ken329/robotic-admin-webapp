@@ -107,6 +107,7 @@ const columns = [
 const DataTable = ({ tableData, openModal, refetch }) => {
   const [data, setData] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
+  const [totalRecords, setTotalRecords] = useState(0);
   const table = useReactTable({
     data,
     columns,
@@ -119,6 +120,7 @@ const DataTable = ({ tableData, openModal, refetch }) => {
 
   useEffect(() => {
     setData(tableData);
+    setTotalRecords(tableData.length);
   }, [tableData]);
 
   return (
@@ -129,7 +131,7 @@ const DataTable = ({ tableData, openModal, refetch }) => {
         refetch={refetch}
       />
       <TableContainer>
-        <Text mb={2}>Total records: {table.getRowModel().rows.length}</Text>
+        <Text mb={2}>Total records: {totalRecords}</Text>
         <Table size="md" w={table.getTotalSize()}>
           <Thead>
             {table.getHeaderGroups().map((headerGroup) => (

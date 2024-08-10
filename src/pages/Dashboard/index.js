@@ -14,6 +14,7 @@ import Layout from "../../components/Layout/MainLayout";
 import useCustomToast from "../../components/CustomToast";
 import BlogList from "../../components/BlogPosts";
 import { USER_ROLE } from "../../utils/constants";
+import NotificationBanner from "../../components/NotificationBanner";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -86,6 +87,7 @@ const Dashboard = () => {
 
   return (
     <Layout isLoading={isLoading}>
+      <NotificationBanner />
       {role === USER_ROLE.ADMIN && (
         <Box mb={4}>
           <AdminPanel />
