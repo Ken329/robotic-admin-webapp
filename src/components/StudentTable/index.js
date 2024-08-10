@@ -30,6 +30,7 @@ import {
   MenuList,
   MenuItem,
   IconButton,
+  Select,
 } from "@chakra-ui/react";
 import { USER_ROLE } from "../../utils/constants";
 import Filters from "./Filters";
@@ -148,19 +149,30 @@ const DataTable = ({ tableData, openModal, openAchievementsModal }) => {
   const [data, setData] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const columns = createColumns(role);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [pagination, setPagination] = useState({
+    pageSize: 10,
+  });
   const table = useReactTable({
     data,
     columns,
-    state: { columnFilters },
+    state: { columnFilters, pagination },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange: setPagination,
   });
 
   useEffect(() => {
     setData(tableData);
+    setTotalRecords(tableData.length);
   }, [tableData]);
+
+  const handlePageSizeChange = (e) => {
+    const newSize = Number(e.target.value);
+    setPagination((prev) => ({ ...prev, pageSize: newSize }));
+  };
 
   return (
     <Box>
@@ -168,8 +180,23 @@ const DataTable = ({ tableData, openModal, openAchievementsModal }) => {
         columnFilters={columnFilters}
         setColumnFilters={setColumnFilters}
       />
+      <Text mb={2}>Total records: {totalRecords}</Text>
+      <Flex mb={2} align="center" gap={2}>
+        <Text>Rows per page:</Text>
+        <Select
+          value={pagination.pageSize}
+          onChange={handlePageSizeChange}
+          width="auto"
+          maxWidth="150px"
+          variant="outline"
+        >
+          <option value={10}>10</option>
+          <option value={25}>25</option>
+          <option value={50}>50</option>
+          <option value={100}>100</option>
+        </Select>
+      </Flex>
       <TableContainer>
-        <Text mb={2}>Total records: {table.getRowModel().rows.length}</Text>
         <Table size="md" w={table.getTotalSize()}>
           <Thead>
             {table.getHeaderGroups().map((headerGroup) => (
