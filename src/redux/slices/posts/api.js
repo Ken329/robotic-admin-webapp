@@ -27,6 +27,7 @@ export const postsApi = baseApiSlice.injectEndpoints({
           assigned,
           coverImage,
           content,
+          customAttributes,
         }) => ({
           url: `/blog`,
           method: "POST",
@@ -38,6 +39,7 @@ export const postsApi = baseApiSlice.injectEndpoints({
             assigned: assigned,
             coverImage: coverImage,
             content: content,
+            customAttributes: customAttributes,
           },
         }),
       }),
@@ -51,6 +53,7 @@ export const postsApi = baseApiSlice.injectEndpoints({
           assigned,
           coverImage,
           content,
+          customAttributes,
         }) => ({
           url: `/blog/${id}`,
           method: "PUT",
@@ -62,6 +65,7 @@ export const postsApi = baseApiSlice.injectEndpoints({
             assigned: assigned,
             coverImage: coverImage,
             content: content,
+            customAttributes: customAttributes,
           },
         }),
       }),
