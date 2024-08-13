@@ -29,7 +29,9 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  IconButton,
 } from "@chakra-ui/react";
+import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import Layout from "../../components/Layout/MainLayout";
 import ReactQuill, { Quill } from "react-quill";
 import QuillResizeImage from "quill-resize-image";
@@ -60,6 +62,8 @@ const CreatePost = () => {
   const [blogTypes, setBlogTypes] = useState([]);
   const [blogCategories, setBlogCategories] = useState([]);
   const [initialCoverImage, setInitialCoverImage] = useState("");
+  const [checkboxLabel, setCheckboxLabel] = useState("");
+  const [customCheckboxes, setCustomCheckboxes] = useState([]);
 
   const { data: blogTypeData } = useGetAllBlogTypesQuery();
   const { data: blogCategoryData } = useGetAllCategoriesQuery();
@@ -96,19 +100,34 @@ const CreatePost = () => {
       setSendTo(post.assigned.split(", "));
       setInitialCoverImage(post.url);
       setCoverImage({ url: post.url });
+
+      if (post.customAttributes) {
+        const checkboxes = post.customAttributes.filter(
+          (attr) => attr.category !== "Team Member"
+        );
+        setCustomCheckboxes(checkboxes);
+      }
     }
   }, [postData, isPostLoaded]);
 
   const validatePostData = () => {
-    return (
-      title &&
-      editorContent &&
-      (coverImage || initialCoverImage) &&
-      blogType &&
-      category &&
-      description &&
-      sendTo.length > 0
-    );
+    if (
+      !title ||
+      !editorContent ||
+      !(coverImage || initialCoverImage) ||
+      !blogType ||
+      !category ||
+      !description ||
+      sendTo.length === 0
+    ) {
+      return false;
+    }
+
+    if (category === "competition" && customCheckboxes.length === 0) {
+      return false;
+    }
+
+    return true;
   };
 
   const handleSendToChange = (value) => {
@@ -137,6 +156,13 @@ const CreatePost = () => {
       assigned: sendTo.join(", "),
       content: editorContent,
     };
+
+    if (category === "competition") {
+      postPayload.customAttributes = [
+        ...customCheckboxes,
+        { category: "Team Member" },
+      ];
+    }
 
     if (coverImage && coverImage.fileId) {
       postPayload.coverImage = coverImage.fileId;
@@ -227,6 +253,25 @@ const CreatePost = () => {
 
   const handleCoverImageSelect = (url, fileId) => {
     setCoverImage({ url, fileId });
+  };
+
+  const handleAddCheckbox = () => {
+    if (checkboxLabel.trim()) {
+      setCustomCheckboxes([...customCheckboxes, { category: checkboxLabel }]);
+      setCheckboxLabel("");
+    } else {
+      toast({
+        title: "Create Post",
+        description: "Checkbox label name cannot be empty.",
+        status: "error",
+      });
+    }
+  };
+
+  const handleRemoveCheckbox = (index) => {
+    const newCheckboxes = [...customCheckboxes];
+    newCheckboxes.splice(index, 1);
+    setCustomCheckboxes(newCheckboxes);
   };
 
   return (
@@ -323,6 +368,46 @@ const CreatePost = () => {
                 style={{ minHeight: "300px" }}
               />
             </FormControl>
+
+            {category === "competition" && (
+              <>
+                <Text>
+                  To add remark, add this line at the end of your content.
+                  <br /> {`{remark: YOUR TEXT}`}
+                </Text>
+
+                <FormControl mb={4}>
+                  <FormLabel>Custom Checkbox</FormLabel>
+                  <Flex>
+                    <Input
+                      placeholder="Enter label name"
+                      value={checkboxLabel}
+                      onChange={(e) => setCheckboxLabel(e.target.value)}
+                      mr={2}
+                    />
+                    <IconButton
+                      icon={<AddIcon />}
+                      onClick={handleAddCheckbox}
+                      colorScheme="blue"
+                      aria-label="Add checkbox"
+                    />
+                  </Flex>
+                </FormControl>
+              </>
+            )}
+            {customCheckboxes.map((checkbox, index) => (
+              <Flex key={index} alignItems="center" mb={2}>
+                <Checkbox mr={2}>{checkbox.category}</Checkbox>
+                <IconButton
+                  icon={<DeleteIcon />}
+                  colorScheme="red"
+                  onClick={() => handleRemoveCheckbox(index)}
+                  aria-label="Remove checkbox"
+                  size="sm"
+                />
+              </Flex>
+            ))}
+
             <Button type="submit" colorScheme="blue" isFullWidth>
               {isEditMode ? "Update Post" : "Create Post"}
             </Button>

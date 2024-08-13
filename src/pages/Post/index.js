@@ -11,10 +11,15 @@ import {
   VStack,
   Container,
   Button,
+  Checkbox,
+  FormControl,
+  FormLabel,
 } from "@chakra-ui/react";
+import Select from "react-select";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import useCustomToast from "../../components/CustomToast";
 import Layout from "../../components/Layout/MainLayout";
+import { POST_TYPE } from "../../utils/constants";
 
 const Post = () => {
   const navigate = useNavigate();
@@ -22,10 +27,22 @@ const Post = () => {
   const toast = useCustomToast();
   const { data, isLoading, isError } = useGetPostByIdQuery(id);
   const [blog, setBlog] = useState(null);
+  const [remark, setRemark] = useState("");
 
   useEffect(() => {
-    if ((data, !isLoading, !isError)) {
-      setBlog(data?.data);
+    if (data && !isLoading && !isError) {
+      setBlog(data.data);
+
+      let content = data.data.content || "";
+      const remarkMatch = content.match(/\{remark:\s*([^}]+)\}/);
+      if (remarkMatch) {
+        setRemark(remarkMatch[1]);
+        content = content.replace(remarkMatch[0], "");
+        setBlog((prevBlog) => ({
+          ...prevBlog,
+          content: content,
+        }));
+      }
     } else if (isError) {
       toast({
         title: "Posts",
@@ -96,6 +113,35 @@ const Post = () => {
             <Heading fontSize="2xl">{blog?.title}</Heading>
           </VStack>
           <Box className="ql-editor">{parse(`${blog?.content}`)}</Box>
+          {blog?.category === POST_TYPE.COMPETITION && (
+            <VStack marginTop="30px">
+              <VStack align="start" spacing="5" mb="30px">
+                {blog?.customAttributes?.map((attribute, index) => {
+                  if (attribute.category === "Team Member") {
+                    return (
+                      <FormControl key={index}>
+                        <FormLabel>
+                          {attribute.category} {remark && `(${remark})`}
+                        </FormLabel>
+                        <Select
+                          placeholder="Select team member"
+                          isSearchable
+                          isClearable
+                          isDisabled={true}
+                        />
+                      </FormControl>
+                    );
+                  } else {
+                    return (
+                      <Checkbox key={index} isReadOnly={true}>
+                        {attribute.category}
+                      </Checkbox>
+                    );
+                  }
+                })}
+              </VStack>
+            </VStack>
+          )}
         </Box>
       </Container>
     </Layout>
