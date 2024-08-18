@@ -99,7 +99,11 @@ const MobileNav = ({ onOpen, onLogout, ...props }) => {
                     ml="2"
                   >
                     <Text fontSize="sm" color="white">
-                      {role}
+                      {role === "admin"
+                        ? "Admin"
+                        : role === "center"
+                        ? "Centre"
+                        : "User"}
                     </Text>
                   </VStack>
                   <Box display={{ base: "none", md: "flex" }} ml="2">
