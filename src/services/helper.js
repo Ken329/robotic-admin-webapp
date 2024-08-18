@@ -28,15 +28,22 @@ const exportToExcel = async (token) => {
       }
     );
 
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", "steamcupplus_students.xlsx"); // Set the file name
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    if (response.status === 200) {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "steamcupplus_students.xlsx"); // Set the file name
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      return {
+        status: response.status,
+        message: "Successfully exported students data",
+      };
+    }
   } catch (error) {
-    throw new Error(error);
+    throw new Error("Failed to export students data: " + error.message);
   }
 };
 
@@ -51,16 +58,27 @@ const exportCompetitionToExcel = async (token, competitionId, fileName) => {
         responseType: "blob",
       }
     );
+    if (response.status === 200) {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${fileName}.xlsx`); // Set the file name
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", `${fileName}.xlsx`); // Set the file name
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+      return {
+        status: response.status,
+        message: "Successfully exported competition data",
+      };
+    }
   } catch (error) {
-    throw new Error(error);
+    const errorMessage =
+      error.response?.status === 500
+        ? "Cannot export empty sign-up data"
+        : error.message || "An unknown error occurred";
+
+    throw new Error(`Failed to export competition data: ${errorMessage}`);
   }
 };
 
