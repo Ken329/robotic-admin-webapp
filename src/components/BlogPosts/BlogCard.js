@@ -27,14 +27,20 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
 } from "@chakra-ui/react";
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import { FiDownload } from "react-icons/fi";
 import { categoryMap, USER_ROLE, POST_TYPE } from "../../utils/constants";
 import { exportCompetitionToExcel } from "../../services/helper";
+import useCustomToast from "../CustomToast";
 
 const BlogCard = ({ blog, handleDelete }) => {
   const navigate = useNavigate();
+  const toast = useCustomToast();
   const role = useSelector(makeSelectUserRole());
   const token = useSelector(makeSelectToken());
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -48,8 +54,28 @@ const BlogCard = ({ blog, handleDelete }) => {
     addSuffix: true,
   });
 
-  const handleExportData = () => {
-    exportCompetitionToExcel(token, blog?.id, blog?.title);
+  const handleExportData = async () => {
+    try {
+      const response = await exportCompetitionToExcel(
+        token,
+        blog?.id,
+        blog?.title
+      );
+
+      if (response.status === 200) {
+        toast({
+          title: "Competition",
+          description: response.message,
+          status: "success",
+        });
+      }
+    } catch (err) {
+      toast({
+        title: "Competition",
+        description: err.message,
+        status: "error",
+      });
+    }
   };
 
   const handleEditClick = () => {
@@ -61,11 +87,10 @@ const BlogCard = ({ blog, handleDelete }) => {
   };
 
   return (
-    <Box
+    <Card
       maxW="sm"
       w="100%"
       bg="white"
-      p="6"
       borderRadius="15px"
       boxShadow="md"
       overflow="hidden"
@@ -90,7 +115,6 @@ const BlogCard = ({ blog, handleDelete }) => {
               aria-label="Export Data"
               icon={<FiDownload />}
               onClick={handleExportData}
-              Export
             />
           )}
           <IconButton
@@ -109,67 +133,71 @@ const BlogCard = ({ blog, handleDelete }) => {
           />
         </Box>
       )}
-      <Box
-        height="250px"
-        width="100%"
-        overflow="hidden"
-        borderRadius="xl"
-        mb="4"
-      >
+
+      <CardHeader p={0}>
         <Image
           src={blog?.url}
           alt={blog?.title}
           objectFit="cover"
           width="100%"
-          height="100%"
+          height="250px"
+          borderTopRadius="15px"
         />
-      </Box>
-      <HStack mb="2">
-        <Tag variant="solid" colorScheme={category.colorScheme}>
-          {category.label}
-        </Tag>
-      </HStack>
-      <VStack spacing="2" alignItems="flex-start" mb="2">
-        <Heading fontSize="xl">{blog?.title}</Heading>
-        <Text fontSize="sm">{blog?.description}</Text>
-      </VStack>
+      </CardHeader>
 
-      <Flex justifyContent="space-between" alignItems="center" mt="auto">
-        <VStack align="start" spacing="1">
-          <HStack spacing="1" wrap="wrap">
-            <Text
-              fontSize={{ base: "xs", md: "sm", lg: "sm" }}
-              color="gray.500"
-            >
-              By
-            </Text>
-            <Text
-              fontSize={{ base: "xs", md: "sm", lg: "sm" }}
-              color="#27374d"
-              fontWeight="600"
-            >
-              Admin
-            </Text>
-            <Text
-              fontSize={{ base: "xs", md: "sm", lg: "sm" }}
-              color="gray.500"
-            >
-              • {timeAgo}
-            </Text>
-          </HStack>
-          <Text fontSize={{ base: "xs", md: "sm", lg: "sm" }} color="gray.500">
-            {blog?.views} views
-          </Text>
+      <CardBody p="15px" m="0">
+        <HStack pb={"10px"}>
+          <Tag variant="solid" colorScheme={category.colorScheme}>
+            {category.label}
+          </Tag>
+        </HStack>
+        <VStack alignItems="flex-start">
+          <Heading fontSize="xl">{blog?.title}</Heading>
+          <Text fontSize="sm">{blog?.description}</Text>
         </VStack>
-        <Spacer />
-        <Button
-          size={{ base: "xs", md: "sm", lg: "sm" }}
-          colorScheme="blue"
-          onClick={() => navigate(`/admin/post/${blog?.id}`)}
-        >
-          Read More
-        </Button>
-      </Flex>
+      </CardBody>
+
+      <CardFooter p="15px" pt="0" m="0">
+        <Flex justifyContent="space-between" alignItems="center" w="100%">
+          <VStack align="start">
+            <HStack wrap="wrap">
+              <Text
+                fontSize={{ base: "xs", md: "sm", lg: "sm" }}
+                color="gray.500"
+              >
+                By
+              </Text>
+              <Text
+                fontSize={{ base: "xs", md: "sm", lg: "sm" }}
+                color="#27374d"
+                fontWeight="600"
+              >
+                Admin
+              </Text>
+              <Text
+                fontSize={{ base: "xs", md: "sm", lg: "sm" }}
+                color="gray.500"
+              >
+                • {timeAgo}
+              </Text>
+            </HStack>
+            <Text
+              fontSize={{ base: "xs", md: "sm", lg: "sm" }}
+              color="gray.500"
+            >
+              {blog?.views} views
+            </Text>
+          </VStack>
+          <Spacer />
+          <Button
+            size={{ base: "xs", md: "sm", lg: "sm" }}
+            colorScheme="blue"
+            onClick={() => navigate(`/admin/post/${blog?.id}`)}
+          >
+            Read More
+          </Button>
+        </Flex>
+      </CardFooter>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -200,7 +228,7 @@ const BlogCard = ({ blog, handleDelete }) => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </Box>
+    </Card>
   );
 };
 
