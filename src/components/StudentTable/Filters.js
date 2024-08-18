@@ -123,6 +123,26 @@ const Filters = ({ columnFilters, setColumnFilters }) => {
     }
   };
 
+  const handleExport = async () => {
+    try {
+      const response = await exportToExcel(token);
+
+      if (response.status === 200) {
+        toast({
+          title: "Students",
+          description: response.message,
+          status: "success",
+        });
+      }
+    } catch (err) {
+      toast({
+        title: "Students",
+        description: err.message,
+        status: "error",
+      });
+    }
+  };
+
   const onFilterChange = (id, value) =>
     setColumnFilters((prev) =>
       prev
@@ -169,7 +189,20 @@ const Filters = ({ columnFilters, setColumnFilters }) => {
             variant="solid"
             size="sm"
             leftIcon={<FiDownload />}
-            onClick={() => exportToExcel(token)}
+            onClick={handleExport}
+          >
+            Export
+          </Button>
+        </Flex>
+      )}
+      {role === "center" && (
+        <Flex gap={"10px"}>
+          <Button
+            colorScheme="blue"
+            variant="solid"
+            size="sm"
+            leftIcon={<FiDownload />}
+            onClick={handleExport}
           >
             Export
           </Button>
