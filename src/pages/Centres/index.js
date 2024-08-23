@@ -21,7 +21,7 @@ const Centres = () => {
 
   useEffect(() => {
     if (!isLoading && !isError && data) {
-      dispatch(saveCentresData(data?.data?.data));
+      dispatch(saveCentresData(data?.data));
     } else if (isError) {
       toast({
         title: "Centre",
