@@ -5,10 +5,8 @@ import PropTypes from "prop-types";
 import {
   HStack,
   Button,
-  Icon,
   Input,
   InputGroup,
-  InputLeftElement,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -27,7 +25,7 @@ import {
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useFormik } from "formik";
-import { FiSearch, FiPlus } from "react-icons/fi";
+import { FiPlus } from "react-icons/fi";
 import { createCentreSchema, verifySchema } from "../../utils/validationSchema";
 import { generatePublicKey, verifyOtp } from "../../services/auth";
 import useCustomToast from "../CustomToast";
@@ -173,15 +171,14 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
   return (
     <HStack mb={6} spacing={3}>
       <InputGroup size={"sm"} maxW={"12rem"}>
-        <InputLeftElement pointerEvents={"none"}>
-          <Icon as={FiSearch} />
-        </InputLeftElement>
         <Input
           type="text"
           variant={"filled"}
-          placeholder="search centre"
+          placeholder="Centre Name"
           borderWidth={1.5}
           borderColor="grey"
+          borderRadius="md"
+          height="2.5rem"
           value={taskName}
           onChange={(e) => onFilterChange("centerName", e.target.value)}
         />
