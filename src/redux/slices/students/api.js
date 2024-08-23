@@ -4,10 +4,24 @@ export const studentsApi = baseApiSlice.injectEndpoints({
   endpoints: (builder) => {
     return {
       getStudentList: builder.query({
-        query: () => ({
-          url: "/user/students",
-        }),
+        query: ({ page = 1, limit = 10, status, name }) => {
+          const queryParams = {
+            ...(page && { page }),
+            ...(limit && { limit }),
+            ...(status && { status }),
+            ...(name && { name }),
+          };
+
+          const params = new URLSearchParams(queryParams).toString();
+
+          const url = params ? `/user/students?${params}` : "/user/students";
+
+          return {
+            url,
+          };
+        },
       }),
+
       approveStudent: builder.mutation({
         query: ({ id, body }) => ({
           url: `/user/${id}/approve`,

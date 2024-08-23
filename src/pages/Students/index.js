@@ -16,7 +16,16 @@ const Students = () => {
   const dispatch = useDispatch();
   const toast = useCustomToast();
   const role = useSelector(makeSelectUserRole());
-  const { data, isLoading, isError, refetch } = useGetStudentListQuery();
+  const [pageSize, setPageSize] = useState(10);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [filters, setFilters] = useState({});
+
+  const { data, isLoading, isError, refetch } = useGetStudentListQuery({
+    limit: pageSize,
+    page: pageIndex + 1,
+    ...filters,
+  });
+
   const studentData = useSelector(makeSelectStudentData());
   const [modalData, setModalData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -54,6 +63,18 @@ const Students = () => {
     refetch();
   };
 
+  const handlePageChange = (newPageIndex) => {
+    setPageIndex(newPageIndex);
+  };
+
+  const handlePageSizeChange = (newPageSize) => {
+    setPageSize(newPageSize);
+  };
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+  };
+
   return (
     <Layout isLoading={isLoading}>
       <Flex flexDirection={"column"} paddingLeft={"20px"}>
@@ -64,6 +85,12 @@ const Students = () => {
           tableData={studentData}
           openModal={openModal}
           openAchievementsModal={openAchievementsModal}
+          totalRecords={data?.data?.totalUser || 0}
+          pageSize={pageSize}
+          pageIndex={pageIndex}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+          onFilterChange={handleFilterChange}
         />
         <DataModal
           isOpen={isModalOpen}
