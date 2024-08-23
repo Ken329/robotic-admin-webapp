@@ -15,10 +15,8 @@ import { makeSelectLevelsData } from "../../redux/slices/students/selector";
 import {
   HStack,
   Button,
-  Icon,
   Input,
   InputGroup,
-  InputLeftElement,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -33,26 +31,40 @@ import {
   VStack,
   Spinner,
   Text,
+  Select,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import { createLevelSchema } from "../../utils/validationSchema";
 import { FiSearch, FiPlus, FiDownload } from "react-icons/fi";
-import FilterPopover from "./FilterPopover";
 import useCustomToast from "../CustomToast";
 import { exportToExcel } from "../../services/helper";
 
-const Filters = ({ columnFilters, setColumnFilters }) => {
+const Filters = ({ handleFilterChange }) => {
   const dispatch = useDispatch();
   const toast = useCustomToast();
   const role = useSelector(makeSelectUserRole());
   const token = useSelector(makeSelectToken());
   const levels = useSelector(makeSelectLevelsData());
-  const taskName = columnFilters.find((f) => f.id === "name")?.value || "";
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { data, refetch } = useGetStudentLevelsQuery();
   const [createStudentLevel, { isLoading: createLevelIsLoading }] =
     useCreateStudentLevelMutation();
   const [deleteStudentLevel] = useDeleteStudentLevelMutation();
+
+  const [name, setName] = useState("");
+  const [status, setStatus] = useState("");
+
+  const handleSearchChange = (e) => {
+    setName(e.target.value);
+  };
+
+  const handleStatusChange = (e) => {
+    setStatus(e.target.value);
+  };
+
+  const applyFilters = () => {
+    handleFilterChange({ name, status });
+  };
 
   useEffect(() => {
     if (data?.data) {
@@ -143,36 +155,37 @@ const Filters = ({ columnFilters, setColumnFilters }) => {
     }
   };
 
-  const onFilterChange = (id, value) =>
-    setColumnFilters((prev) =>
-      prev
-        .filter((f) => f.id !== id)
-        .concat({
-          id,
-          value,
-        })
-    );
-
   return (
     <HStack mb={6} spacing={3}>
-      <InputGroup size={"sm"} maxW={"12rem"}>
-        <InputLeftElement pointerEvents={"none"}>
-          <Icon as={FiSearch} />
-        </InputLeftElement>
-        <Input
-          type="text"
-          variant={"filled"}
-          placeholder="search student"
-          borderWidth={1.5}
-          borderColor="grey"
-          value={taskName}
-          onChange={(e) => onFilterChange("name", e.target.value)}
-        />
-      </InputGroup>
-      <FilterPopover
-        columnFilters={columnFilters}
-        setColumnFilters={setColumnFilters}
-      />
+      <Flex gap={"10px"} alignItems="center">
+        <InputGroup size={"sm"} maxW={"12rem"}>
+          <Input
+            type="text"
+            variant={"filled"}
+            placeholder="Student Name"
+            borderWidth={1.5}
+            borderColor="grey"
+            value={name}
+            onChange={handleSearchChange}
+          />
+        </InputGroup>
+        <Select value={status} variant="filled" onChange={handleStatusChange}>
+          <option value="">All Statuses</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+          <option value="pending center">Pending Center</option>
+          <option value="pending admin">Pending Admin</option>
+        </Select>
+      </Flex>
+      <Button
+        colorScheme="orange"
+        variant="solid"
+        size="sm"
+        leftIcon={<FiSearch />}
+        onClick={applyFilters}
+      >
+        Search
+      </Button>
       {role === "admin" && (
         <Flex gap={"10px"}>
           <Button
@@ -283,8 +296,7 @@ const Filters = ({ columnFilters, setColumnFilters }) => {
 };
 
 Filters.propTypes = {
-  columnFilters: PropTypes.any.isRequired,
-  setColumnFilters: PropTypes.func.isRequired,
+  handleFilterChange: PropTypes.func.isRequired,
 };
 
 export default Filters;

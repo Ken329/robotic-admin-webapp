@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
-import { useGetStudentListQuery } from "../../redux/slices/students/api";
 import {
   Box,
   Button,
@@ -13,33 +12,20 @@ import {
 } from "@chakra-ui/react";
 import { FiPlus, FiChevronUp, FiChevronDown } from "react-icons/fi";
 import StatCard from "./StatCard";
-import useCustomToast from "../CustomToast";
 
 const AdminPanel = ({ isAdmin }) => {
-  const toast = useCustomToast();
   const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const { data, isLoading, isError } = useGetStudentListQuery();
-  const [studentData, setStudentData] = useState({});
-
-  useEffect(() => {
-    if (!isLoading && !isError && data) {
-      setStudentData(data?.data);
-    } else if (isError) {
-      toast({
-        title: "Admin Panel",
-        description: "Error getting student list",
-        status: "error",
-      });
-    }
-  }, [data, isLoading, isError]);
+  const [studentData] = useState({
+    pendingAdmin: 0,
+    pendingCenter: 0,
+    approved: 0,
+    rejected: 0,
+  });
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
   };
-
-  const pendingAdmin = studentData["pending admin"];
-  const pendingCenter = studentData["pending center"];
 
   return (
     <Box
@@ -72,13 +58,13 @@ const AdminPanel = ({ isAdmin }) => {
           {isAdmin ? (
             <StatCard
               label="Pending Admin Approvals"
-              count={pendingAdmin || 0}
+              count={studentData?.pendingAdmin || 0}
               fontSize={{ base: "sm", md: "md" }}
             />
           ) : (
             <StatCard
               label="Pending Centre Approvals"
-              count={pendingCenter || 0}
+              count={studentData?.pendingCenter || 0}
               fontSize={{ base: "sm", md: "md" }}
             />
           )}

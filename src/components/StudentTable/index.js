@@ -1,203 +1,205 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import { makeSelectUserRole } from "../../redux/slices/app/selector";
 import {
-  getCoreRowModel,
-  useReactTable,
-  flexRender,
-  getFilteredRowModel,
-  getSortedRowModel,
-  getPaginationRowModel,
-} from "@tanstack/react-table";
-import {
-  Flex,
   Box,
-  Badge,
   Button,
-  ButtonGroup,
-  Icon,
-  Text,
-  TableContainer,
+  Select,
   Table,
   Thead,
   Tbody,
   Tr,
   Th,
   Td,
+  Text,
+  Flex,
+  TableContainer,
+  Badge,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
   IconButton,
-  Select,
 } from "@chakra-ui/react";
+import { TriangleUpIcon, TriangleDownIcon } from "@chakra-ui/icons";
 import { USER_ROLE } from "../../utils/constants";
 import Filters from "./Filters";
-import { FiSliders } from "react-icons/fi";
-import { ArrowDownIcon, ArrowUpIcon } from "@chakra-ui/icons";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
+import {
+  useReactTable,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  flexRender,
+} from "@tanstack/react-table";
 
-const createColumns = (role) => [
-  {
-    accessorKey: "name",
-    header: "Name",
-    size: 300,
-    cell: (props) => <p>{props.getValue()}</p>,
-    enableColumnFilter: true,
-    filterFn: "includesString",
-  },
-  {
-    accessorKey: "email",
-    header: "Email ID",
-    size: 300,
-    cell: (props) => <p>{props.getValue()}</p>,
-    enableColumnFilter: true,
-    filterFn: "includesString",
-  },
-  {
-    accessorKey: "centerName",
-    header: "Centre",
-    size: 300,
-    cell: (props) => <p>{props.getValue()}</p>,
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    size: 100,
-    cell: (props) => {
-      const status = props.getValue();
-      let color;
-      switch (status) {
-        case "approved":
-          color = "green.600";
-          break;
-        case "rejected":
-          color = "red.600";
-          break;
-        case "pending center":
-          color = "blue.600";
-          break;
-        case "pending admin":
-          color = "yellow.500";
-          break;
-        default:
-          color = "black";
-      }
-      return (
-        <Flex justifyContent="center">
-          <Badge
-            size={"xl"}
-            px={2}
-            py={2}
-            borderRadius={"10px"}
-            color="white"
-            backgroundColor={color}
-          >
-            {status}
-          </Badge>
-        </Flex>
-      );
-    },
-    enableColumnFilter: true,
-    filterFn: (row, columnId, filterStatuses) => {
-      if (filterStatuses.length === 0) return true;
-      const status = row.getValue(columnId);
-      return filterStatuses.includes(status);
-    },
-  },
-  {
-    accessorKey: "actions",
-    header: "Actions",
-    size: 100,
-    cell: ({ openModal, openAchievementsModal, ...props }) => (
-      <Flex justifyContent="center" gap="10px">
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            aria-label="Options"
-            icon={<BiDotsHorizontalRounded />}
-            variant="solid"
-            size="md"
-          />
-          <MenuList>
-            <MenuItem
-              onClick={() => {
-                openModal(props.row.original);
-              }}
-            >
-              View
-            </MenuItem>
-            {role === USER_ROLE.ADMIN && (
-              <MenuItem
-                onClick={() => {
-                  openAchievementsModal(props.row.original);
-                }}
-              >
-                Achievements
-              </MenuItem>
-            )}
-          </MenuList>
-        </Menu>
-      </Flex>
-    ),
-  },
-];
-
-const DataTable = ({ tableData, openModal, openAchievementsModal }) => {
+const DataTable = ({
+  tableData,
+  openModal,
+  openAchievementsModal,
+  totalRecords,
+  pageSize,
+  pageIndex,
+  onPageChange,
+  onPageSizeChange,
+  onFilterChange,
+}) => {
   const role = useSelector(makeSelectUserRole());
-  const [data, setData] = useState([]);
-  const [columnFilters, setColumnFilters] = useState([]);
-  const columns = createColumns(role);
-  const [totalRecords, setTotalRecords] = useState(0);
-  const [pagination, setPagination] = useState({
-    pageSize: 10,
-  });
+
+  const columns = React.useMemo(
+    () => [
+      {
+        accessorKey: "name",
+        header: "Name",
+        size: 300,
+        enableSorting: true,
+      },
+      {
+        accessorKey: "email",
+        header: "Email",
+        size: 300,
+        enableSorting: true,
+      },
+      {
+        accessorKey: "centerName",
+        header: "Centre",
+        size: 300,
+        enableSorting: true,
+      },
+      {
+        accessorKey: "status",
+        header: "Status",
+        size: 100,
+        cell: ({ cell }) => {
+          const status = cell.getValue();
+          let color;
+          switch (status) {
+            case "approved":
+              color = "green.600";
+              break;
+            case "rejected":
+              color = "red.600";
+              break;
+            case "pending center":
+              color = "blue.600";
+              break;
+            case "pending admin":
+              color = "yellow.500";
+              break;
+            default:
+              color = "black";
+          }
+          return (
+            <Flex justifyContent="center">
+              <Badge
+                size={"xl"}
+                px={2}
+                py={2}
+                borderRadius={"10px"}
+                color="white"
+                backgroundColor={color}
+              >
+                {status}
+              </Badge>
+            </Flex>
+          );
+        },
+      },
+      {
+        accessorKey: "actions",
+        header: "Actions",
+        size: 100,
+        cell: ({ row }) => (
+          <Flex justifyContent="center" gap="10px">
+            <Menu>
+              <MenuButton
+                as={IconButton}
+                aria-label="Options"
+                icon={<BiDotsHorizontalRounded />}
+                variant="solid"
+                size="md"
+              />
+              <MenuList>
+                <MenuItem
+                  onClick={() => {
+                    openModal(row.original);
+                  }}
+                >
+                  View
+                </MenuItem>
+                {role === USER_ROLE.ADMIN && (
+                  <MenuItem
+                    onClick={() => {
+                      openAchievementsModal(row.original);
+                    }}
+                  >
+                    Achievements
+                  </MenuItem>
+                )}
+              </MenuList>
+            </Menu>
+          </Flex>
+        ),
+      },
+    ],
+    [role, openModal, openAchievementsModal]
+  );
+
   const table = useReactTable({
-    data,
+    data: tableData,
     columns,
-    state: { columnFilters, pagination },
+    pageCount: Math.ceil(totalRecords / pageSize),
+    state: {
+      pagination: { pageIndex, pageSize },
+      sorting: [], // Initial sorting state
+    },
+    onPaginationChange: (updater) => {
+      const newState = updater({
+        pageIndex: pageIndex,
+        pageSize: pageSize,
+      });
+
+      if (newState.pageIndex !== pageIndex) {
+        onPageChange(newState.pageIndex);
+      }
+
+      if (newState.pageSize !== pageSize) {
+        onPageSizeChange(newState.pageSize);
+      }
+    },
+    onSortingChange: (updater) => {
+      const newSorting = updater(table.getState().sorting);
+
+      table.setSorting(newSorting);
+    },
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onPaginationChange: setPagination,
+    getSortedRowModel: getSortedRowModel(),
+    manualPagination: true,
+    manualSorting: true,
   });
-
-  useEffect(() => {
-    setData(tableData);
-    setTotalRecords(tableData.length);
-  }, [tableData]);
-
-  const handlePageSizeChange = (e) => {
-    const newSize = Number(e.target.value);
-    setPagination((prev) => ({ ...prev, pageSize: newSize }));
-  };
 
   return (
     <Box>
-      <Filters
-        columnFilters={columnFilters}
-        setColumnFilters={setColumnFilters}
-      />
-      <Text mb={2}>Total records: {totalRecords}</Text>
-      <Flex mb={2} align="center" gap={2}>
-        <Text>Rows per page:</Text>
+      <Filters handleFilterChange={onFilterChange} />
+
+      <Flex justifyContent="space-between" alignItems="center" mb={4}>
         <Select
-          value={pagination.pageSize}
-          onChange={handlePageSizeChange}
-          width="auto"
-          maxWidth="150px"
-          variant="outline"
+          width="200px"
+          value={pageSize}
+          onChange={(e) => table.setPageSize(Number(e.target.value))}
         >
-          <option value={10}>10</option>
-          <option value={25}>25</option>
-          <option value={50}>50</option>
-          <option value={100}>100</option>
+          {[10, 25, 50, 100].map((size) => (
+            <option key={size} value={size}>
+              Show {size}
+            </option>
+          ))}
         </Select>
       </Flex>
+
       <TableContainer>
-        <Table size="md" w={table.getTotalSize()}>
+        <Table>
           <Thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <Tr key={headerGroup.id}>
@@ -206,81 +208,69 @@ const DataTable = ({ tableData, openModal, openAchievementsModal }) => {
                     w={header.getSize()}
                     key={header.id}
                     backgroundColor="#CBD5E0"
+                    onClick={() => header.column.getToggleSortingHandler()}
+                    cursor="pointer"
                   >
-                    <Flex align={"center"} gap={"10px"}>
-                      <Box as="span">{header.column.columnDef.header}</Box>
-                      {header.column.getCanSort() && (
-                        <Icon
-                          as={FiSliders}
-                          onClick={header.column.getToggleSortingHandler()}
-                        />
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+                    <Text ml={2}>
+                      {header.column.getIsSorted() === "asc" && (
+                        <TriangleUpIcon boxSize={4} />
                       )}
-                      <Box as="span">
-                        {
-                          {
-                            asc: <ArrowUpIcon boxSize={3} ml={2} />,
-                            desc: <ArrowDownIcon boxSize={3} ml={2} />,
-                          }[header.column.getIsSorted()]
-                        }
-                      </Box>
-                    </Flex>
+                      {header.column.getIsSorted() === "desc" && (
+                        <TriangleDownIcon boxSize={4} />
+                      )}
+                    </Text>
                   </Th>
                 ))}
               </Tr>
             ))}
           </Thead>
           <Tbody>
-            {table.getRowModel().rows.length === 0 ? (
-              <Tr>
-                <Td
-                  colSpan={columns.length}
-                  textAlign="center"
-                  backgroundColor="#F7FAFC"
-                >
-                  No data found
-                </Td>
-              </Tr>
-            ) : (
+            {table.getRowModel().rows.length > 0 ? (
               table.getRowModel().rows.map((row) => (
                 <Tr key={row.id}>
                   {row.getVisibleCells().map((cell) => (
-                    <Td
-                      w={cell.column.getSize()}
-                      key={cell.id}
-                      backgroundColor="#F7FAFC"
-                    >
-                      {flexRender(cell.column.columnDef.cell, {
-                        ...cell.getContext(),
-                        openModal,
-                        openAchievementsModal,
-                      })}
+                    <Td key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </Td>
                   ))}
                 </Tr>
               ))
+            ) : (
+              <Tr>
+                <Td colSpan={columns.length}>
+                  <Text textAlign="center">No data found</Text>
+                </Td>
+              </Tr>
             )}
           </Tbody>
         </Table>
-        <br />
-        <Text mb={2}>
+      </TableContainer>
+
+      <Flex justifyContent="space-between" alignItems="center" mt={4}>
+        <Button
+          onClick={() => table.previousPage()}
+          isDisabled={!table.getCanPreviousPage()}
+        >
+          Previous
+        </Button>
+        <Text>
           Page {table.getState().pagination.pageIndex + 1} of{" "}
           {table.getPageCount()}
         </Text>
-        <ButtonGroup size="sm" isAttached variant="solid">
-          <Button
-            onClick={() => table.previousPage()}
-            isDisabled={!table.getCanPreviousPage()}
-          >
-            {"<"}
-          </Button>
-          <Button
-            onClick={() => table.nextPage()}
-            isDisabled={!table.getCanNextPage()}
-          >
-            {">"}
-          </Button>
-        </ButtonGroup>
-      </TableContainer>
+        <Button
+          onClick={() => table.nextPage()}
+          isDisabled={!table.getCanNextPage()}
+        >
+          Next
+        </Button>
+      </Flex>
     </Box>
   );
 };
@@ -289,6 +279,12 @@ DataTable.propTypes = {
   tableData: PropTypes.array.isRequired,
   openModal: PropTypes.func.isRequired,
   openAchievementsModal: PropTypes.func.isRequired,
+  totalRecords: PropTypes.number.isRequired,
+  pageSize: PropTypes.number.isRequired,
+  pageIndex: PropTypes.number.isRequired,
+  onPageChange: PropTypes.func.isRequired,
+  onPageSizeChange: PropTypes.func.isRequired,
+  onFilterChange: PropTypes.func.isRequired,
 };
 
 export default DataTable;
