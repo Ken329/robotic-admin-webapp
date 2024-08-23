@@ -186,9 +186,10 @@ const DataTable = ({
 
       <Flex justifyContent="space-between" alignItems="center" mb={4}>
         <Select
-          width="200px"
+          width="120px"
           value={pageSize}
           onChange={(e) => table.setPageSize(Number(e.target.value))}
+          borderColor="gray"
         >
           {[10, 25, 50, 100].map((size) => (
             <option key={size} value={size}>
@@ -199,6 +200,7 @@ const DataTable = ({
       </Flex>
 
       <TableContainer>
+        <Text mb={2}>Total records: {totalRecords}</Text>
         <Table>
           <Thead>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -260,10 +262,14 @@ const DataTable = ({
         >
           Previous
         </Button>
-        <Text>
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
-        </Text>
+        {table.getPageCount() > 0 ? (
+          <Text>
+            Page {table.getState().pagination.pageIndex + 1} of{" "}
+            {table.getPageCount()}
+          </Text>
+        ) : (
+          <Text>No Page</Text>
+        )}
         <Button
           onClick={() => table.nextPage()}
           isDisabled={!table.getCanNextPage()}

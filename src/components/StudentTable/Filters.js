@@ -32,6 +32,8 @@ import {
   Spinner,
   Text,
   Select,
+  Grid,
+  GridItem,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import { createLevelSchema } from "../../utils/validationSchema";
@@ -96,7 +98,7 @@ const Filters = ({ handleFilterChange }) => {
       if (response?.success) {
         toast({
           title: "Student Level",
-          description: "Sucessfully created level",
+          description: "Successfully created level",
           status: "success",
         });
 
@@ -156,47 +158,67 @@ const Filters = ({ handleFilterChange }) => {
   };
 
   return (
-    <HStack mb={6} spacing={3}>
-      <Flex gap={"10px"} alignItems="center">
-        <InputGroup size={"sm"} maxW={"12rem"}>
-          <Input
-            type="text"
-            variant={"filled"}
-            placeholder="Student Name"
-            borderWidth={1.5}
-            borderColor="grey"
-            value={name}
-            onChange={handleSearchChange}
-          />
-        </InputGroup>
-        <Select value={status} variant="filled" onChange={handleStatusChange}>
-          <option value="">All Statuses</option>
-          <option value="approved">Approved</option>
-          <option value="rejected">Rejected</option>
-          <option value="pending center">Pending Center</option>
-          <option value="pending admin">Pending Admin</option>
-        </Select>
-      </Flex>
-      <Button
-        colorScheme="orange"
-        variant="solid"
-        size="sm"
-        leftIcon={<FiSearch />}
-        onClick={applyFilters}
-      >
-        Search
-      </Button>
-      {role === "admin" && (
-        <Flex gap={"10px"}>
+    <Grid
+      templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
+      gap={4}
+      mb={6}
+      alignItems={"center"}
+    >
+      <GridItem>
+        <Flex direction={{ base: "column", md: "row" }} gap={4}>
+          <InputGroup size={"sm"} mb={{ base: 4, md: 0 }}>
+            <Input
+              type="text"
+              variant={"filled"}
+              placeholder="Student Name"
+              borderWidth={1.5}
+              borderColor="gray"
+              borderRadius="md"
+              height="2.5rem"
+              value={name}
+              onChange={handleSearchChange}
+            />
+          </InputGroup>
+          <Select
+            value={status}
+            onChange={handleStatusChange}
+            mb={{ base: 4, md: 0 }}
+            borderColor="gray"
+          >
+            <option value="">Select Status</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+            <option value="pending center">Pending Center</option>
+            <option value="pending admin">Pending Admin</option>
+          </Select>
+        </Flex>
+      </GridItem>
+      <GridItem>
+        <HStack
+          spacing={3}
+          direction={{ base: "column", md: "row" }}
+          alignItems="center"
+        >
           <Button
-            colorScheme="teal"
+            colorScheme="orange"
             variant="solid"
             size="sm"
-            leftIcon={<FiPlus />}
-            onClick={openModal}
+            leftIcon={<FiSearch />}
+            onClick={applyFilters}
           >
-            New Level
+            Search
           </Button>
+          {role === "admin" && (
+            <Button
+              colorScheme="teal"
+              variant="solid"
+              size="sm"
+              leftIcon={<FiPlus />}
+              onClick={openModal}
+            >
+              New Level
+            </Button>
+          )}
           <Button
             colorScheme="blue"
             variant="solid"
@@ -206,21 +228,9 @@ const Filters = ({ handleFilterChange }) => {
           >
             Export
           </Button>
-        </Flex>
-      )}
-      {role === "center" && (
-        <Flex gap={"10px"}>
-          <Button
-            colorScheme="blue"
-            variant="solid"
-            size="sm"
-            leftIcon={<FiDownload />}
-            onClick={handleExport}
-          >
-            Export
-          </Button>
-        </Flex>
-      )}
+        </HStack>
+      </GridItem>
+
       <Modal isOpen={isModalOpen} onClose={closeModal} size="xl">
         <ModalOverlay />
         <ModalContent>
@@ -291,7 +301,7 @@ const Filters = ({ handleFilterChange }) => {
           </ModalBody>
         </ModalContent>
       </Modal>
-    </HStack>
+    </Grid>
   );
 };
 
