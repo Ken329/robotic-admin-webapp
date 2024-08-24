@@ -13,8 +13,17 @@ export const appApi = baseApiSlice.injectEndpoints({
           url: "/maintenance",
         }),
       }),
+      getAdminPanelData: builder.query({
+        query: () => ({
+          url: "/user/statuses",
+        }),
+      }),
     };
   },
 });
 
-export const { useGetUserDataQuery, useMaintenanceCheckQuery } = appApi;
+export const {
+  useGetUserDataQuery,
+  useMaintenanceCheckQuery,
+  useGetAdminPanelDataQuery,
+} = appApi;
