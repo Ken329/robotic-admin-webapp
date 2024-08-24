@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
+import { useGetAdminPanelDataQuery } from "../../redux/slices/app/api";
 import {
   Box,
   Button,
@@ -12,16 +13,26 @@ import {
 } from "@chakra-ui/react";
 import { FiPlus, FiChevronUp, FiChevronDown } from "react-icons/fi";
 import StatCard from "./StatCard";
+import useCustomToast from "../CustomToast";
 
 const AdminPanel = ({ isAdmin }) => {
   const navigate = useNavigate();
+  const toast = useCustomToast();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [studentData] = useState({
-    pendingAdmin: 0,
-    pendingCenter: 0,
-    approved: 0,
-    rejected: 0,
-  });
+  const { data, isLoading, isError } = useGetAdminPanelDataQuery();
+  const [adminPanelData, setAdminPanelData] = useState({});
+
+  useEffect(() => {
+    if (!isLoading && !isError && data) {
+      setAdminPanelData(data?.data);
+    } else if (isError) {
+      toast({
+        title: "Dashboard",
+        description: "Error getting Admin Panel Data",
+        status: "error",
+      });
+    }
+  }, [data, isLoading, isError]);
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
@@ -58,24 +69,24 @@ const AdminPanel = ({ isAdmin }) => {
           {isAdmin ? (
             <StatCard
               label="Pending Admin Approvals"
-              count={studentData?.pendingAdmin || 0}
+              count={adminPanelData?.["pending admin"] || 0}
               fontSize={{ base: "sm", md: "md" }}
             />
           ) : (
             <StatCard
               label="Pending Centre Approvals"
-              count={studentData?.pendingCenter || 0}
+              count={adminPanelData?.["pending center"] || 0}
               fontSize={{ base: "sm", md: "md" }}
             />
           )}
           <StatCard
             label="Approved Students"
-            count={studentData?.approved || 0}
+            count={adminPanelData?.approved || 0}
             fontSize={{ base: "sm", md: "md" }}
           />
           <StatCard
             label="Rejected Students"
-            count={studentData?.rejected || 0}
+            count={adminPanelData?.rejected || 0}
             fontSize={{ base: "sm", md: "md" }}
           />
         </SimpleGrid>
