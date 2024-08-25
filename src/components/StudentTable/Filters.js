@@ -186,10 +186,11 @@ const Filters = ({ handleFilterChange }) => {
             borderColor="gray"
           >
             <option value="">Select Status</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
+            <option value="pending verification">Pending Verification</option>
             <option value="pending center">Pending Center</option>
             <option value="pending admin">Pending Admin</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
           </Select>
         </Flex>
       </GridItem>

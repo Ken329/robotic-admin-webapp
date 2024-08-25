@@ -57,7 +57,7 @@ const DataTable = ({
       },
       {
         accessorKey: "email",
-        header: "Email",
+        header: "Email ID",
         size: 300,
         enableSorting: true,
       },
@@ -235,7 +235,7 @@ const DataTable = ({
               table.getRowModel().rows.map((row) => (
                 <Tr key={row.id}>
                   {row.getVisibleCells().map((cell) => (
-                    <Td key={cell.id}>
+                    <Td key={cell.id} backgroundColor="#F7FAFC">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

@@ -17,7 +17,7 @@ import {
   MenuList,
   Icon,
 } from "@chakra-ui/react";
-import { FiMenu, FiChevronDown, FiBell, FiUser } from "react-icons/fi";
+import { FiMenu, FiChevronDown, FiUser } from "react-icons/fi";
 
 const MobileNav = ({ onOpen, onLogout, ...props }) => {
   const location = useLocation();
@@ -63,12 +63,6 @@ const MobileNav = ({ onOpen, onLogout, ...props }) => {
       </Text>
 
       <HStack spacing={{ base: "0", md: "6" }}>
-        <IconButton
-          size="lg"
-          variant="ghost"
-          aria-label="open menu"
-          icon={<FiBell />}
-        />
         <Flex alignItems={"center"}>
           <Menu>
             <MenuButton
