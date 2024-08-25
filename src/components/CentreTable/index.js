@@ -43,7 +43,7 @@ const columns = [
     cell: (props) => <p>{props.getValue()}</p>,
   },
   {
-    accessorKey: "id",
+    accessorKey: "centerId",
     header: "Centre ID",
     size: 300,
     cell: (props) => <p>{props.getValue()}</p>,
