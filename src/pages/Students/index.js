@@ -9,6 +9,7 @@ import Layout from "../../components/Layout/MainLayout";
 import DataTable from "../../components/StudentTable";
 import DataModal from "../../components/StudentTable/DataModel";
 import AchievementsModal from "../../components/StudentTable/AchievementsModal";
+import DeleteModal from "../../components/StudentTable/DeleteModal";
 import { USER_ROLE } from "../../utils/constants";
 import useCustomToast from "../../components/CustomToast";
 
@@ -30,6 +31,7 @@ const Students = () => {
   const [modalData, setModalData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAchievementsModalOpen, setIsAchievementsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !isError && data) {
@@ -63,6 +65,16 @@ const Students = () => {
     refetch();
   };
 
+  const openDeleteModal = (rowData) => {
+    setModalData(rowData);
+    setIsDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    refetch();
+  };
+
   const handlePageChange = (newPageIndex) => {
     setPageIndex(newPageIndex);
   };
@@ -85,6 +97,7 @@ const Students = () => {
           tableData={studentData}
           openModal={openModal}
           openAchievementsModal={openAchievementsModal}
+          openDeleteModal={openDeleteModal}
           totalRecords={data?.data?.totalUser || 0}
           pageSize={pageSize}
           pageIndex={pageIndex}
@@ -98,11 +111,18 @@ const Students = () => {
           rowData={modalData}
         />
         {role === USER_ROLE.ADMIN && (
-          <AchievementsModal
-            isOpen={isAchievementsModalOpen}
-            onClose={closeAchievementsModal}
-            rowData={modalData}
-          />
+          <>
+            <AchievementsModal
+              isOpen={isAchievementsModalOpen}
+              onClose={closeAchievementsModal}
+              rowData={modalData}
+            />
+            <DeleteModal
+              isOpen={isDeleteModalOpen}
+              onClose={closeDeleteModal}
+              rowData={modalData}
+            />
+          </>
         )}
       </Flex>
     </Layout>
