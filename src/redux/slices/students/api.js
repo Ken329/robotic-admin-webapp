@@ -42,6 +42,12 @@ export const studentsApi = baseApiSlice.injectEndpoints({
           body: body,
         }),
       }),
+      deleteStudent: builder.mutation({
+        query: (id) => ({
+          url: `/user/student/${id}`,
+          method: "DELETE",
+        }),
+      }),
       getStudentLevels: builder.query({
         query: () => ({
           url: "/level",
@@ -71,6 +77,7 @@ export const {
   useApproveStudentMutation,
   useRejectStudentMutation,
   useUpdateStudentMutation,
+  useDeleteStudentMutation,
   useGetStudentLevelsQuery,
   useCreateStudentLevelMutation,
   useDeleteStudentLevelMutation,
