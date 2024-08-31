@@ -38,6 +38,7 @@ const DataTable = ({
   tableData,
   openModal,
   openAchievementsModal,
+  openDeleteModal,
   totalRecords,
   pageSize,
   pageIndex,
@@ -129,13 +130,24 @@ const DataTable = ({
                   View
                 </MenuItem>
                 {role === USER_ROLE.ADMIN && (
-                  <MenuItem
-                    onClick={() => {
-                      openAchievementsModal(row.original);
-                    }}
-                  >
-                    Achievements
-                  </MenuItem>
+                  <>
+                    <MenuItem
+                      onClick={() => {
+                        openAchievementsModal(row.original);
+                      }}
+                    >
+                      Achievements
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        openDeleteModal(row.original);
+                      }}
+                      color="red.500"
+                      fontWeight="bold"
+                    >
+                      Delete
+                    </MenuItem>
+                  </>
                 )}
               </MenuList>
             </Menu>
@@ -285,6 +297,7 @@ DataTable.propTypes = {
   tableData: PropTypes.array.isRequired,
   openModal: PropTypes.func.isRequired,
   openAchievementsModal: PropTypes.func.isRequired,
+  openDeleteModal: PropTypes.func.isRequired,
   totalRecords: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,
   pageIndex: PropTypes.number.isRequired,
