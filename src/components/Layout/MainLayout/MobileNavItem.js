@@ -2,27 +2,31 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
-import { makeSelectUserRole } from "../../../redux/slices/app/selector";
+import {
+  makeSelectUserRole,
+  makeSelectUserName,
+} from "../../../redux/slices/app/selector";
 import {
   Box,
   Flex,
   Text,
   HStack,
-  VStack,
   useColorModeValue,
   IconButton,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
-  Icon,
+  Avatar,
+  AvatarBadge,
 } from "@chakra-ui/react";
-import { FiMenu, FiChevronDown, FiUser } from "react-icons/fi";
+import { FiMenu } from "react-icons/fi";
 
 const MobileNav = ({ onOpen, onLogout, ...props }) => {
   const location = useLocation();
   const [currentPage, setCurrentPage] = useState(null);
   const role = useSelector(makeSelectUserRole());
+  const userName = useSelector(makeSelectUserName());
 
   useEffect(() => {
     let currentLocation = location?.pathname;
@@ -64,55 +68,55 @@ const MobileNav = ({ onOpen, onLogout, ...props }) => {
 
       <HStack spacing={{ base: "0", md: "6" }}>
         <Flex alignItems={"center"}>
-          <Menu>
-            <MenuButton
-              py={2}
-              transition="all 0.3s"
-              _focus={{ boxShadow: "none" }}
+          <HStack>
+            <Box
+              display={{ base: "none", md: "flex", lg: "flex" }}
+              alignItems="center"
+              bg={
+                role === "admin"
+                  ? "green.500"
+                  : role === "center"
+                  ? "blue.500"
+                  : null
+              }
+              borderRadius="full"
+              px="3"
+              py="1"
             >
-              <HStack>
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  bg={
-                    role === "admin"
-                      ? "green.500"
-                      : role === "center"
-                      ? "blue.500"
-                      : null
-                  }
-                  borderRadius="full"
-                  px="3"
-                  py="1"
-                >
-                  <Icon as={FiUser} w={6} h={6} color="white" />
-                  <VStack
-                    display={{ base: "none", md: "flex" }}
-                    alignItems="flex-start"
-                    spacing="1px"
-                    ml="2"
+              <Text fontSize="sm" color="white">
+                {role === "admin"
+                  ? "Admin "
+                  : role === "center"
+                  ? "Centre "
+                  : "User"}
+                - {userName}
+              </Text>
+            </Box>
+            <Menu>
+              <MenuButton
+                py={2}
+                transition="all 0.3s"
+                _focus={{ boxShadow: "none" }}
+              >
+                <HStack>
+                  <Avatar
+                    size="sm"
+                    name={userName}
+                    bg="orange.400"
+                    color="white"
                   >
-                    <Text fontSize="sm" color="white">
-                      {role === "admin"
-                        ? "Admin"
-                        : role === "center"
-                        ? "Centre"
-                        : "User"}
-                    </Text>
-                  </VStack>
-                  <Box display={{ base: "none", md: "flex" }} ml="2">
-                    <FiChevronDown color="white" />
-                  </Box>
-                </Box>
-              </HStack>
-            </MenuButton>
-            <MenuList
-              bg={useColorModeValue("white", "gray.900")}
-              borderColor={useColorModeValue("gray.200", "gray.700")}
-            >
-              <MenuItem onClick={onLogout}>Sign out</MenuItem>
-            </MenuList>
-          </Menu>
+                    <AvatarBadge boxSize="1.25em" bg="green.500" />
+                  </Avatar>
+                </HStack>
+              </MenuButton>
+              <MenuList
+                bg={useColorModeValue("white", "gray.900")}
+                borderColor={useColorModeValue("gray.200", "gray.700")}
+              >
+                <MenuItem onClick={onLogout}>Sign out</MenuItem>
+              </MenuList>
+            </Menu>
+          </HStack>
         </Flex>
       </HStack>
     </Flex>

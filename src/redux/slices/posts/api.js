@@ -18,6 +18,11 @@ export const postsApi = baseApiSlice.injectEndpoints({
           url: "/blog/type",
         }),
       }),
+      getALLParticipants: builder.query({
+        query: (id) => ({
+          url: `/blog/${id}/participants`,
+        }),
+      }),
       createPost: builder.mutation({
         query: ({
           title,
@@ -106,6 +111,7 @@ export const {
   useGetAllFilesQuery,
   useGetAllCategoriesQuery,
   useGetAllBlogTypesQuery,
+  useGetALLParticipantsQuery,
   useCreatePostMutation,
   useUpdatePostMutation,
   useDeletePostMutation,
