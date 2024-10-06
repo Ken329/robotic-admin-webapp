@@ -37,6 +37,7 @@ import { FiDownload } from "react-icons/fi";
 import { categoryMap, USER_ROLE, POST_TYPE } from "../../utils/constants";
 import { exportCompetitionToExcel } from "../../services/helper";
 import useCustomToast from "../CustomToast";
+import ParticipantsModal from "./ParticipantsModal";
 
 const BlogCard = ({ blog, handleDelete }) => {
   const navigate = useNavigate();
@@ -109,13 +110,16 @@ const BlogCard = ({ blog, handleDelete }) => {
           _hover={{ opacity: "1" }}
         >
           {blog?.category === POST_TYPE.COMPETITION && (
-            <IconButton
-              size="sm"
-              colorScheme="blue"
-              aria-label="Export Data"
-              icon={<FiDownload />}
-              onClick={handleExportData}
-            />
+            <>
+              <ParticipantsModal blogId={blog?.id} />
+              <IconButton
+                size="sm"
+                colorScheme="blue"
+                aria-label="Export Data"
+                icon={<FiDownload />}
+                onClick={handleExportData}
+              />
+            </>
           )}
           <IconButton
             size="sm"
