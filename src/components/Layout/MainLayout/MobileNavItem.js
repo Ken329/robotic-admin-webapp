@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
@@ -24,18 +24,26 @@ import { FiMenu } from "react-icons/fi";
 
 const MobileNav = ({ onOpen, onLogout, ...props }) => {
   const location = useLocation();
-  const [currentPage, setCurrentPage] = useState(null);
   const role = useSelector(makeSelectUserRole());
   const userName = useSelector(makeSelectUserName());
+  const storedUserName = localStorage.getItem("adminUserName");
 
-  useEffect(() => {
-    let currentLocation = location?.pathname;
-    if (currentLocation === "/dashboard") {
-      setCurrentPage("Dashboard");
-    } else {
-      setCurrentPage("Admin Portal");
+  const displayName = useMemo(() => {
+    if (userName && userName !== storedUserName) {
+      localStorage.setItem("adminUserName", userName);
+      return userName;
     }
-  }, [location]);
+    return storedUserName || userName;
+  }, [userName, storedUserName]);
+
+  const pageTitles = {
+    "/admin/dashboard": "Admin Dashboard",
+    "/admin/students": "Students",
+    "/admin/centres": "Centres",
+    "/admin/achievements": "Achievements",
+  };
+
+  const currentPage = pageTitles[location.pathname] || "";
 
   return (
     <Flex
@@ -89,7 +97,7 @@ const MobileNav = ({ onOpen, onLogout, ...props }) => {
                   : role === "center"
                   ? "Centre "
                   : "User"}
-                - {userName}
+                - {displayName}
               </Text>
             </Box>
             <Menu>
@@ -101,7 +109,7 @@ const MobileNav = ({ onOpen, onLogout, ...props }) => {
                 <HStack>
                   <Avatar
                     size="sm"
-                    name={userName}
+                    name={displayName}
                     bg="orange.400"
                     color="white"
                   >
