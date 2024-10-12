@@ -50,6 +50,7 @@ const Achievements = () => {
   const [selectedAchievement, setSelectedAchievement] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [createdDate, setCreatedDate] = useState("");
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
@@ -109,6 +110,7 @@ const Achievements = () => {
     formData.append("title", title);
     formData.append("description", description);
     formData.append("file", croppedImage);
+    formData.append("createdDate", createdDate);
 
     try {
       if (selectedAchievement) {
@@ -156,6 +158,7 @@ const Achievements = () => {
     setSelectedAchievement(achievement);
     setTitle(achievement?.title);
     setDescription(achievement?.description);
+    setCreatedDate(achievement?.createdDate);
     setImage(null);
     setCroppedImage(null);
     setImagePreview(achievement?.imageUrl);
@@ -195,6 +198,7 @@ const Achievements = () => {
                 setSelectedAchievement(null);
                 setTitle("");
                 setDescription("");
+                setCreatedDate("");
                 setImage(null);
                 setCroppedImage(null);
                 setImagePreview(null);
@@ -325,6 +329,23 @@ const Achievements = () => {
                       objectFit="cover"
                     />
                   </Box>
+                )}
+              </FormControl>
+              <FormControl mb={4}>
+                {selectedAchievement ? (
+                  <FormLabel>
+                    Created Date <Text color={"red"}>Non-editable</Text>
+                  </FormLabel>
+                ) : (
+                  <>
+                    <FormLabel>Created Date</FormLabel>
+                    <Input
+                      value={createdDate}
+                      onChange={(e) => setCreatedDate(e.target.value)}
+                      placeholder="Date format e.g. 20/01/2000"
+                      isDisabled={selectedAchievement}
+                    />
+                  </>
                 )}
               </FormControl>
             </ModalBody>
