@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import moment from "moment";
 import { useSelector } from "react-redux";
 import { makeSelectUserRole } from "../../redux/slices/app/selector";
 import {
@@ -72,8 +73,10 @@ const DataTable = ({
         accessorKey: "status",
         header: "Status",
         size: 100,
-        cell: ({ cell }) => {
-          const status = cell.getValue();
+        cell: ({ row }) => {
+          const status = row.original.status;
+          const statusChangeAt = row.original.statusChangeAt;
+
           let color;
           switch (status) {
             case "approved":
@@ -92,7 +95,12 @@ const DataTable = ({
               color = "black";
           }
           return (
-            <Flex justifyContent="center">
+            <Flex
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              gap="5px"
+            >
               <Badge
                 size={"xl"}
                 px={2}
@@ -100,9 +108,15 @@ const DataTable = ({
                 borderRadius={"10px"}
                 color="white"
                 backgroundColor={color}
+                width="fit-content"
               >
                 {status}
               </Badge>
+              {statusChangeAt && (
+                <Text as="em" fontSize="sm">
+                  Last updated - {moment(statusChangeAt).format("DD/MM/YYYY")}
+                </Text>
+              )}
             </Flex>
           );
         },
