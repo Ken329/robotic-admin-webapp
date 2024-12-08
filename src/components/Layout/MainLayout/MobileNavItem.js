@@ -3,10 +3,6 @@ import { useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import {
-  makeSelectUserRole,
-  makeSelectUserName,
-} from "../../../redux/slices/app/selector";
-import {
   Box,
   Flex,
   Text,
@@ -21,29 +17,36 @@ import {
   AvatarBadge,
 } from "@chakra-ui/react";
 import { FiMenu } from "react-icons/fi";
+import {
+  makeSelectUserRole,
+  makeSelectUserName,
+} from "../../../redux/slices/app/selector";
+import { PAGE_NAME } from "../../../utils/constants";
 
 const MobileNav = ({ onOpen, onLogout, ...props }) => {
   const location = useLocation();
-  const role = useSelector(makeSelectUserRole());
-  const userName = useSelector(makeSelectUserName());
-  const storedUserName = localStorage.getItem("adminUserName");
 
-  const displayName = useMemo(() => {
-    if (userName && userName !== storedUserName) {
-      localStorage.setItem("adminUserName", userName);
-      return userName;
-    }
-    return storedUserName || userName;
-  }, [userName, storedUserName]);
+  const useUserData = (value, key) => {
+    const result = useMemo(() => {
+      const storedValue = localStorage.getItem(key);
 
-  const pageTitles = {
-    "/admin/dashboard": "Admin Dashboard",
-    "/admin/students": "Students",
-    "/admin/centres": "Centres",
-    "/admin/achievements": "Achievements",
+      if (value && value !== storedValue) {
+        localStorage.setItem(key, value);
+        return value;
+      }
+      return storedValue || value;
+    }, [value, key]);
+
+    return result;
   };
 
-  const currentPage = pageTitles[location.pathname] || "";
+  const role = useSelector(makeSelectUserRole());
+  const userName = useSelector(makeSelectUserName());
+
+  const displayName = useUserData(userName, "adminUserName");
+  const userRole = useUserData(role, "adminUserRole");
+
+  const currentPage = PAGE_NAME[location.pathname] || "";
 
   return (
     <Flex
@@ -81,9 +84,9 @@ const MobileNav = ({ onOpen, onLogout, ...props }) => {
               display={{ base: "none", md: "flex", lg: "flex" }}
               alignItems="center"
               bg={
-                role === "admin"
+                userRole === "admin"
                   ? "green.500"
-                  : role === "center"
+                  : userRole === "center"
                   ? "blue.500"
                   : null
               }
@@ -91,10 +94,10 @@ const MobileNav = ({ onOpen, onLogout, ...props }) => {
               px="3"
               py="1"
             >
-              <Text fontSize="sm" color="white">
-                {role === "admin"
+              <Text fontSize="sm" color="white" fontWeight={"bold"}>
+                {userRole === "admin"
                   ? "Admin "
-                  : role === "center"
+                  : userRole === "center"
                   ? "Centre "
                   : "User"}
                 - {displayName}

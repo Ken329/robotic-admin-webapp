@@ -91,6 +91,9 @@ const DataTable = ({
             case "pending admin":
               color = "yellow.500";
               break;
+            case "expired":
+              color = "grey";
+              break;
             default:
               color = "black";
           }
