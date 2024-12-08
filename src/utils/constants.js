@@ -25,3 +25,10 @@ export const POST_TYPE = {
   COMPETITION: "competition",
   EXERCISE: "exercise",
 };
+
+export const PAGE_NAME = {
+  "/admin/dashboard": "Admin Dashboard",
+  "/admin/students": "Students",
+  "/admin/centres": "Centres",
+  "/admin/achievements": "Achievements",
+};
