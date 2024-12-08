@@ -1,8 +1,6 @@
-import React from "react";
+import React, { useMemo } from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
-import { makeSelectUserRole } from "../../../redux/slices/app/selector";
-import SteamCupLogoEdited from "../../../assets/images/STEAM Cup+edited.png";
 import {
   Box,
   Flex,
@@ -10,31 +8,55 @@ import {
   useColorModeValue,
   Image,
 } from "@chakra-ui/react";
-import { FiHome, FiUser } from "react-icons/fi";
+import { FiHome, FiUser, FiMonitor, FiAward } from "react-icons/fi";
+import { makeSelectUserRole } from "../../../redux/slices/app/selector";
+import SteamCupLogoEdited from "../../../assets/images/STEAM Cup+edited.webp";
 import NavItem from "./NavItem";
 
 const SidebarContent = ({ onClose, ...props }) => {
-  const role = useSelector(makeSelectUserRole());
-
-  const getLinkItems = (userRole) => {
-    if (userRole === "admin") {
-      return [
-        { name: "Dashboard", icon: FiHome, path: "/admin/dashboard" },
-        { name: "Students", icon: FiUser, path: "/admin/students" },
-        { name: "Centres", icon: FiUser, path: "/admin/centres" },
-        { name: "Achievements", icon: FiUser, path: "/admin/achievements" },
-      ];
-    } else if (userRole === "center") {
-      return [
-        { name: "Dashboard", icon: FiHome, path: "/admin/dashboard" },
-        { name: "Students", icon: FiUser, path: "/admin/students" },
-      ];
-    } else {
-      return [];
-    }
+  const useUserRole = () => {
+    const role = useSelector(makeSelectUserRole());
+    const userRole = useMemo(() => {
+      const storedRole = localStorage.getItem("adminUserRole");
+      if (role && role !== storedRole) {
+        localStorage.setItem("adminUserRole", role);
+        return role;
+      }
+      return storedRole || role;
+    }, [role]);
+    return userRole;
   };
 
-  const linkItems = getLinkItems(role);
+  const useLinkItems = () => {
+    const userRole = useUserRole();
+
+    const linkItems = useMemo(() => {
+      switch (userRole) {
+        case "admin":
+          return [
+            { name: "Dashboard", icon: FiHome, path: "/admin/dashboard" },
+            { name: "Students", icon: FiUser, path: "/admin/students" },
+            { name: "Centres", icon: FiMonitor, path: "/admin/centres" },
+            {
+              name: "Achievements",
+              icon: FiAward,
+              path: "/admin/achievements",
+            },
+          ];
+        case "center":
+          return [
+            { name: "Dashboard", icon: FiHome, path: "/admin/dashboard" },
+            { name: "Students", icon: FiUser, path: "/admin/students" },
+          ];
+        default:
+          return [];
+      }
+    }, [userRole]);
+
+    return linkItems;
+  };
+
+  const linkItems = useLinkItems();
 
   return (
     <Box
