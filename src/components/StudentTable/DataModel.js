@@ -68,12 +68,37 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
 
   const handleApprove = async (values) => {
     try {
-      const payload = {};
+      let payload = {};
       Object.keys(values).forEach((key) => {
         if (values[key] !== studentData[key]) {
           payload[key] = values[key];
         }
       });
+
+      if (
+        role === USER_ROLE.CENTER &&
+        studentData.joinedDate &&
+        studentData.level &&
+        !payload.joinedDate &&
+        !payload.level
+      ) {
+        payload = {
+          ...payload,
+          joinedDate: studentData.joinedDate,
+          level: studentData.level,
+        };
+      }
+
+      if (
+        role === USER_ROLE.ADMIN &&
+        studentData.roboticId &&
+        !payload.roboticId
+      ) {
+        payload = {
+          ...payload,
+          roboticId: studentData.roboticId,
+        };
+      }
 
       const response = await approveStudent({
         id: studentData.id,
