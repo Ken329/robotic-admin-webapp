@@ -54,6 +54,12 @@ export const studentsApi = baseApiSlice.injectEndpoints({
           method: "POST",
         }),
       }),
+      expireStudentAccount: builder.mutation({
+        query: (id) => ({
+          url: `/user/${id}/expired`,
+          method: "POST",
+        }),
+      }),
       getStudentLevels: builder.query({
         query: () => ({
           url: "/level",
@@ -85,6 +91,7 @@ export const {
   useUpdateStudentMutation,
   useDeleteStudentMutation,
   useRenewMembershipMutation,
+  useExpireStudentAccountMutation,
   useGetStudentLevelsQuery,
   useCreateStudentLevelMutation,
   useDeleteStudentLevelMutation,
