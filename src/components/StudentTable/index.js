@@ -40,6 +40,7 @@ const DataTable = ({
   openModal,
   openAchievementsModal,
   openDeleteModal,
+  openRenewMembershipModal,
   totalRecords,
   pageSize,
   pageIndex,
@@ -157,6 +158,15 @@ const DataTable = ({
                     </MenuItem>
                     <MenuItem
                       onClick={() => {
+                        openRenewMembershipModal(row.original);
+                      }}
+                      color="blue.500"
+                      fontWeight="bold"
+                    >
+                      Renew Membership
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
                         openDeleteModal(row.original);
                       }}
                       color="red.500"
@@ -172,7 +182,13 @@ const DataTable = ({
         ),
       },
     ],
-    [role, openModal, openAchievementsModal]
+    [
+      role,
+      openModal,
+      openAchievementsModal,
+      openRenewMembershipModal,
+      openDeleteModal,
+    ]
   );
 
   const table = useReactTable({
@@ -315,6 +331,7 @@ DataTable.propTypes = {
   openModal: PropTypes.func.isRequired,
   openAchievementsModal: PropTypes.func.isRequired,
   openDeleteModal: PropTypes.func.isRequired,
+  openRenewMembershipModal: PropTypes.func.isRequired,
   totalRecords: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,
   pageIndex: PropTypes.number.isRequired,

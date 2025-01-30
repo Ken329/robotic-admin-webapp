@@ -10,6 +10,7 @@ import DataTable from "../../components/StudentTable";
 import DataModal from "../../components/StudentTable/DataModel";
 import AchievementsModal from "../../components/StudentTable/AchievementsModal";
 import DeleteModal from "../../components/StudentTable/DeleteModal";
+import RenewMembershipModal from "../../components/StudentTable/RenewMembershipModal";
 import { USER_ROLE } from "../../utils/constants";
 import useCustomToast from "../../components/CustomToast";
 
@@ -31,6 +32,7 @@ const Students = () => {
   const [modalData, setModalData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAchievementsModalOpen, setIsAchievementsModalOpen] = useState(false);
+  const [isRenewModalOpen, setIsRenewModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
@@ -75,6 +77,16 @@ const Students = () => {
     refetch();
   };
 
+  const openRenewMembershipModal = (rowData) => {
+    setModalData(rowData);
+    setIsRenewModalOpen(true);
+  };
+
+  const closeRenewMembershipModal = () => {
+    setIsRenewModalOpen(false);
+    refetch();
+  };
+
   const handlePageChange = (newPageIndex) => {
     setPageIndex(newPageIndex);
   };
@@ -97,6 +109,7 @@ const Students = () => {
           tableData={studentData}
           openModal={openModal}
           openAchievementsModal={openAchievementsModal}
+          openRenewMembershipModal={openRenewMembershipModal}
           openDeleteModal={openDeleteModal}
           totalRecords={data?.data?.totalUser || 0}
           pageSize={pageSize}
@@ -115,6 +128,11 @@ const Students = () => {
             <AchievementsModal
               isOpen={isAchievementsModalOpen}
               onClose={closeAchievementsModal}
+              rowData={modalData}
+            />
+            <RenewMembershipModal
+              isOpen={isRenewModalOpen}
+              onClose={closeRenewMembershipModal}
               rowData={modalData}
             />
             <DeleteModal
