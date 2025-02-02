@@ -24,7 +24,7 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import { TriangleUpIcon, TriangleDownIcon } from "@chakra-ui/icons";
-import { USER_ROLE } from "../../utils/constants";
+import { USER_ROLE, STUDENT_STATUS } from "../../utils/constants";
 import Filters from "./Filters";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import {
@@ -129,57 +129,63 @@ const DataTable = ({
         accessorKey: "actions",
         header: "Actions",
         size: 100,
-        cell: ({ row }) => (
-          <Flex justifyContent="center" gap="10px">
-            <Menu>
-              <MenuButton
-                as={IconButton}
-                aria-label="Options"
-                icon={<BiDotsHorizontalRounded />}
-                variant="solid"
-                size="md"
-              />
-              <MenuList>
-                <MenuItem
-                  onClick={() => {
-                    openModal(row.original);
-                  }}
-                >
-                  View
-                </MenuItem>
-                {role === USER_ROLE.ADMIN && (
-                  <>
-                    <MenuItem
-                      onClick={() => {
-                        openAchievementsModal(row.original);
-                      }}
-                    >
-                      Achievements
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        openRenewMembershipModal(row.original);
-                      }}
-                      color="blue.500"
-                      fontWeight="bold"
-                    >
-                      Renew Membership
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        openDeleteModal(row.original);
-                      }}
-                      color="red.500"
-                      fontWeight="bold"
-                    >
-                      Delete
-                    </MenuItem>
-                  </>
-                )}
-              </MenuList>
-            </Menu>
-          </Flex>
-        ),
+        cell: ({ row }) => {
+          const status = row.original.status;
+
+          return (
+            <Flex justifyContent="center" gap="10px">
+              <Menu>
+                <MenuButton
+                  as={IconButton}
+                  aria-label="Options"
+                  icon={<BiDotsHorizontalRounded />}
+                  variant="solid"
+                  size="md"
+                />
+                <MenuList>
+                  <MenuItem
+                    onClick={() => {
+                      openModal(row.original);
+                    }}
+                  >
+                    View
+                  </MenuItem>
+                  {role === USER_ROLE.ADMIN && (
+                    <>
+                      <MenuItem
+                        onClick={() => {
+                          openAchievementsModal(row.original);
+                        }}
+                      >
+                        Achievements
+                      </MenuItem>
+                      {status === STUDENT_STATUS.APPROVED && (
+                        <MenuItem
+                          onClick={() => {
+                            openRenewMembershipModal(row.original);
+                          }}
+                          color="blue.500"
+                          fontWeight="bold"
+                        >
+                          Renew Membership
+                        </MenuItem>
+                      )}
+                      <MenuItem
+                        onClick={() => {
+                          openDeleteModal(row.original);
+                        }}
+                        color="red.500"
+                        fontWeight="bold"
+                      >
+                        Delete
+                      </MenuItem>
+                    </>
+                  )}
+                </MenuList>
+              </Menu>
+            </Flex>
+          );
+        },
       },
     ],
     [
