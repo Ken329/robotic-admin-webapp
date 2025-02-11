@@ -78,15 +78,20 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
       if (
         role === USER_ROLE.CENTER &&
         studentData.joinedDate &&
-        studentData.level &&
-        !payload.joinedDate &&
-        !payload.level
+        studentData.level
       ) {
-        payload = {
-          ...payload,
-          joinedDate: studentData.joinedDate,
-          level: studentData.level,
-        };
+        if (!payload.joinedDate) {
+          payload = {
+            ...payload,
+            joinedDate: studentData.joinedDate,
+          };
+        }
+        if (!payload.level) {
+          payload = {
+            ...payload,
+            level: studentData.level,
+          };
+        }
       }
 
       if (
