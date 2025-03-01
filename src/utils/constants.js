@@ -32,3 +32,9 @@ export const PAGE_NAME = {
   "/admin/centres": "Centres",
   "/admin/achievements": "Achievements",
 };
+
+export const POST_ATTRIBUTE_TYPES = {
+  CHECKBOX: "checkbox",
+  TEXT_INPUT: "textInput",
+  TEAM_MEMBER: "Team Member"
+};
