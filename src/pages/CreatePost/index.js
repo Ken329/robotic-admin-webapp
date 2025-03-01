@@ -38,6 +38,7 @@ import QuillResizeImage from "quill-resize-image";
 import "react-quill/dist/quill.snow.css";
 import useCustomToast from "../../components/CustomToast";
 import CoverImage from "./CoverImage";
+import { POST_ATTRIBUTE_TYPES } from "../../utils/constants";
 
 Quill.register("modules/resize", QuillResizeImage);
 
@@ -64,6 +65,9 @@ const CreatePost = () => {
   const [initialCoverImage, setInitialCoverImage] = useState("");
   const [checkboxLabel, setCheckboxLabel] = useState("");
   const [customCheckboxes, setCustomCheckboxes] = useState([]);
+  const [textInputLabel, setTextInputLabel] = useState("");
+  const [customTextInputs, setCustomTextInputs] = useState([]);
+  const [includeTeamMember, setIncludeTeamMember] = useState(false);
 
   const { data: blogTypeData } = useGetAllBlogTypesQuery();
   const { data: blogCategoryData } = useGetAllCategoriesQuery();
@@ -103,9 +107,19 @@ const CreatePost = () => {
 
       if (post.customAttributes) {
         const checkboxes = post.customAttributes.filter(
-          (attr) => attr.category !== "Team Member"
+          (attr) => attr.type === POST_ATTRIBUTE_TYPES.CHECKBOX
         );
+        const textInputs = post.customAttributes.filter(
+          (attr) => attr.type === POST_ATTRIBUTE_TYPES.TEXT_INPUT
+        );
+
+        const hasTeamMember = post.customAttributes.some(
+          (attr) => attr.category === POST_ATTRIBUTE_TYPES.TEAM_MEMBER
+        );
+
         setCustomCheckboxes(checkboxes);
+        setCustomTextInputs(textInputs);
+        setIncludeTeamMember(hasTeamMember);
       }
     }
   }, [postData, isPostLoaded]);
@@ -160,7 +174,10 @@ const CreatePost = () => {
     if (category === "competition") {
       postPayload.customAttributes = [
         ...customCheckboxes,
-        { category: "Team Member" },
+        ...customTextInputs,
+        ...(includeTeamMember
+          ? [{ category: POST_ATTRIBUTE_TYPES.TEAM_MEMBER }]
+          : []),
       ];
     }
 
@@ -257,7 +274,10 @@ const CreatePost = () => {
 
   const handleAddCheckbox = () => {
     if (checkboxLabel.trim()) {
-      setCustomCheckboxes([...customCheckboxes, { category: checkboxLabel }]);
+      setCustomCheckboxes([
+        ...customCheckboxes,
+        { category: checkboxLabel, type: POST_ATTRIBUTE_TYPES.CHECKBOX },
+      ]);
       setCheckboxLabel("");
     } else {
       toast({
@@ -268,10 +288,36 @@ const CreatePost = () => {
     }
   };
 
+  const handleAddTextInput = () => {
+    if (textInputLabel.trim()) {
+      setCustomTextInputs([
+        ...customTextInputs,
+        { category: textInputLabel, type: POST_ATTRIBUTE_TYPES.TEXT_INPUT },
+      ]);
+      setTextInputLabel("");
+    } else {
+      toast({
+        title: "Create Post",
+        description: "Text Input label name cannot be empty.",
+        status: "error",
+      });
+    }
+  };
+
   const handleRemoveCheckbox = (index) => {
     const newCheckboxes = [...customCheckboxes];
     newCheckboxes.splice(index, 1);
     setCustomCheckboxes(newCheckboxes);
+  };
+
+  const handleRemoveTextInput = (index) => {
+    const newTextInputs = [...customTextInputs];
+    newTextInputs.splice(index, 1);
+    setCustomTextInputs(newTextInputs);
+  };
+
+  const handleTeamMemberToggle = () => {
+    setIncludeTeamMember((prev) => !prev);
   };
 
   return (
@@ -393,20 +439,72 @@ const CreatePost = () => {
                     />
                   </Flex>
                 </FormControl>
+
+                {customCheckboxes.map((checkbox, index) => (
+                  <Flex key={index} alignItems="center" mb={2}>
+                    <Checkbox mr={2} isReadOnly>
+                      {checkbox.category}
+                    </Checkbox>
+                    <IconButton
+                      icon={<DeleteIcon />}
+                      colorScheme="red"
+                      onClick={() => handleRemoveCheckbox(index)}
+                      aria-label="Remove checkbox"
+                      size="sm"
+                    />
+                  </Flex>
+                ))}
+
+                <FormControl mb={4}>
+                  <FormLabel>Custom Text Input</FormLabel>
+                  <Flex>
+                    <Input
+                      placeholder="Enter label name"
+                      value={textInputLabel}
+                      onChange={(e) => setTextInputLabel(e.target.value)}
+                      mr={2}
+                    />
+                    <IconButton
+                      icon={<AddIcon />}
+                      onClick={handleAddTextInput}
+                      colorScheme="blue"
+                      aria-label="Add text input"
+                    />
+                  </Flex>
+                </FormControl>
+
+                {customTextInputs.map((textInput, index) => (
+                  <>
+                    <FormControl mb={4}>
+                      <FormLabel>{textInput.category}</FormLabel>
+                      <Flex>
+                        <Input
+                          value={null}
+                          placeholder={`Enter ${textInput.category}`}
+                          isReadOnly
+                          mr={2}
+                        />
+                        <IconButton
+                          icon={<DeleteIcon />}
+                          colorScheme="red"
+                          onClick={() => handleRemoveTextInput(index)}
+                          aria-label="Remove textInput"
+                          size="sm"
+                        />
+                      </Flex>
+                    </FormControl>
+                  </>
+                ))}
+
+                <Checkbox
+                  key="Team-Member-Selection"
+                  isChecked={includeTeamMember}
+                  onChange={handleTeamMemberToggle}
+                >
+                  Include Team Member Selection?
+                </Checkbox>
               </>
             )}
-            {customCheckboxes.map((checkbox, index) => (
-              <Flex key={index} alignItems="center" mb={2}>
-                <Checkbox mr={2}>{checkbox.category}</Checkbox>
-                <IconButton
-                  icon={<DeleteIcon />}
-                  colorScheme="red"
-                  onClick={() => handleRemoveCheckbox(index)}
-                  aria-label="Remove checkbox"
-                  size="sm"
-                />
-              </Flex>
-            ))}
 
             <Button type="submit" colorScheme="blue" isFullWidth>
               {isEditMode ? "Update Post" : "Create Post"}
