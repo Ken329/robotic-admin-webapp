@@ -14,6 +14,7 @@ import {
   Checkbox,
   FormControl,
   FormLabel,
+  Input,
 } from "@chakra-ui/react";
 import Select from "react-select";
 import { ArrowBackIcon } from "@chakra-ui/icons";
@@ -117,7 +118,30 @@ const Post = () => {
             <VStack marginTop="30px">
               <VStack align="start" spacing="5" mb="30px">
                 {blog?.customAttributes?.map((attribute, index) => {
-                  if (attribute.category === "Team Member") {
+                  if (attribute.type === "checkbox") {
+                    return (
+                      <Checkbox key={index} isChecked={false} isReadOnly={true}>
+                        {attribute.category}
+                      </Checkbox>
+                    );
+                  }
+                  if (attribute.type === "textInput") {
+                    return (
+                      <FormControl key={index}>
+                        <FormLabel>{attribute.category}</FormLabel>
+                        <Input
+                          placeholder={`Enter ${attribute.category}`}
+                          value={null}
+                          mr={2}
+                          isReadOnly={true}
+                        />
+                      </FormControl>
+                    );
+                  }
+                  if (
+                    attribute.type === "Team Member" ||
+                    attribute.category === "Team Member"
+                  ) {
                     return (
                       <FormControl key={index}>
                         <FormLabel>
@@ -127,7 +151,7 @@ const Post = () => {
                           placeholder="Select team member"
                           isSearchable
                           isClearable
-                          isDisabled={true}
+                          isReadOnly={true}
                         />
                       </FormControl>
                     );
