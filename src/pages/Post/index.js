@@ -114,15 +114,21 @@ const Post = () => {
             <Heading fontSize="2xl">{blog?.title}</Heading>
           </VStack>
           <Box className="ql-editor">{parse(`${blog?.content}`)}</Box>
-          {blog?.category === POST_TYPE.COMPETITION && (
-            <VStack marginTop="30px">
-              <VStack align="start" spacing="5" mb="30px">
+          <Box marginTop="30px">
+            {blog?.category === POST_TYPE.COMPETITION && (
+              <VStack spacing="5" mb="30px">
                 {blog?.customAttributes?.map((attribute, index) => {
                   if (attribute.type === "checkbox") {
                     return (
-                      <Checkbox key={index} isChecked={false} isReadOnly={true}>
-                        {attribute.category}
-                      </Checkbox>
+                      <FormControl key={index}>
+                        <Checkbox
+                          key={index}
+                          isChecked={false}
+                          isReadOnly={true}
+                        >
+                          {attribute.category}
+                        </Checkbox>
+                      </FormControl>
                     );
                   }
                   if (attribute.type === "textInput") {
@@ -157,15 +163,17 @@ const Post = () => {
                     );
                   } else {
                     return (
-                      <Checkbox key={index} isReadOnly={true}>
-                        {attribute.category}
-                      </Checkbox>
+                      <FormControl key={index}>
+                        <Checkbox key={index} isReadOnly={true}>
+                          {attribute.category}
+                        </Checkbox>
+                      </FormControl>
                     );
                   }
                 })}
               </VStack>
-            </VStack>
-          )}
+            )}
+          </Box>
         </Box>
       </Container>
     </Layout>

@@ -191,6 +191,7 @@ const Filters = ({ handleFilterChange }) => {
             <option value="pending admin">Pending Admin</option>
             <option value="approved">Approved</option>
             <option value="rejected">Rejected</option>
+            <option value="expired">Expired</option>
           </Select>
         </Flex>
       </GridItem>
