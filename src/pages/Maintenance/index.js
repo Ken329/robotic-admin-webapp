@@ -54,7 +54,8 @@ const Maintenance = () => {
           color="gray.600"
           maxWidth="500px"
         >
-          STEAM Cup+ is under daily maintenance from 22:00 PM to{" "}
+          STEAM Cup+ is under daily maintenance from{" "}
+          {maintenanceTime?.startTime || "12.00 AM"} to{" "}
           {maintenanceTime?.endTime || "N/A"}. Please try again tomorrow.
         </Text>
       </VStack>
