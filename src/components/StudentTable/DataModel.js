@@ -33,7 +33,9 @@ import {
   VStack,
   Spinner,
   Select,
+  Tooltip,
 } from "@chakra-ui/react";
+import { QuestionOutlineIcon } from "@chakra-ui/icons";
 import Spin from "../Spin";
 import { getUserById } from "../../services/auth";
 import { createSignUpSchema } from "../../utils/validationSchema";
@@ -265,6 +267,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                     level: studentData?.level || "",
                     roboticId: studentData?.roboticId || "",
                     joinedDate: studentData?.joinedDate || "",
+                    expiryDate: studentData?.expiryDate || "",
                   }}
                   onSubmit={(values) => {
                     if (studentData?.status === STUDENT_STATUS.APPROVED) {
@@ -306,7 +309,10 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                               name="race"
                               placeholder="Select Student race"
                               variant="filled"
-                              isReadOnly={isReadOnly}
+                              isDisabled={isReadOnly}
+                              _disabled={{
+                                opacity: 1,
+                              }}
                             >
                               <option value="Malay">Malay</option>
                               <option value="Chinese">Chinese</option>
@@ -332,7 +338,10 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                               name="nationality"
                               placeholder="Select student nationality"
                               variant="filled"
-                              isReadOnly={isReadOnly}
+                              isDisabled={isReadOnly}
+                              _disabled={{
+                                opacity: 1,
+                              }}
                             >
                               <option value="malaysia">Malaysian</option>
                               <option value="others">Others</option>
@@ -390,7 +399,10 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                               name="gender"
                               placeholder="Select student gender"
                               variant="filled"
-                              isReadOnly={isReadOnly}
+                              isDisabled={isReadOnly}
+                              _disabled={{
+                                opacity: 1,
+                              }}
                             >
                               <option value="male">Male</option>
                               <option value="female">Female</option>
@@ -500,7 +512,10 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                               name="size"
                               placeholder="Select T-Shirt size"
                               variant="filled"
-                              isReadOnly={isReadOnly}
+                              isDisabled={isReadOnly}
+                              _disabled={{
+                                opacity: 1,
+                              }}
                             >
                               <option value="4XS">4XS</option>
                               <option value="3XS">3XS</option>
@@ -531,25 +546,63 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                           <FormErrorMessage>{errors.center}</FormErrorMessage>
                         </FormControl>
 
-                        <FormControl
-                          isInvalid={errors.joinedDate && touched.joinedDate}
-                          w="100%"
-                        >
-                          <FormLabel htmlFor="joinedDate">
-                            Joined Date
-                          </FormLabel>
-                          <Field
-                            as={Input}
-                            id="joinedDate"
-                            name="joinedDate"
-                            type="text"
-                            variant="filled"
-                            isReadOnly={isReadOnly}
-                          />
-                          <FormErrorMessage>
-                            {errors.joinedDate}
-                          </FormErrorMessage>
-                        </FormControl>
+                        <Grid templateColumns="repeat(2, 1fr)" gap={4} w="100%">
+                          <FormControl
+                            isInvalid={errors.joinedDate && touched.joinedDate}
+                            w="100%"
+                          >
+                            <FormLabel htmlFor="joinedDate">
+                              Joined Date
+                            </FormLabel>
+                            <Field
+                              as={Input}
+                              id="joinedDate"
+                              name="joinedDate"
+                              type="text"
+                              variant="filled"
+                              isReadOnly={isReadOnly}
+                            />
+                            <FormErrorMessage>
+                              {errors.joinedDate}
+                            </FormErrorMessage>
+                          </FormControl>
+
+                          <FormControl
+                            isInvalid={errors.expiryDate && touched.expiryDate}
+                            w="100%"
+                          >
+                            <FormLabel
+                              htmlFor="expiryDate"
+                              display="flex"
+                              alignItems="center"
+                              gap={2}
+                            >
+                              Membership Expiry Date
+                              <Tooltip
+                                label="This field will be calculated and assigned automatically."
+                                hasArrow
+                              >
+                                <QuestionOutlineIcon
+                                  color="gray.500"
+                                  cursor="pointer"
+                                  boxSize={4}
+                                />
+                              </Tooltip>
+                            </FormLabel>
+
+                            <Field
+                              as={Input}
+                              id="expiryDate"
+                              name="expiryDate"
+                              type="text"
+                              variant="filled"
+                              isReadOnly={true}
+                            />
+                            <FormErrorMessage>
+                              {errors.expiryDate}
+                            </FormErrorMessage>
+                          </FormControl>
+                        </Grid>
 
                         <FormControl
                           isInvalid={errors.roboticId && touched.roboticId}
@@ -581,7 +634,10 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                             name="level"
                             placeholder="Select Student Level"
                             variant="filled"
-                            isReadOnly={isReadOnly}
+                            isDisabled={isReadOnly}
+                            _disabled={{
+                              opacity: 1,
+                            }}
                           >
                             {levels &&
                               levels.map((level) => (
@@ -632,7 +688,10 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                             name="relationship"
                             placeholder="Select relationship to student"
                             variant="filled"
-                            isReadOnly={isReadOnly}
+                            isDisabled={isReadOnly}
+                            _disabled={{
+                              opacity: 1,
+                            }}
                           >
                             <option value="father">Father</option>
                             <option value="mother">Mother</option>
