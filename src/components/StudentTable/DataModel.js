@@ -52,6 +52,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
   const [loading, setLoading] = useState(true);
   const [isEdit, setIsEdit] = useState(false);
   const { data } = useGetStudentLevelsQuery();
+  const [expiryDate, setExpiryDate] = useState(studentData?.expiryDate || "");
 
   const signUpSchema = createSignUpSchema(role);
 
@@ -216,6 +217,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
         try {
           const response = await getUserById(rowData?.id, token);
           setStudentData(response);
+          setExpiryDate(response?.expiryDate)
         } catch (error) {
           toast({
             title: "Student",
@@ -267,7 +269,6 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                     level: studentData?.level || "",
                     roboticId: studentData?.roboticId || "",
                     joinedDate: studentData?.joinedDate || "",
-                    expiryDate: studentData?.expiryDate || "",
                   }}
                   onSubmit={(values) => {
                     if (studentData?.status === STUDENT_STATUS.APPROVED) {
@@ -567,12 +568,8 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                             </FormErrorMessage>
                           </FormControl>
 
-                          <FormControl
-                            isInvalid={errors.expiryDate && touched.expiryDate}
-                            w="100%"
-                          >
+                          <FormControl w="100%">
                             <FormLabel
-                              htmlFor="expiryDate"
                               display="flex"
                               alignItems="center"
                               gap={2}
@@ -592,15 +589,11 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
 
                             <Field
                               as={Input}
-                              id="expiryDate"
-                              name="expiryDate"
+                              value={expiryDate}
                               type="text"
                               variant="filled"
                               isReadOnly={true}
                             />
-                            <FormErrorMessage>
-                              {errors.expiryDate}
-                            </FormErrorMessage>
                           </FormControl>
                         </Grid>
 
