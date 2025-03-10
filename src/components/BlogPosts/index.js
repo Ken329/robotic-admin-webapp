@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import {
   Box,
@@ -13,58 +13,24 @@ import {
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import BlogCard from "./BlogCard";
-
-const sortBlogs = (blogs, sortBy) => {
-  const sortedBlogs = [...blogs];
-  switch (sortBy) {
-    case "newest":
-      return sortedBlogs.sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-      );
-    case "oldest":
-      return sortedBlogs.sort(
-        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
-      );
-    case "mostViewed":
-      return sortedBlogs.sort((a, b) => b.views - a.views);
-    default:
-      return sortedBlogs;
-  }
-};
+import useBlogFilter from "./hook/useBlogFilter";
 
 const BlogList = ({ blogs, handleDelete }) => {
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("newest");
-
-  const handleCategoryChange = (event) => {
-    setSelectedCategory(event.target.value);
-  };
-
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
-  const handleSortChange = (event) => {
-    setSortBy(event.target.value);
-  };
-
-  const filteredBlogs = blogs.filter((blog) => {
-    const matchesCategory =
-      selectedCategory === "all" || blog.category === selectedCategory;
-    const matchesSearch = blog.title
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
-
-  const sortedAndFilteredBlogs = sortBlogs(filteredBlogs, sortBy);
+  const {
+    selectedCategory,
+    searchQuery,
+    sortBy,
+    sortedBlogs,
+    setSelectedCategory,
+    setSearchQuery,
+    setSortBy,
+  } = useBlogFilter(blogs);
 
   return (
     <Box m={{ base: "5%", md: "5%", lg: "2%" }}>
       <Flex
-        direction={{ base: "column", md: "row", lg: "row" }}
-        alignItems={{ base: "stretch", md: "center", lg: "center" }}
+        direction={{ base: "column", md: "row" }}
+        alignItems="center"
         mb={4}
         gap={4}
       >
@@ -75,32 +41,29 @@ const BlogList = ({ blogs, handleDelete }) => {
           <Input
             placeholder="Search"
             value={searchQuery}
-            onChange={handleSearchChange}
+            onChange={(e) => setSearchQuery(e.target.value)}
             bg="white"
             border="none"
             _focus={{ boxShadow: "outline" }}
           />
         </InputGroup>
-        <Flex direction={{ base: "rown", md: 0, lg: 0 }} gap={4}>
+        <Flex gap={4}>
           <Select
-            onChange={handleCategoryChange}
+            onChange={(e) => setSelectedCategory(e.target.value)}
             bg="white"
             flex="1"
             borderRadius="md"
             boxShadow="sm"
             _focus={{ boxShadow: "outline" }}
+            value={selectedCategory}
           >
             <option value="all">All</option>
-            {[...new Set(blogs.map((blog) => blog.category))].map(
-              (category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              )
-            )}
+            <option value="general">General</option>
+            <option value="exercise">Exercise</option>
+            <option value="competition">Competition</option>
           </Select>
           <Select
-            onChange={handleSortChange}
+            onChange={(e) => setSortBy(e.target.value)}
             bg="white"
             flex="1"
             borderRadius="md"
@@ -117,12 +80,12 @@ const BlogList = ({ blogs, handleDelete }) => {
       <Heading as="h3" size="lg" mb="10px">
         Latest Posts
       </Heading>
-      <SimpleGrid columns={{ base: 1, md: 1, lg: 3 }} spacing={5}>
-        {sortedAndFilteredBlogs.map((blog) => (
+      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={5}>
+        {sortedBlogs.map((blog) => (
           <BlogCard key={blog.id} blog={blog} handleDelete={handleDelete} />
         ))}
       </SimpleGrid>
-      {sortedAndFilteredBlogs.length === 0 && <Text>None</Text>}
+      {sortedBlogs.length === 0 && <Text>None</Text>}
     </Box>
   );
 };

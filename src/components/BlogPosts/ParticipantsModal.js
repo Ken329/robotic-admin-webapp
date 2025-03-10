@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import {
   Box,
@@ -21,95 +21,17 @@ import {
   Flex,
   useDisclosure,
 } from "@chakra-ui/react";
-import {
-  getCoreRowModel,
-  useReactTable,
-  flexRender,
-  getFilteredRowModel,
-  getSortedRowModel,
-  getPaginationRowModel,
-} from "@tanstack/react-table";
 import { ArrowDownIcon, ArrowUpIcon } from "@chakra-ui/icons";
 import { FiSliders, FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { formatDistanceToNow } from "date-fns";
-import { useGetALLParticipantsQuery } from "../../redux/slices/posts/api";
+import useParticipantsTable from "./hook/useParticipantsTable";
 
 const ParticipantsModal = ({ blogId }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [data, setData] = useState([]);
-  const [globalFilter, setGlobalFilter] = useState("");
-  const [sorting, setSorting] = useState([]);
-  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
 
-  const { data: participantsData } = useGetALLParticipantsQuery(blogId, {
-    skip: !isOpen,
-  });
-
-  const formatDate = (dateString) =>
-    formatDistanceToNow(new Date(dateString), { addSuffix: true });
-
-  const columns = useMemo(
-    () => [
-      {
-        accessorKey: "email",
-        header: "Email",
-      },
-      {
-        accessorKey: "centerName",
-        header: "Center",
-      },
-      {
-        accessorKey: "levelName",
-        header: "Level",
-      },
-      {
-        accessorFn: (row) =>
-          row.attributes
-            .filter(
-              (attr) => attr.value === true && attr.category !== "Team Member"
-            )
-            .map((attr) => attr.category)
-            .join(", "),
-        header: "Categories",
-      },
-      {
-        accessorFn: (row) => {
-          const teamMember = row.attributes.find(
-            (attr) => attr.category === "Team Member"
-          );
-          return teamMember && teamMember.value ? teamMember.value : "None";
-        },
-        header: "Team Member",
-      },
-      {
-        accessorFn: (row) => formatDate(row.createdAt),
-        header: "Signed Up",
-      },
-    ],
-    []
+  const { table, nameFilter, setNameFilter } = useParticipantsTable(
+    blogId,
+    isOpen
   );
-
-  const table = useReactTable({
-    data: data || [],
-    columns,
-    state: {
-      globalFilter,
-      sorting,
-      pagination,
-    },
-    onSortingChange: setSorting,
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-  });
-
-  useEffect(() => {
-    if (participantsData) {
-      setData(participantsData.data);
-    }
-  }, [participantsData]);
 
   return (
     <>
@@ -125,8 +47,8 @@ const ParticipantsModal = ({ blogId }) => {
             <Flex mb={4} align="center" gap={4}>
               <Input
                 placeholder="Search participants..."
-                value={globalFilter || ""}
-                onChange={(e) => setGlobalFilter(e.target.value)}
+                value={nameFilter || ""}
+                onChange={(e) => setNameFilter(e.target.value)}
                 width="auto"
               />
             </Flex>
@@ -175,7 +97,7 @@ const ParticipantsModal = ({ blogId }) => {
                   {table.getRowModel().rows.length === 0 ? (
                     <Tr>
                       <Td
-                        colSpan={columns.length}
+                        colSpan={table.getAllColumns().length}
                         textAlign="center"
                         backgroundColor="#F7FAFC"
                       >
@@ -187,10 +109,7 @@ const ParticipantsModal = ({ blogId }) => {
                       <Tr key={row.id}>
                         {row.getVisibleCells().map((cell) => (
                           <Td key={cell.id} backgroundColor="#F7FAFC">
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
+                            {cell.renderValue()}
                           </Td>
                         ))}
                       </Tr>
