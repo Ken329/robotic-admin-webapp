@@ -138,6 +138,33 @@ const BlogCard = ({ blog, handleDelete }) => {
         </Box>
       )}
 
+      {role === USER_ROLE.CENTER && (
+        <Box
+          position="absolute"
+          top="10px"
+          right="10px"
+          display="flex"
+          flexDirection="row"
+          alignItems="flex-end"
+          gap="2"
+          opacity="0"
+          _hover={{ opacity: "1" }}
+        >
+          {blog?.category === POST_TYPE.COMPETITION && (
+            <>
+              <ParticipantsModal blogId={blog?.id} />
+              <IconButton
+                size="sm"
+                colorScheme="blue"
+                aria-label="Export Data"
+                icon={<FiDownload />}
+                onClick={handleExportData}
+              />
+            </>
+          )}
+        </Box>
+      )}
+
       <CardHeader p={0}>
         <Image
           src={blog?.url}
