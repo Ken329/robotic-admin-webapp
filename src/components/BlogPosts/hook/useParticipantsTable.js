@@ -11,7 +11,7 @@ import { useGetALLParticipantsQuery } from "../../../redux/slices/posts/api";
 
 const useParticipantsTable = (blogId, isOpen) => {
   const [data, setData] = useState([]);
-  const [nameFilter, setNameFilter] = useState("");
+  const [emailFilter, setEmailFilter] = useState("");
   const [sorting, setSorting] = useState([]);
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
 
@@ -24,6 +24,8 @@ const useParticipantsTable = (blogId, isOpen) => {
       setData(participantsData.data);
     }
   }, [participantsData]);
+
+  const totalRecords = participantsData?.data.length || 0;
 
   const formatDate = (dateString) =>
     formatDistanceToNow(new Date(dateString), { addSuffix: true });
@@ -56,10 +58,17 @@ const useParticipantsTable = (blogId, isOpen) => {
     [dynamicColumns]
   );
 
+  const filteredData = useMemo(() => {
+    if (!emailFilter) return data;
+    return data.filter((row) =>
+      row.email.toLowerCase().includes(emailFilter.toLowerCase())
+    );
+  }, [data, emailFilter]);
+
   const table = useReactTable({
-    data: data || [],
+    data: filteredData,
     columns,
-    state: { nameFilter, sorting, pagination },
+    state: { sorting, pagination },
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
@@ -68,7 +77,7 @@ const useParticipantsTable = (blogId, isOpen) => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  return { table, nameFilter, setNameFilter };
+  return { table, emailFilter, setEmailFilter, totalRecords  };
 };
 
 export default useParticipantsTable;
