@@ -217,7 +217,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
         try {
           const response = await getUserById(rowData?.id, token);
           setStudentData(response);
-          setExpiryDate(response?.expiryDate)
+          setExpiryDate(response?.expiryDate);
         } catch (error) {
           toast({
             title: "Student",
@@ -589,7 +589,9 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
 
                             <Field
                               as={Input}
-                              value={expiryDate}
+                              value={new Date(expiryDate).toLocaleDateString(
+                                "en-GB"
+                              )}
                               type="text"
                               variant="filled"
                               isReadOnly={true}

@@ -28,10 +28,8 @@ import useParticipantsTable from "./hook/useParticipantsTable";
 const ParticipantsModal = ({ blogId }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { table, nameFilter, setNameFilter } = useParticipantsTable(
-    blogId,
-    isOpen
-  );
+  const { table, emailFilter, setEmailFilter, totalRecords } =
+    useParticipantsTable(blogId, isOpen);
 
   return (
     <>
@@ -46,12 +44,14 @@ const ParticipantsModal = ({ blogId }) => {
           <ModalBody>
             <Flex mb={4} align="center" gap={4}>
               <Input
-                placeholder="Search participants..."
-                value={nameFilter || ""}
-                onChange={(e) => setNameFilter(e.target.value)}
+                placeholder="Search Email"
+                value={emailFilter || ""}
+                onChange={(e) => setEmailFilter(e.target.value)}
                 width="auto"
               />
             </Flex>
+
+            <Text mb={2}>Total records: {totalRecords}</Text>
 
             <TableContainer>
               <Table variant="simple">
