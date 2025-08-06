@@ -21,6 +21,7 @@ import {
   Flex,
   useDisclosure,
 } from "@chakra-ui/react";
+import { flexRender } from "@tanstack/react-table";
 import { ArrowDownIcon, ArrowUpIcon } from "@chakra-ui/icons";
 import { FiSliders, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import useParticipantsTable from "./hook/useParticipantsTable";
@@ -109,7 +110,10 @@ const ParticipantsModal = ({ blogId }) => {
                       <Tr key={row.id}>
                         {row.getVisibleCells().map((cell) => (
                           <Td key={cell.id} backgroundColor="#F7FAFC">
-                            {cell.renderValue()}
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
                           </Td>
                         ))}
                       </Tr>
