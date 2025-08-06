@@ -1,4 +1,7 @@
-import { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import { formatDistanceToNow } from "date-fns";
+import { useSelector } from "react-redux";
+import { makeSelectUserRole } from "../../../redux/slices/app/selector";
 import {
   getCoreRowModel,
   useReactTable,
@@ -6,18 +9,34 @@ import {
   getSortedRowModel,
   getPaginationRowModel,
 } from "@tanstack/react-table";
-import { formatDistanceToNow } from "date-fns";
-import { useGetALLParticipantsQuery } from "../../../redux/slices/posts/api";
+import { Button } from "@chakra-ui/react";
+import { USER_ROLE } from "../../../utils/constants";
+import {
+  useGetALLParticipantsQuery,
+  useDeleteParticipantSignUpMutation,
+} from "../../../redux/slices/posts/api";
+import useCustomToast from "../../CustomToast";
 
 const useParticipantsTable = (blogId, isOpen) => {
+  const toast = useCustomToast();
+  const role = useSelector(makeSelectUserRole());
   const [data, setData] = useState([]);
   const [nameFilter, setNameFilter] = useState("");
   const [sorting, setSorting] = useState([]);
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
 
-  const { data: participantsData } = useGetALLParticipantsQuery(blogId, {
+  const isAdmin = role === USER_ROLE.ADMIN;
+
+  const {
+    data: participantsData,
+    refetch,
+    isFetching,
+  } = useGetALLParticipantsQuery(blogId, {
     skip: !isOpen,
   });
+
+  const [deleteParticipant, { isLoading: isDeleting }] =
+    useDeleteParticipantSignUpMutation();
 
   useEffect(() => {
     if (participantsData) {
@@ -38,13 +57,50 @@ const useParticipantsTable = (blogId, isOpen) => {
     return [...categories];
   }, [participantsData]);
 
-  const predefinedColumns = [
+  const handleDelete = async (id) => {
+    try {
+      const response = await deleteParticipant(id).unwrap();
+      if (response.success) {
+        toast({
+          title: "Participants",
+          description: response?.message,
+          status: "success",
+        });
+        refetch();
+      }
+    } catch (err) {
+      toast({
+        title: "Participants",
+        description: "Failed to delete participant",
+        status: "error",
+      });
+      console.error("Failed to delete participant:", err);
+    }
+  };
+
+  const baseColumns = [
     { accessorKey: "fullName", header: "Name" },
-    { accessorKey: "email", header: "Email" },
     { accessorKey: "centerName", header: "Center" },
+    { accessorKey: "nric", header: "NRIC" },
+    { accessorKey: "passport", header: "Passport" },
     { accessorKey: "levelName", header: "Level" },
     { accessorFn: (row) => formatDate(row.createdAt), header: "Signed Up" },
   ];
+
+  const actionColumn = {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => (
+      <Button
+        size="sm"
+        colorScheme="red"
+        isLoading={isDeleting}
+        onClick={() => handleDelete(row.original.participantId)}
+      >
+        Delete
+      </Button>
+    ),
+  };
 
   const dynamicColumns = attributeCategories.map((category) => ({
     accessorFn: (row) => {
@@ -54,10 +110,12 @@ const useParticipantsTable = (blogId, isOpen) => {
     header: category,
   }));
 
-  const columns = useMemo(
-    () => [...predefinedColumns, ...dynamicColumns],
-    [dynamicColumns]
-  );
+  const columns = useMemo(() => {
+    if (isAdmin) {
+      return [...baseColumns, ...dynamicColumns, actionColumn];
+    }
+    return [...baseColumns, ...dynamicColumns];
+  }, [baseColumns, dynamicColumns, actionColumn, isAdmin]);
 
   const filteredData = useMemo(() => {
     if (!nameFilter) return data;
@@ -78,7 +136,7 @@ const useParticipantsTable = (blogId, isOpen) => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  return { table, nameFilter, setNameFilter, totalRecords };
+  return { table, nameFilter, setNameFilter, totalRecords, isFetching };
 };
 
 export default useParticipantsTable;
