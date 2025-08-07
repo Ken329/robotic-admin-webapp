@@ -1,29 +1,25 @@
-import { baseApiSlice } from "../../createAppApi";
+import { baseApiSlice } from '../../createAppApi';
 
 export const appApi = baseApiSlice.injectEndpoints({
-  endpoints: (builder) => {
+  endpoints: builder => {
     return {
       getUserData: builder.query({
         query: () => ({
-          url: "/user",
-        }),
+          url: '/user'
+        })
       }),
       maintenanceCheck: builder.query({
         query: () => ({
-          url: "/maintenance",
-        }),
+          url: '/maintenance'
+        })
       }),
       getAdminPanelData: builder.query({
         query: () => ({
-          url: "/user/statuses",
-        }),
-      }),
+          url: '/user/statuses'
+        })
+      })
     };
-  },
+  }
 });
 
-export const {
-  useGetUserDataQuery,
-  useMaintenanceCheckQuery,
-  useGetAdminPanelDataQuery,
-} = appApi;
+export const { useGetUserDataQuery, useMaintenanceCheckQuery, useGetAdminPanelDataQuery } = appApi;

@@ -1,46 +1,50 @@
-import React, { useState, useEffect, useRef } from "react";
-import parse from "html-react-parser";
-import { useNavigate, useParams } from "react-router-dom";
-import {
-  useGetAllBlogTypesQuery,
-  useGetAllCategoriesQuery,
-  useCreatePostMutation,
-  useUpdatePostMutation,
-  useGetPostByIdQuery,
-} from "../../redux/slices/posts/api";
-import { useGetStudentLevelsQuery } from "../../redux/slices/students/api";
+import React, { useEffect, useRef, useState } from 'react';
+
+import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import {
   Box,
-  Heading,
-  Flex,
-  FormControl,
-  FormLabel,
-  Input,
-  Text,
-  Select,
   Button,
   Checkbox,
   CheckboxGroup,
-  useDisclosure,
+  Flex,
+  FormControl,
+  FormLabel,
+  Heading,
+  IconButton,
+  Input,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
-  IconButton,
-} from "@chakra-ui/react";
-import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
-import Layout from "../../components/Layout/MainLayout";
-import ReactQuill, { Quill } from "react-quill";
-import QuillResizeImage from "quill-resize-image";
-import "react-quill/dist/quill.snow.css";
-import useCustomToast from "../../components/CustomToast";
-import CoverImage from "./CoverImage";
-import { POST_ATTRIBUTE_TYPES } from "../../utils/constants";
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Select,
+  Text,
+  useDisclosure
+} from '@chakra-ui/react';
 
-Quill.register("modules/resize", QuillResizeImage);
+import 'react-quill/dist/quill.snow.css';
+
+import parse from 'html-react-parser';
+import QuillResizeImage from 'quill-resize-image';
+import ReactQuill, { Quill } from 'react-quill';
+import { useNavigate, useParams } from 'react-router-dom';
+
+import CoverImage from './CoverImage';
+import useCustomToast from '../../components/CustomToast';
+import Layout from '../../components/Layout/MainLayout';
+import {
+  useCreatePostMutation,
+  useGetAllBlogTypesQuery,
+  useGetAllCategoriesQuery,
+  useGetPostByIdQuery,
+  useUpdatePostMutation
+} from '../../redux/slices/posts/api';
+import { useGetStudentLevelsQuery } from '../../redux/slices/students/api';
+import { POST_ATTRIBUTE_TYPES } from '../../utils/constants';
+
+Quill.register('modules/resize', QuillResizeImage);
 
 const CreatePost = () => {
   const toast = useCustomToast();
@@ -50,22 +54,22 @@ const CreatePost = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const quillRef = useRef(null);
 
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState('');
   const [coverImage, setCoverImage] = useState(null);
-  const [description, setDescription] = useState("");
-  const [blogType, setBlogType] = useState("");
-  const [category, setCategory] = useState("");
-  const [editorContent, setEditorContent] = useState("");
+  const [description, setDescription] = useState('');
+  const [blogType, setBlogType] = useState('');
+  const [category, setCategory] = useState('');
+  const [editorContent, setEditorContent] = useState('');
   const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState("");
-  const [sendTo, setSendTo] = useState(["All"]);
+  const [imageUrl, setImageUrl] = useState('');
+  const [sendTo, setSendTo] = useState(['All']);
   const [sendToOptions, setSendToOptions] = useState([]);
   const [blogTypes, setBlogTypes] = useState([]);
   const [blogCategories, setBlogCategories] = useState([]);
-  const [initialCoverImage, setInitialCoverImage] = useState("");
-  const [checkboxLabel, setCheckboxLabel] = useState("");
+  const [initialCoverImage, setInitialCoverImage] = useState('');
+  const [checkboxLabel, setCheckboxLabel] = useState('');
   const [customCheckboxes, setCustomCheckboxes] = useState([]);
-  const [textInputLabel, setTextInputLabel] = useState("");
+  const [textInputLabel, setTextInputLabel] = useState('');
   const [customTextInputs, setCustomTextInputs] = useState([]);
   const [includeTeamMember, setIncludeTeamMember] = useState(false);
 
@@ -74,7 +78,7 @@ const CreatePost = () => {
   const { data: studentLevels } = useGetStudentLevelsQuery();
   const { data: postData, isSuccess: isPostLoaded } = useGetPostByIdQuery(id, {
     skip: !isEditMode,
-    refetchOnMountOrArgChange: true,
+    refetchOnMountOrArgChange: true
   });
   const [createPost] = useCreatePostMutation();
   const [updatePost] = useUpdatePostMutation();
@@ -86,35 +90,33 @@ const CreatePost = () => {
 
   useEffect(() => {
     if (studentLevels) {
-      setSendToOptions([
-        "All",
-        ...studentLevels.data.map((level) => level.name),
-      ]);
+      setSendToOptions(['All', ...studentLevels.data.map(level => level.name)]);
     }
   }, [studentLevels]);
 
   useEffect(() => {
     if (isPostLoaded && postData.success) {
       const post = postData.data;
+
       setTitle(post.title);
       setDescription(post.description);
       setCategory(post.category);
       setBlogType(post.type);
       setEditorContent(post.content);
-      setSendTo(post.assigned.split(", "));
+      setSendTo(post.assigned.split(', '));
       setInitialCoverImage(post.url);
       setCoverImage({ url: post.url });
 
       if (post.customAttributes) {
         const checkboxes = post.customAttributes.filter(
-          (attr) => attr.type === POST_ATTRIBUTE_TYPES.CHECKBOX
+          attr => attr.type === POST_ATTRIBUTE_TYPES.CHECKBOX
         );
         const textInputs = post.customAttributes.filter(
-          (attr) => attr.type === POST_ATTRIBUTE_TYPES.TEXT_INPUT
+          attr => attr.type === POST_ATTRIBUTE_TYPES.TEXT_INPUT
         );
 
         const hasTeamMember = post.customAttributes.some(
-          (attr) => attr.category === POST_ATTRIBUTE_TYPES.TEAM_MEMBER
+          attr => attr.category === POST_ATTRIBUTE_TYPES.TEAM_MEMBER
         );
 
         setCustomCheckboxes(checkboxes);
@@ -137,28 +139,29 @@ const CreatePost = () => {
       return false;
     }
 
-    if (category === "competition" && customCheckboxes.length === 0) {
+    if (category === 'competition' && customCheckboxes.length === 0) {
       return false;
     }
 
     return true;
   };
 
-  const handleSendToChange = (value) => {
-    setSendTo(value.includes("All") ? ["All"] : value);
+  const handleSendToChange = value => {
+    setSendTo(value.includes('All') ? ['All'] : value);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
 
     if (!validatePostData()) {
       toast({
-        title: "Validation Error",
-        description: "Please fill in all required fields.",
-        status: "error",
+        title: 'Validation Error',
+        description: 'Please fill in all required fields.',
+        status: 'error'
       });
       setLoading(false);
+
       return;
     }
 
@@ -167,17 +170,15 @@ const CreatePost = () => {
       description,
       category,
       type: blogType,
-      assigned: sendTo.join(", "),
-      content: editorContent,
+      assigned: sendTo.join(', '),
+      content: editorContent
     };
 
-    if (category === "competition") {
+    if (category === 'competition') {
       postPayload.customAttributes = [
         ...customCheckboxes,
         ...customTextInputs,
-        ...(includeTeamMember
-          ? [{ category: POST_ATTRIBUTE_TYPES.TEAM_MEMBER }]
-          : []),
+        ...(includeTeamMember ? [{ category: POST_ATTRIBUTE_TYPES.TEAM_MEMBER }] : [])
       ];
     }
 
@@ -189,27 +190,25 @@ const CreatePost = () => {
       if (isEditMode) {
         await updatePost({ id, ...postPayload }).unwrap();
         toast({
-          title: "Post Updated",
-          description: "Your post has been updated successfully.",
-          status: "success",
+          title: 'Post Updated',
+          description: 'Your post has been updated successfully.',
+          status: 'success'
         });
       } else {
         await createPost(postPayload).unwrap();
         toast({
-          title: "Post Created",
-          description: "Your post has been created successfully.",
-          status: "success",
+          title: 'Post Created',
+          description: 'Your post has been created successfully.',
+          status: 'success'
         });
       }
 
-      navigate("/admin/dashboard");
+      navigate('/admin/dashboard');
     } catch (error) {
       toast({
-        title: "Error",
-        description: `There was an error ${
-          isEditMode ? "updating" : "creating"
-        } the post.`,
-        status: "error",
+        title: 'Error',
+        description: `There was an error ${isEditMode ? 'updating' : 'creating'} the post.`,
+        status: 'error'
       });
     } finally {
       setLoading(false);
@@ -221,25 +220,26 @@ const CreatePost = () => {
       if (imageUrl) {
         const quill = quillRef.current.getEditor();
         const range = quill.getSelection();
+
         if (range) {
-          quill.insertEmbed(range.index, "image", imageUrl);
+          quill.insertEmbed(range.index, 'image', imageUrl);
         } else {
-          quill.insertEmbed(quill.getLength() - 1, "image", imageUrl);
+          quill.insertEmbed(quill.getLength() - 1, 'image', imageUrl);
         }
         toast({
-          title: "Create Post",
-          description: "Image uploaded successfully",
-          status: "success",
+          title: 'Create Post',
+          description: 'Image uploaded successfully',
+          status: 'success'
         });
 
-        setImageUrl("");
+        setImageUrl('');
         onClose();
       }
     } catch (error) {
       toast({
-        title: "Create Post",
+        title: 'Create Post',
         description: `Error uploading image: ${error}`,
-        status: "error",
+        status: 'error'
       });
     }
   };
@@ -249,23 +249,23 @@ const CreatePost = () => {
       container: [
         [{ font: [] }],
         [{ header: [1, 2, 3, 4, 5, 6, false] }],
-        ["bold", "italic", "underline", "strike"],
+        ['bold', 'italic', 'underline', 'strike'],
         [{ color: [] }, { background: [] }],
-        [{ list: "ordered" }, { list: "bullet" }],
-        [{ indent: "-1" }, { indent: "+1" }, { align: [] }],
-        ["link", "image", "video"],
-        ["clean"],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        [{ indent: '-1' }, { indent: '+1' }, { align: [] }],
+        ['link', 'image', 'video'],
+        ['clean']
       ],
-      handlers: { image: onOpen },
+      handlers: { image: onOpen }
     },
     resize: {
       displayStyles: {
-        backgroundColor: "black",
-        border: "none",
-        color: "white",
+        backgroundColor: 'black',
+        border: 'none',
+        color: 'white'
       },
-      modules: ["Resize", "DisplaySize", "Toolbar"],
-    },
+      modules: ['Resize', 'DisplaySize', 'Toolbar']
+    }
   };
 
   const handleCoverImageSelect = (url, fileId) => {
@@ -276,14 +276,14 @@ const CreatePost = () => {
     if (checkboxLabel.trim()) {
       setCustomCheckboxes([
         ...customCheckboxes,
-        { category: checkboxLabel, type: POST_ATTRIBUTE_TYPES.CHECKBOX },
+        { category: checkboxLabel, type: POST_ATTRIBUTE_TYPES.CHECKBOX }
       ]);
-      setCheckboxLabel("");
+      setCheckboxLabel('');
     } else {
       toast({
-        title: "Create Post",
-        description: "Checkbox label name cannot be empty.",
-        status: "error",
+        title: 'Create Post',
+        description: 'Checkbox label name cannot be empty.',
+        status: 'error'
       });
     }
   };
@@ -292,47 +292,47 @@ const CreatePost = () => {
     if (textInputLabel.trim()) {
       setCustomTextInputs([
         ...customTextInputs,
-        { category: textInputLabel, type: POST_ATTRIBUTE_TYPES.TEXT_INPUT },
+        { category: textInputLabel, type: POST_ATTRIBUTE_TYPES.TEXT_INPUT }
       ]);
-      setTextInputLabel("");
+      setTextInputLabel('');
     } else {
       toast({
-        title: "Create Post",
-        description: "Text Input label name cannot be empty.",
-        status: "error",
+        title: 'Create Post',
+        description: 'Text Input label name cannot be empty.',
+        status: 'error'
       });
     }
   };
 
-  const handleRemoveCheckbox = (index) => {
+  const handleRemoveCheckbox = index => {
     const newCheckboxes = [...customCheckboxes];
+
     newCheckboxes.splice(index, 1);
     setCustomCheckboxes(newCheckboxes);
   };
 
-  const handleRemoveTextInput = (index) => {
+  const handleRemoveTextInput = index => {
     const newTextInputs = [...customTextInputs];
+
     newTextInputs.splice(index, 1);
     setCustomTextInputs(newTextInputs);
   };
 
   const handleTeamMemberToggle = () => {
-    setIncludeTeamMember((prev) => !prev);
+    setIncludeTeamMember(prev => !prev);
   };
 
   return (
     <Layout isLoading={loading}>
       <Flex minH="100vh" gap={6} flexWrap="wrap">
-        <form onSubmit={handleSubmit} style={{ flex: "1 1 45%" }}>
+        <form onSubmit={handleSubmit} style={{ flex: '1 1 45%' }}>
           <Flex gap={6} boxShadow="lg" p={4} flexDir="column" width="100%">
-            <Heading textAlign="center">
-              {isEditMode ? "Edit Post" : "Create Post"}
-            </Heading>
+            <Heading textAlign="center">{isEditMode ? 'Edit Post' : 'Create Post'}</Heading>
             <FormControl isRequired>
               <FormLabel>Title:</FormLabel>
               <Input
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={e => setTitle(e.target.value)}
                 type="text"
                 placeholder="Post title"
               />
@@ -346,9 +346,9 @@ const CreatePost = () => {
                     src={(coverImage && coverImage.url) || initialCoverImage}
                     alt="Cover"
                     style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
                     }}
                   />
                 </Box>
@@ -358,7 +358,7 @@ const CreatePost = () => {
               <FormLabel>Description:</FormLabel>
               <Input
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={e => setDescription(e.target.value)}
                 type="text"
                 placeholder="Post description"
               />
@@ -368,9 +368,9 @@ const CreatePost = () => {
               <Select
                 value={blogType}
                 placeholder="Post type"
-                onChange={(e) => setBlogType(e.target.value)}
+                onChange={e => setBlogType(e.target.value)}
               >
-                {blogTypes.map((type) => (
+                {blogTypes.map(type => (
                   <option key={type} value={type}>
                     {type}
                   </option>
@@ -382,9 +382,9 @@ const CreatePost = () => {
               <Select
                 value={category}
                 placeholder="Post category"
-                onChange={(e) => setCategory(e.target.value)}
+                onChange={e => setCategory(e.target.value)}
               >
-                {blogCategories.map((cat) => (
+                {blogCategories.map(cat => (
                   <option key={cat} value={cat}>
                     {cat}
                   </option>
@@ -395,7 +395,7 @@ const CreatePost = () => {
               <FormLabel>Send To:</FormLabel>
               <CheckboxGroup value={sendTo} onChange={handleSendToChange}>
                 <Flex flexWrap="wrap" gap={4}>
-                  {sendToOptions.map((option) => (
+                  {sendToOptions.map(option => (
                     <Checkbox key={option} value={option}>
                       {option}
                     </Checkbox>
@@ -411,11 +411,11 @@ const CreatePost = () => {
                 onChange={setEditorContent}
                 theme="snow"
                 modules={modules}
-                style={{ minHeight: "300px" }}
+                style={{ minHeight: '300px' }}
               />
             </FormControl>
 
-            {category === "competition" && (
+            {category === 'competition' && (
               <>
                 <Text>
                   To add remark, add this line at the end of your content.
@@ -428,7 +428,7 @@ const CreatePost = () => {
                     <Input
                       placeholder="Enter label name"
                       value={checkboxLabel}
-                      onChange={(e) => setCheckboxLabel(e.target.value)}
+                      onChange={e => setCheckboxLabel(e.target.value)}
                       mr={2}
                     />
                     <IconButton
@@ -461,7 +461,7 @@ const CreatePost = () => {
                     <Input
                       placeholder="Enter label name"
                       value={textInputLabel}
-                      onChange={(e) => setTextInputLabel(e.target.value)}
+                      onChange={e => setTextInputLabel(e.target.value)}
                       mr={2}
                     />
                     <IconButton
@@ -507,7 +507,7 @@ const CreatePost = () => {
             )}
 
             <Button type="submit" colorScheme="blue" isFullWidth>
-              {isEditMode ? "Update Post" : "Create Post"}
+              {isEditMode ? 'Update Post' : 'Create Post'}
             </Button>
           </Flex>
         </form>
@@ -522,9 +522,9 @@ const CreatePost = () => {
                   src={(coverImage && coverImage.url) || initialCoverImage}
                   alt="Cover"
                   style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover'
                   }}
                 />
               </Box>
@@ -558,7 +558,7 @@ const CreatePost = () => {
                 <Input
                   type="url"
                   value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
+                  onChange={e => setImageUrl(e.target.value)}
                   placeholder="Enter the image URL"
                 />
               </FormControl>

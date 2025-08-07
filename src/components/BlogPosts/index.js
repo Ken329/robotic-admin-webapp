@@ -1,19 +1,22 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react';
+
+import { SearchIcon } from '@chakra-ui/icons';
 import {
   Box,
-  Text,
+  Flex,
   Heading,
-  SimpleGrid,
-  Select,
   Input,
   InputGroup,
   InputLeftElement,
-  Flex,
-} from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
-import BlogCard from "./BlogCard";
-import useBlogFilter from "./hook/useBlogFilter";
+  Select,
+  SimpleGrid,
+  Text
+} from '@chakra-ui/react';
+
+import PropTypes from 'prop-types';
+
+import BlogCard from './BlogCard';
+import useBlogFilter from './hook/useBlogFilter';
 
 const BlogList = ({ blogs, handleDelete }) => {
   const {
@@ -23,17 +26,12 @@ const BlogList = ({ blogs, handleDelete }) => {
     sortedBlogs,
     setSelectedCategory,
     setSearchQuery,
-    setSortBy,
+    setSortBy
   } = useBlogFilter(blogs);
 
   return (
-    <Box m={{ base: "5%", md: "5%", lg: "2%" }}>
-      <Flex
-        direction={{ base: "column", md: "row" }}
-        alignItems="center"
-        mb={4}
-        gap={4}
-      >
+    <Box m={{ base: '5%', md: '5%', lg: '2%' }}>
+      <Flex direction={{ base: 'column', md: 'row' }} alignItems="center" mb={4} gap={4}>
         <InputGroup flex="1" bg="white" borderRadius="md" boxShadow="sm">
           <InputLeftElement pointerEvents="none">
             <SearchIcon color="gray.300" />
@@ -41,20 +39,20 @@ const BlogList = ({ blogs, handleDelete }) => {
           <Input
             placeholder="Search"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={e => setSearchQuery(e.target.value)}
             bg="white"
             border="none"
-            _focus={{ boxShadow: "outline" }}
+            _focus={{ boxShadow: 'outline' }}
           />
         </InputGroup>
         <Flex gap={4}>
           <Select
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            onChange={e => setSelectedCategory(e.target.value)}
             bg="white"
             flex="1"
             borderRadius="md"
             boxShadow="sm"
-            _focus={{ boxShadow: "outline" }}
+            _focus={{ boxShadow: 'outline' }}
             value={selectedCategory}
           >
             <option value="all">All</option>
@@ -63,12 +61,12 @@ const BlogList = ({ blogs, handleDelete }) => {
             <option value="competition">Competition</option>
           </Select>
           <Select
-            onChange={(e) => setSortBy(e.target.value)}
+            onChange={e => setSortBy(e.target.value)}
             bg="white"
             flex="1"
             borderRadius="md"
             boxShadow="sm"
-            _focus={{ boxShadow: "outline" }}
+            _focus={{ boxShadow: 'outline' }}
             value={sortBy}
           >
             <option value="newest">Newest</option>
@@ -81,7 +79,7 @@ const BlogList = ({ blogs, handleDelete }) => {
         Latest Posts
       </Heading>
       <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={5}>
-        {sortedBlogs.map((blog) => (
+        {sortedBlogs.map(blog => (
           <BlogCard key={blog.id} blog={blog} handleDelete={handleDelete} />
         ))}
       </SimpleGrid>
@@ -92,11 +90,11 @@ const BlogList = ({ blogs, handleDelete }) => {
 
 BlogList.propTypes = {
   blogs: PropTypes.array.isRequired,
-  handleDelete: PropTypes.func,
+  handleDelete: PropTypes.func
 };
 
 BlogList.defaultProps = {
-  blogs: [],
+  blogs: []
 };
 
 export default BlogList;

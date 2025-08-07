@@ -1,18 +1,16 @@
-import { createSelector } from "@reduxjs/toolkit";
+import { createSelector } from '@reduxjs/toolkit';
 
-const selectApp = (state) => state.app;
+const selectApp = state => state.app;
 
-export const makeSelectUserData = () =>
-  createSelector(selectApp, (appState) => appState.userData);
+export const makeSelectUserData = () => createSelector(selectApp, appState => appState.userData);
 
-export const makeSelectToken = () =>
-  createSelector(selectApp, (appState) => appState.token);
+export const makeSelectToken = () => createSelector(selectApp, appState => appState.token);
 
 export const makeSelectUserName = () =>
-  createSelector(selectApp, (appState) => appState.userData?.email);
+  createSelector(selectApp, appState => appState.userData?.email);
 
 export const makeSelectUserRole = () =>
-  createSelector(selectApp, (appState) => appState.userData?.role);
+  createSelector(selectApp, appState => appState.userData?.role);
 
 export const makeSelectUserStatus = () =>
-  createSelector(selectApp, (appState) => appState.userData?.status);
+  createSelector(selectApp, appState => appState.userData?.status);

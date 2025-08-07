@@ -1,18 +1,19 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  centres: [],
+  centres: []
 };
 
 const centreSlice = createSlice({
-  name: "centres",
+  name: 'centres',
   initialState: initialState,
   reducers: {
     saveCentresData(state, action) {
       state.centres = action.payload;
-    },
-  },
+    }
+  }
 });
 
 export const { saveCentresData } = centreSlice.actions;
+
 export default centreSlice.reducer;

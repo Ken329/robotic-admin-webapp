@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
+import React, { useEffect, useState } from 'react';
+
 import {
-  Modal,
-  ModalOverlay,
-  ModalBody,
-  ModalFooter,
-  ModalContent,
-  Button,
   Box,
-} from "@chakra-ui/react";
-import Cropper from "react-easy-crop";
-import { cropImage } from "../../utils/helper";
-import useCustomToast from "../CustomToast";
+  Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalOverlay
+} from '@chakra-ui/react';
+
+import PropTypes from 'prop-types';
+import Cropper from 'react-easy-crop';
+
+import useCustomToast from '../CustomToast';
+import { cropImage } from '../../utils/helper';
 
 const ImageCrop = ({ open, image, onComplete, onClose }) => {
   const toast = useCustomToast();
@@ -23,6 +26,7 @@ const ImageCrop = ({ open, image, onComplete, onClose }) => {
   useEffect(() => {
     if (image) {
       const reader = new FileReader();
+
       reader.onload = () => {
         setImageSrc(reader.result);
       };
@@ -30,23 +34,20 @@ const ImageCrop = ({ open, image, onComplete, onClose }) => {
     }
   }, [image]);
 
-  const onZoomChange = (zoom) => {
+  const onZoomChange = zoom => {
     setZoom(zoom);
   };
 
   const handleCropComplete = async () => {
     try {
-      const croppedImageDataURL = await cropImage(
-        imageSrc,
-        croppedAreaPixels,
-        console.log
-      );
+      const croppedImageDataURL = await cropImage(imageSrc, croppedAreaPixels, console.log);
+
       onComplete(croppedImageDataURL);
     } catch (error) {
       toast({
-        title: "ImageCrop",
-        description: "Error cropping image",
-        status: "error",
+        title: 'ImageCrop',
+        description: 'Error cropping image',
+        status: 'error'
       });
     }
   };
@@ -56,12 +57,7 @@ const ImageCrop = ({ open, image, onComplete, onClose }) => {
       <ModalOverlay />
       <ModalContent>
         <ModalBody>
-          <Box
-            width={"100%"}
-            height={"300px"}
-            position="relative"
-            background="#333"
-          >
+          <Box width={'100%'} height={'300px'} position="relative" background="#333">
             <Cropper
               image={imageSrc}
               crop={crop}
@@ -89,11 +85,11 @@ ImageCrop.propTypes = {
   open: PropTypes.bool.isRequired,
   image: PropTypes.instanceOf(File),
   onComplete: PropTypes.func,
-  onClose: PropTypes.func,
+  onClose: PropTypes.func
 };
 
 ImageCrop.defaultProps = {
-  open: false,
+  open: false
 };
 
 export default ImageCrop;

@@ -1,38 +1,42 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { useDeleteStudentMutation } from "../../redux/slices/students/api";
+import React from 'react';
+
 import {
   Button,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
-} from "@chakra-ui/react";
-import useCustomToast from "../CustomToast";
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay
+} from '@chakra-ui/react';
+
+import PropTypes from 'prop-types';
+
+import useCustomToast from '../CustomToast';
+import { useDeleteStudentMutation } from '../../redux/slices/students/api';
 
 const DeleteModal = ({ isOpen, onClose, rowData }) => {
   const [deleteStudent] = useDeleteStudentMutation();
 
   const toast = useCustomToast();
 
-  const handleDeleteStudent = async (id) => {
+  const handleDeleteStudent = async id => {
     try {
       const response = await deleteStudent(id).unwrap();
+
       if (response?.success) {
         toast({
-          title: "Student",
-          description: "Successfully deleted student",
-          status: "success",
+          title: 'Student',
+          description: 'Successfully deleted student',
+          status: 'success'
         });
       }
     } catch (error) {
       toast({
-        title: "Student",
+        title: 'Student',
         description: error?.data?.message,
-        status: "error",
+        status: 'error'
       });
     }
   };
@@ -44,8 +48,7 @@ const DeleteModal = ({ isOpen, onClose, rowData }) => {
         <ModalHeader>Delete Student</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          Do you want to delete this student account? This action cannot be
-          undone.
+          Do you want to delete this student account? This action cannot be undone.
         </ModalBody>
 
         <ModalFooter>
@@ -71,7 +74,7 @@ const DeleteModal = ({ isOpen, onClose, rowData }) => {
 DeleteModal.propTypes = {
   isOpen: PropTypes.any.isRequired,
   onClose: PropTypes.func.isRequired,
-  rowData: PropTypes.object,
+  rowData: PropTypes.object
 };
 
 export default DeleteModal;

@@ -1,19 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import PropTypes from "prop-types";
-import { useDispatch } from "react-redux";
-import { useGetUserDataQuery } from "../../../redux/slices/app/api";
-import { saveUserData } from "../../../redux/slices/app";
-import {
-  Box,
-  useColorModeValue,
-  Drawer,
-  DrawerContent,
-} from "@chakra-ui/react";
-import SidebarContent from "./SideBarContent";
-import MobileNav from "./MobileNavItem";
-import Spin from "../../Spin";
-import AnimatedPage from "../../AnimatedPage";
+import React, { useEffect, useState } from 'react';
+
+import { Box, Drawer, DrawerContent, useColorModeValue } from '@chakra-ui/react';
+
+import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
+import MobileNav from './MobileNavItem';
+import SidebarContent from './SideBarContent';
+import { saveUserData } from '../../../redux/slices/app';
+import { useGetUserDataQuery } from '../../../redux/slices/app/api';
+import AnimatedPage from '../../AnimatedPage';
+import Spin from '../../Spin';
 
 const Layout = ({ children, isLoading }) => {
   const navigate = useNavigate();
@@ -24,31 +22,30 @@ const Layout = ({ children, isLoading }) => {
   useEffect(() => {
     if (!isUserLoading && !isError && data) {
       const role = data?.data?.role;
-      if (role === "student") {
-        navigate("/admin/logout", {
+
+      if (role === 'student') {
+        navigate('/admin/logout', {
           replace: true,
-          state: { unauthorized: true },
+          state: { unauthorized: true }
         });
       }
       dispatch(saveUserData(data?.data));
     } else if (isError) {
       onLogout();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, isUserLoading, isError, dispatch]);
 
   const onClose = () => setIsOpen(false);
   const onOpen = () => setIsOpen(true);
 
   const onLogout = () => {
-    navigate("/admin/logout");
+    navigate('/admin/logout');
   };
 
   return (
-    <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
-      <SidebarContent
-        onClose={onClose}
-        display={{ base: "none", md: "block" }}
-      />
+    <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
+      <SidebarContent onClose={onClose} display={{ base: 'none', md: 'block' }} />
       <Drawer
         isOpen={isOpen}
         placement="left"
@@ -71,11 +68,11 @@ const Layout = ({ children, isLoading }) => {
 
 Layout.propTypes = {
   children: PropTypes.any.isRequired,
-  isLoading: PropTypes.bool,
+  isLoading: PropTypes.bool
 };
 
 Layout.defaultProps = {
-  isLoading: false,
+  isLoading: false
 };
 
 export default Layout;

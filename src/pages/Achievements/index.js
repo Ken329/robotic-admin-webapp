@@ -1,41 +1,44 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from 'react';
+
+import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import {
-  Flex,
-  Heading,
   Box,
-  Grid,
-  Text,
   Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
+  Flex,
   FormControl,
   FormLabel,
-  Input,
-  Image,
-  useDisclosure,
+  Grid,
+  Heading,
   IconButton,
-} from "@chakra-ui/react";
-import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
+  Image,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
+  useDisclosure
+} from '@chakra-ui/react';
+
+import { useDispatch, useSelector } from 'react-redux';
+
+import useCustomToast from '../../components/CustomToast';
+import ImageCrop from '../../components/ImageCrop';
+import Layout from '../../components/Layout/MainLayout';
+import { saveAchievementsData } from '../../redux/slices/achievements';
 import {
-  useGetAchievementListQuery,
   useCreateAchievementMutation,
   useDeleteAchievementMutation,
-  useUpdateAchievementMutation,
-} from "../../redux/slices/achievements/api";
-import { saveAchievementsData } from "../../redux/slices/achievements";
-import { makeSelectToken } from "../../redux/slices/app/selector";
-import { makeSelectAchievementsData } from "../../redux/slices/achievements/selector";
-import { getAchievementImage } from "../../services/helper";
-import Layout from "../../components/Layout/MainLayout";
-import ImageCrop from "../../components/ImageCrop";
-import { dataURLtoFile, formatDate } from "../../utils/helper";
-import useCustomToast from "../../components/CustomToast";
+  useGetAchievementListQuery,
+  useUpdateAchievementMutation
+} from '../../redux/slices/achievements/api';
+import { makeSelectAchievementsData } from '../../redux/slices/achievements/selector';
+import { makeSelectToken } from '../../redux/slices/app/selector';
+import { getAchievementImage } from '../../services/helper';
+import { dataURLtoFile, formatDate } from '../../utils/helper';
 
 const Achievements = () => {
   const dispatch = useDispatch();
@@ -48,34 +51,37 @@ const Achievements = () => {
   const [updateAchievement] = useUpdateAchievementMutation();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedAchievement, setSelectedAchievement] = useState(null);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [createdDate, setCreatedDate] = useState("");
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [createdDate, setCreatedDate] = useState('');
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
   const [showCropModal, setShowCropModal] = useState(false);
 
   useEffect(() => {
-    const fetchImages = async (achievements) => {
+    const fetchImages = async achievements => {
       const updatedAchievements = await Promise.all(
-        achievements?.map(async (achievement) => {
+        achievements?.map(async achievement => {
           const imageUrl = achievement?.imageUrl;
+
           try {
             const imageBlob = await getAchievementImage(imageUrl, token);
             const imageObjectURL = URL.createObjectURL(imageBlob);
+
             return { ...achievement, imageUrl: imageObjectURL };
           } catch (error) {
             toast({
-              title: "Achievements",
+              title: 'Achievements',
               description: `Error fetching image: ${error}`,
-              status: "error",
+              status: 'error'
             });
 
             return achievement;
           }
         })
       );
+
       dispatch(saveAchievementsData(updatedAchievements));
     };
 
@@ -85,21 +91,24 @@ const Achievements = () => {
       dispatch(saveAchievementsData(null));
     } else if (isError) {
       toast({
-        title: "Achievements",
-        description: "Error getting achievement list",
-        status: "error",
+        title: 'Achievements',
+        description: 'Error getting achievement list',
+        status: 'error'
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, isLoading, isError]);
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = e => {
     const selectedFile = e.target.files[0];
+
     setImage(selectedFile);
     setShowCropModal(true);
   };
 
-  const handleCropComplete = (croppedImageDataURL) => {
+  const handleCropComplete = croppedImageDataURL => {
     const croppedImageFile = dataURLtoFile(croppedImageDataURL, image.name);
+
     setCroppedImage(croppedImageFile);
     setImagePreview(URL.createObjectURL(croppedImageFile));
     setShowCropModal(false);
@@ -107,54 +116,56 @@ const Achievements = () => {
 
   const handleSubmit = async () => {
     const formData = new FormData();
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("file", croppedImage);
-    formData.append("createdDate", createdDate);
+
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('file', croppedImage);
+    formData.append('createdDate', createdDate);
 
     try {
       if (selectedAchievement) {
         const updateAchievementPayload = {
           id: selectedAchievement.id,
-          formData: formData,
+          formData: formData
         };
 
         const response = await updateAchievement(updateAchievementPayload);
 
         if (response?.data?.success) {
           toast({
-            title: "Achievements",
+            title: 'Achievements',
             description: response?.data?.message,
-            status: "success",
+            status: 'success'
           });
         }
       } else {
         const response = await createAchievement({
-          formData,
+          formData
         }).unwrap();
 
         if (response?.success) {
           toast({
-            title: "Achievements",
+            title: 'Achievements',
             description: response?.message,
-            status: "success",
+            status: 'success'
           });
         }
       }
       const refetchedData = await refetch();
+
       if (refetchedData.data) {
         onClose();
       }
     } catch (error) {
       toast({
-        title: "Achievements",
+        title: 'Achievements',
         description: `Failed to create achievement`,
-        status: "error",
+        status: 'error'
       });
     }
   };
 
-  const handleEdit = (achievement) => {
+  const handleEdit = achievement => {
     setSelectedAchievement(achievement);
     setTitle(achievement?.title);
     setDescription(achievement?.description);
@@ -165,29 +176,30 @@ const Achievements = () => {
     onOpen();
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async id => {
     try {
       const response = await deleteAchievement(id).unwrap();
+
       if (response?.success) {
         toast({
-          title: "Achievements",
+          title: 'Achievements',
           description: response?.message,
-          status: "success",
+          status: 'success'
         });
         refetch();
       }
     } catch (error) {
       toast({
-        title: "Achievements",
+        title: 'Achievements',
         description: error?.data?.message,
-        status: "error",
+        status: 'error'
       });
     }
   };
 
   return (
     <Layout isLoading={isLoading}>
-      <Flex flexDirection={"column"} paddingLeft={"20px"}>
+      <Flex flexDirection={'column'} paddingLeft={'20px'}>
         <Box p={5}>
           <Heading as="h2" size="lg" mb="4">
             Achievements
@@ -196,9 +208,9 @@ const Achievements = () => {
             <Box
               onClick={() => {
                 setSelectedAchievement(null);
-                setTitle("");
-                setDescription("");
-                setCreatedDate("");
+                setTitle('');
+                setDescription('');
+                setCreatedDate('');
                 setImage(null);
                 setCroppedImage(null);
                 setImagePreview(null);
@@ -211,7 +223,7 @@ const Achievements = () => {
               cursor="pointer"
               textAlign="center"
               transition="transform 0.2s"
-              _hover={{ transform: "scale(1.05)" }}
+              _hover={{ transform: 'scale(1.05)' }}
               position="relative"
             >
               <Text fontWeight="bold">+ New Achievement</Text>
@@ -226,7 +238,7 @@ const Achievements = () => {
                 textAlign="center"
                 bg="white"
                 transition="transform 0.2s"
-                _hover={{ transform: "scale(1.05)" }}
+                _hover={{ transform: 'scale(1.05)' }}
                 position="relative"
                 boxShadow="md"
               >
@@ -249,13 +261,13 @@ const Achievements = () => {
                 </Text>
                 <Text
                   fontSize={{
-                    base: "xs",
-                    md: "sm",
-                    lg: "sm",
+                    base: 'xs',
+                    md: 'sm',
+                    lg: 'sm'
                   }}
                   color="gray.500"
                 >
-                  {formatDate(achievement?.createdAt) || ""}
+                  {formatDate(achievement?.createdAt) || ''}
                 </Text>
                 <Flex
                   display="flex"
@@ -266,7 +278,7 @@ const Achievements = () => {
                   width="70px"
                   maxWidth="70px"
                   opacity="0"
-                  _hover={{ opacity: "1" }}
+                  _hover={{ opacity: '1' }}
                 >
                   <IconButton
                     aria-label="Edit Achievement"
@@ -291,33 +303,21 @@ const Achievements = () => {
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>
-              {selectedAchievement
-                ? "Edit Achievement"
-                : "Create New Achievement"}
+              {selectedAchievement ? 'Edit Achievement' : 'Create New Achievement'}
             </ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <FormControl mb={4}>
                 <FormLabel>Title</FormLabel>
-                <Input
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                />
+                <Input value={title} onChange={e => setTitle(e.target.value)} />
               </FormControl>
               <FormControl mb={4}>
                 <FormLabel>Description</FormLabel>
-                <Input
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
+                <Input value={description} onChange={e => setDescription(e.target.value)} />
               </FormControl>
               <FormControl mb={4}>
                 <FormLabel>Image</FormLabel>
-                <Input
-                  type="file"
-                  onChange={handleImageUpload}
-                  accept="image/*"
-                />
+                <Input type="file" onChange={handleImageUpload} accept="image/*" />
                 {imagePreview && (
                   <Box mt={2}>
                     <FormLabel>Preview</FormLabel>
@@ -334,14 +334,14 @@ const Achievements = () => {
               <FormControl mb={4}>
                 {selectedAchievement ? (
                   <FormLabel>
-                    Created Date <Text color={"red"}>Non-editable</Text>
+                    Created Date <Text color={'red'}>Non-editable</Text>
                   </FormLabel>
                 ) : (
                   <>
                     <FormLabel>Created Date</FormLabel>
                     <Input
                       value={createdDate}
-                      onChange={(e) => setCreatedDate(e.target.value)}
+                      onChange={e => setCreatedDate(e.target.value)}
                       placeholder="Date format e.g. 20/01/2000"
                       isDisabled={selectedAchievement}
                     />

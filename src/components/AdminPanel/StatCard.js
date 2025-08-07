@@ -1,19 +1,16 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Stat, StatLabel, StatNumber, Box } from "@chakra-ui/react";
+import React from 'react';
+
+import { Box, Stat, StatLabel, StatNumber } from '@chakra-ui/react';
+
+import PropTypes from 'prop-types';
 
 const StatCard = ({ label, count }) => (
-  <Box
-    p={{ base: 3, md: 4 }}
-    bg="gray.100"
-    borderRadius="md"
-    boxShadow={{ base: "sm", md: "md" }}
-  >
+  <Box p={{ base: 3, md: 4 }} bg="gray.100" borderRadius="md" boxShadow={{ base: 'sm', md: 'md' }}>
     <Stat>
-      <StatLabel fontSize={{ base: "md", md: "lg" }} color="black" mb={2}>
+      <StatLabel fontSize={{ base: 'md', md: 'lg' }} color="black" mb={2}>
         {label}
       </StatLabel>
-      <StatNumber fontSize={{ base: "xl", md: "2xl" }} color="black">
+      <StatNumber fontSize={{ base: 'xl', md: '2xl' }} color="black">
         {count}
       </StatNumber>
     </Stat>
@@ -22,7 +19,7 @@ const StatCard = ({ label, count }) => (
 
 StatCard.propTypes = {
   label: PropTypes.string,
-  count: PropTypes.number,
+  count: PropTypes.number
 };
 
 export default StatCard;

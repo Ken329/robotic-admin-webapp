@@ -1,39 +1,42 @@
-import React from "react";
-import PropTypes from "prop-types";
-import moment from "moment";
-import { useSelector } from "react-redux";
-import { makeSelectUserRole } from "../../redux/slices/app/selector";
+import React from 'react';
+
+import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
 import {
+  Badge,
   Box,
   Button,
-  Select,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  Text,
   Flex,
-  TableContainer,
-  Badge,
+  IconButton,
   Menu,
   MenuButton,
-  MenuList,
   MenuItem,
-  IconButton,
-} from "@chakra-ui/react";
-import { TriangleUpIcon, TriangleDownIcon } from "@chakra-ui/icons";
-import { USER_ROLE, STUDENT_STATUS } from "../../utils/constants";
-import Filters from "./Filters";
-import { BiDotsHorizontalRounded } from "react-icons/bi";
+  MenuList,
+  Select,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr
+} from '@chakra-ui/react';
 import {
-  useReactTable,
+  flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  flexRender,
-} from "@tanstack/react-table";
+  useReactTable
+} from '@tanstack/react-table';
+
+import dayjs from 'dayjs';
+import PropTypes from 'prop-types';
+import { BiDotsHorizontalRounded } from 'react-icons/bi';
+import { useSelector } from 'react-redux';
+
+import Filters from './Filters';
+import { makeSelectUserRole } from '../../redux/slices/app/selector';
+import { STUDENT_STATUS, USER_ROLE } from '../../utils/constants';
 
 const DataTable = ({
   tableData,
@@ -46,70 +49,67 @@ const DataTable = ({
   pageIndex,
   onPageChange,
   onPageSizeChange,
-  onFilterChange,
+  onFilterChange
 }) => {
   const role = useSelector(makeSelectUserRole());
 
   const columns = React.useMemo(
     () => [
       {
-        accessorKey: "name",
-        header: "Name",
+        accessorKey: 'name',
+        header: 'Name',
         size: 300,
-        enableSorting: true,
+        enableSorting: true
       },
       {
-        accessorKey: "email",
-        header: "Email ID",
+        accessorKey: 'email',
+        header: 'Email ID',
         size: 300,
-        enableSorting: true,
+        enableSorting: true
       },
       {
-        accessorKey: "centerName",
-        header: "Centre",
+        accessorKey: 'centerName',
+        header: 'Centre',
         size: 300,
-        enableSorting: true,
+        enableSorting: true
       },
       {
-        accessorKey: "status",
-        header: "Status",
+        accessorKey: 'status',
+        header: 'Status',
         size: 100,
         cell: ({ row }) => {
           const status = row.original.status;
           const statusChangeAt = row.original.statusChangeAt;
 
           let color;
+
           switch (status) {
-            case "approved":
-              color = "green.600";
+            case 'approved':
+              color = 'green.600';
               break;
-            case "rejected":
-              color = "red.600";
+            case 'rejected':
+              color = 'red.600';
               break;
-            case "pending center":
-              color = "blue.600";
+            case 'pending center':
+              color = 'blue.600';
               break;
-            case "pending admin":
-              color = "yellow.500";
+            case 'pending admin':
+              color = 'yellow.500';
               break;
-            case "expired":
-              color = "grey";
+            case 'expired':
+              color = 'grey';
               break;
             default:
-              color = "black";
+              color = 'black';
           }
+
           return (
-            <Flex
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              gap="5px"
-            >
+            <Flex display="flex" flexDirection="column" alignItems="center" gap="5px">
               <Badge
-                size={"xl"}
+                size={'xl'}
                 px={2}
                 py={2}
-                borderRadius={"10px"}
+                borderRadius={'10px'}
                 color="white"
                 backgroundColor={color}
                 width="fit-content"
@@ -118,16 +118,16 @@ const DataTable = ({
               </Badge>
               {statusChangeAt && (
                 <Text as="em" fontSize="sm">
-                  Last updated - {moment(statusChangeAt).format("DD/MM/YYYY")}
+                  Last updated - {dayjs(statusChangeAt).format('DD/MM/YYYY')}
                 </Text>
               )}
             </Flex>
           );
-        },
+        }
       },
       {
-        accessorKey: "actions",
-        header: "Actions",
+        accessorKey: 'actions',
+        header: 'Actions',
         size: 100,
         cell: ({ row }) => {
           const status = row.original.status;
@@ -185,16 +185,10 @@ const DataTable = ({
               </Menu>
             </Flex>
           );
-        },
-      },
+        }
+      }
     ],
-    [
-      role,
-      openModal,
-      openAchievementsModal,
-      openRenewMembershipModal,
-      openDeleteModal,
-    ]
+    [role, openModal, openAchievementsModal, openRenewMembershipModal, openDeleteModal]
   );
 
   const table = useReactTable({
@@ -203,12 +197,12 @@ const DataTable = ({
     pageCount: Math.ceil(totalRecords / pageSize),
     state: {
       pagination: { pageIndex, pageSize },
-      sorting: [], // Initial sorting state
+      sorting: [] // Initial sorting state
     },
-    onPaginationChange: (updater) => {
+    onPaginationChange: updater => {
       const newState = updater({
         pageIndex: pageIndex,
-        pageSize: pageSize,
+        pageSize: pageSize
       });
 
       if (newState.pageIndex !== pageIndex) {
@@ -219,7 +213,7 @@ const DataTable = ({
         onPageSizeChange(newState.pageSize);
       }
     },
-    onSortingChange: (updater) => {
+    onSortingChange: updater => {
       const newSorting = updater(table.getState().sorting);
 
       table.setSorting(newSorting);
@@ -228,7 +222,7 @@ const DataTable = ({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     manualPagination: true,
-    manualSorting: true,
+    manualSorting: true
   });
 
   return (
@@ -239,10 +233,10 @@ const DataTable = ({
         <Select
           width="120px"
           value={pageSize}
-          onChange={(e) => table.setPageSize(Number(e.target.value))}
+          onChange={e => table.setPageSize(Number(e.target.value))}
           borderColor="gray"
         >
-          {[10, 25, 50, 100].map((size) => (
+          {[10, 25, 50, 100].map(size => (
             <option key={size} value={size}>
               Show {size}
             </option>
@@ -254,9 +248,9 @@ const DataTable = ({
         <Text mb={2}>Total records: {totalRecords}</Text>
         <Table>
           <Thead>
-            {table.getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map(headerGroup => (
               <Tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
+                {headerGroup.headers.map(header => (
                   <Th
                     w={header.getSize()}
                     key={header.id}
@@ -264,17 +258,10 @@ const DataTable = ({
                     onClick={() => header.column.getToggleSortingHandler()}
                     cursor="pointer"
                   >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
+                    {flexRender(header.column.columnDef.header, header.getContext())}
                     <Text ml={2}>
-                      {header.column.getIsSorted() === "asc" && (
-                        <TriangleUpIcon boxSize={4} />
-                      )}
-                      {header.column.getIsSorted() === "desc" && (
-                        <TriangleDownIcon boxSize={4} />
-                      )}
+                      {header.column.getIsSorted() === 'asc' && <TriangleUpIcon boxSize={4} />}
+                      {header.column.getIsSorted() === 'desc' && <TriangleDownIcon boxSize={4} />}
                     </Text>
                   </Th>
                 ))}
@@ -283,14 +270,11 @@ const DataTable = ({
           </Thead>
           <Tbody>
             {table.getRowModel().rows.length > 0 ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map(row => (
                 <Tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map(cell => (
                     <Td key={cell.id} backgroundColor="#F7FAFC">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </Td>
                   ))}
                 </Tr>
@@ -307,24 +291,17 @@ const DataTable = ({
       </TableContainer>
 
       <Flex justifyContent="space-between" alignItems="center" mt={4}>
-        <Button
-          onClick={() => table.previousPage()}
-          isDisabled={!table.getCanPreviousPage()}
-        >
+        <Button onClick={() => table.previousPage()} isDisabled={!table.getCanPreviousPage()}>
           Previous
         </Button>
         {table.getPageCount() > 0 ? (
           <Text>
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
+            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
           </Text>
         ) : (
           <Text>No Page</Text>
         )}
-        <Button
-          onClick={() => table.nextPage()}
-          isDisabled={!table.getCanNextPage()}
-        >
+        <Button onClick={() => table.nextPage()} isDisabled={!table.getCanNextPage()}>
           Next
         </Button>
       </Flex>
@@ -343,7 +320,7 @@ DataTable.propTypes = {
   pageIndex: PropTypes.number.isRequired,
   onPageChange: PropTypes.func.isRequired,
   onPageSizeChange: PropTypes.func.isRequired,
-  onFilterChange: PropTypes.func.isRequired,
+  onFilterChange: PropTypes.func.isRequired
 };
 
 export default DataTable;

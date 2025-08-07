@@ -1,19 +1,14 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import { useNavigate } from "react-router-dom";
-import { useGetAdminPanelDataQuery } from "../../redux/slices/app/api";
-import {
-  Box,
-  Button,
-  Heading,
-  SimpleGrid,
-  Collapse,
-  IconButton,
-  Flex,
-} from "@chakra-ui/react";
-import { FiPlus, FiChevronUp, FiChevronDown } from "react-icons/fi";
-import StatCard from "./StatCard";
-import useCustomToast from "../CustomToast";
+import React, { useEffect, useState } from 'react';
+
+import { Box, Button, Collapse, Flex, Heading, IconButton, SimpleGrid } from '@chakra-ui/react';
+
+import PropTypes from 'prop-types';
+import { FiChevronDown, FiChevronUp, FiPlus } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+
+import StatCard from './StatCard';
+import useCustomToast from '../CustomToast';
+import { useGetAdminPanelDataQuery } from '../../redux/slices/app/api';
 
 const AdminPanel = ({ isAdmin }) => {
   const navigate = useNavigate();
@@ -27,11 +22,12 @@ const AdminPanel = ({ isAdmin }) => {
       setAdminPanelData(data?.data);
     } else if (isError) {
       toast({
-        title: "Dashboard",
-        description: "Error getting Admin Panel Data",
-        status: "error",
+        title: 'Dashboard',
+        description: 'Error getting Admin Panel Data',
+        status: 'error'
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, isLoading, isError]);
 
   const toggleCollapse = () => {
@@ -40,7 +36,7 @@ const AdminPanel = ({ isAdmin }) => {
 
   return (
     <Box
-      m={{ base: "3%", md: "5%", lg: "2%" }}
+      m={{ base: '3%', md: '5%', lg: '2%' }}
       p={{ base: 3, md: 4 }}
       bg="#27374d"
       color="white"
@@ -49,7 +45,7 @@ const AdminPanel = ({ isAdmin }) => {
       mb={4}
     >
       <Flex justify="space-between" align="center" mb={{ base: 3, md: 4 }}>
-        <Heading as="h3" size={{ base: "sm", md: "md" }}>
+        <Heading as="h3" size={{ base: 'sm', md: 'md' }}>
           Admin Panel
         </Heading>
         <IconButton
@@ -61,33 +57,29 @@ const AdminPanel = ({ isAdmin }) => {
       </Flex>
 
       <Collapse in={!isCollapsed}>
-        <SimpleGrid
-          columns={{ base: 1, md: 2, lg: 3 }}
-          spacing={{ base: 2, md: 4 }}
-          mb={4}
-        >
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={{ base: 2, md: 4 }} mb={4}>
           {isAdmin ? (
             <StatCard
               label="Pending Admin Approvals"
-              count={adminPanelData?.["pending admin"] || 0}
-              fontSize={{ base: "sm", md: "md" }}
+              count={adminPanelData?.['pending admin'] || 0}
+              fontSize={{ base: 'sm', md: 'md' }}
             />
           ) : (
             <StatCard
               label="Pending Centre Approvals"
-              count={adminPanelData?.["pending center"] || 0}
-              fontSize={{ base: "sm", md: "md" }}
+              count={adminPanelData?.['pending center'] || 0}
+              fontSize={{ base: 'sm', md: 'md' }}
             />
           )}
           <StatCard
             label="Approved Students"
             count={adminPanelData?.approved || 0}
-            fontSize={{ base: "sm", md: "md" }}
+            fontSize={{ base: 'sm', md: 'md' }}
           />
           <StatCard
             label="Rejected Students"
             count={adminPanelData?.rejected || 0}
-            fontSize={{ base: "sm", md: "md" }}
+            fontSize={{ base: 'sm', md: 'md' }}
           />
         </SimpleGrid>
 
@@ -95,9 +87,9 @@ const AdminPanel = ({ isAdmin }) => {
           <Button
             colorScheme="teal"
             variant="solid"
-            size={{ base: "sm", md: "md" }}
+            size={{ base: 'sm', md: 'md' }}
             leftIcon={<FiPlus />}
-            onClick={() => navigate("/admin/createPost")}
+            onClick={() => navigate('/admin/createPost')}
             flex="1"
           >
             New Post
@@ -109,11 +101,11 @@ const AdminPanel = ({ isAdmin }) => {
 };
 
 AdminPanel.propTypes = {
-  isAdmin: PropTypes.bool.isRequired,
+  isAdmin: PropTypes.bool.isRequired
 };
 
 AdminPanel.defaultProps = {
-  isAdmin: false,
+  isAdmin: false
 };
 
 export default AdminPanel;

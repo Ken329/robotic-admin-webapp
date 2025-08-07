@@ -1,27 +1,29 @@
-import React, { useState, useMemo, useEffect } from "react";
-import { formatDistanceToNow } from "date-fns";
-import { useSelector } from "react-redux";
-import { makeSelectUserRole } from "../../../redux/slices/app/selector";
+import { useEffect, useMemo, useState } from 'react';
+
 import {
   getCoreRowModel,
-  useReactTable,
   getFilteredRowModel,
-  getSortedRowModel,
   getPaginationRowModel,
-} from "@tanstack/react-table";
-import { Button } from "@chakra-ui/react";
-import { USER_ROLE } from "../../../utils/constants";
+  getSortedRowModel,
+  useReactTable
+} from '@tanstack/react-table';
+
+import dayjs from 'dayjs';
+import { useSelector } from 'react-redux';
+
+import { makeSelectUserRole } from '../../../redux/slices/app/selector';
 import {
-  useGetALLParticipantsQuery,
   useDeleteParticipantSignUpMutation,
-} from "../../../redux/slices/posts/api";
-import useCustomToast from "../../CustomToast";
+  useGetALLParticipantsQuery
+} from '../../../redux/slices/posts/api';
+import { USER_ROLE } from '../../../utils/constants';
+import useCustomToast from '../../CustomToast';
 
 const useParticipantsTable = (blogId, isOpen) => {
   const toast = useCustomToast();
   const role = useSelector(makeSelectUserRole());
   const [data, setData] = useState([]);
-  const [nameFilter, setNameFilter] = useState("");
+  const [nameFilter, setNameFilter] = useState('');
   const [sorting, setSorting] = useState([]);
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
 
@@ -30,12 +32,12 @@ const useParticipantsTable = (blogId, isOpen) => {
   const {
     data: participantsData,
     refetch,
-    isFetching,
+    isFetching
   } = useGetALLParticipantsQuery(blogId, {
-    skip: !isOpen,
+    skip: !isOpen
   });
 
-  const [deleteParticipant, { isLoading: isDeleting }] =
+  const [deleteParticipantMutation, { isLoading: isDeleting }] =
     useDeleteParticipantSignUpMutation();
 
   useEffect(() => {
@@ -44,84 +46,82 @@ const useParticipantsTable = (blogId, isOpen) => {
     }
   }, [participantsData]);
 
-  const totalRecords = participantsData?.data.length || 0;
-
-  const formatDate = (dateString) =>
-    formatDistanceToNow(new Date(dateString), { addSuffix: true });
-
-  const attributeCategories = useMemo(() => {
-    const categories = new Set();
-    (participantsData?.data || []).forEach((row) => {
-      row.attributes.forEach((attr) => categories.add(attr.category));
-    });
-    return [...categories];
-  }, [participantsData]);
-
-  const handleDelete = async (id) => {
+  const deleteParticipant = async id => {
     try {
-      const response = await deleteParticipant(id).unwrap();
+      const response = await deleteParticipantMutation(id).unwrap();
+
       if (response.success) {
         toast({
-          title: "Participants",
+          title: 'Participants',
           description: response?.message,
-          status: "success",
+          status: 'success'
         });
         refetch();
       }
     } catch (err) {
       toast({
-        title: "Participants",
-        description: "Failed to delete participant",
-        status: "error",
+        title: 'Participants',
+        description: 'Failed to delete participant',
+        status: 'error'
       });
-      console.error("Failed to delete participant:", err);
+      console.error('Failed to delete participant:', err);
     }
   };
 
-  const baseColumns = [
-    { accessorKey: "fullName", header: "Name" },
-    { accessorKey: "centerName", header: "Center" },
-    { accessorKey: "nric", header: "NRIC" },
-    { accessorKey: "passport", header: "Passport" },
-    { accessorKey: "levelName", header: "Level" },
-    { accessorFn: (row) => formatDate(row.createdAt), header: "Signed Up" },
-  ];
+  const totalRecords = participantsData?.data.length || 0;
 
-  const actionColumn = {
-    id: "actions",
-    header: "Actions",
-    cell: ({ row }) => (
-      <Button
-        size="sm"
-        colorScheme="red"
-        isLoading={isDeleting}
-        onClick={() => handleDelete(row.original.participantId)}
-      >
-        Delete
-      </Button>
-    ),
-  };
+  const attributeCategories = useMemo(() => {
+    const categories = new Set();
 
-  const dynamicColumns = attributeCategories.map((category) => ({
-    accessorFn: (row) => {
-      const attr = row.attributes.find((attr) => attr.category === category);
-      return attr ? attr.value.toString() : "N/A";
+    (participantsData?.data || []).forEach(row => {
+      row.attributes.forEach(attr => categories.add(attr.category));
+    });
+
+    return [...categories];
+  }, [participantsData]);
+
+  const baseColumns = useMemo(
+    () => [
+      { accessorKey: 'fullName', header: 'Name' },
+      { accessorKey: 'centerName', header: 'Center' },
+      { accessorKey: 'nric', header: 'NRIC' },
+      { accessorKey: 'passport', header: 'Passport' },
+      { accessorKey: 'levelName', header: 'Level' },
+      { accessorFn: row => dayjs(row.createdAt).format('DD/MM/YYYY'), header: 'Signed Up' }
+    ],
+    []
+  );
+
+  const dynamicColumns = attributeCategories.map(category => ({
+    accessorFn: row => {
+      const attr = row.attributes.find(attr => attr.category === category);
+
+      return attr ? attr.value.toString() : 'N/A';
     },
-    header: category,
+    header: category
   }));
+
+  const actionColumn = useMemo(
+    () => ({
+      id: 'actions',
+      header: 'Actions',
+      cell: () => null
+    }),
+    []
+  );
 
   const columns = useMemo(() => {
     if (isAdmin) {
       return [...baseColumns, ...dynamicColumns, actionColumn];
     }
+
     return [...baseColumns, ...dynamicColumns];
   }, [baseColumns, dynamicColumns, actionColumn, isAdmin]);
 
   const filteredData = useMemo(() => {
     if (!nameFilter) return data;
-    return data.filter((row) =>
-      row.fullName.toLowerCase().includes(nameFilter.toLowerCase())
-    );
+
+    return data.filter(row => row.fullName.toLowerCase().includes(nameFilter.toLowerCase()));
   }, [data, nameFilter]);
 
   const table = useReactTable({
@@ -133,10 +133,18 @@ const useParticipantsTable = (blogId, isOpen) => {
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    getPaginationRowModel: getPaginationRowModel()
   });
 
-  return { table, nameFilter, setNameFilter, totalRecords, isFetching };
+  return {
+    table,
+    nameFilter,
+    setNameFilter,
+    totalRecords,
+    isFetching,
+    deleteParticipant,
+    isDeleting
+  };
 };
 
 export default useParticipantsTable;
