@@ -18,6 +18,9 @@ const envKeys = Object.keys(env).reduce((prev, next) => {
 }, {});
 
 module.exports = {
+  eslint: {
+    enable: process.env.NODE_ENV !== "production", 
+  },
   webpack: {
     plugins: [
       new webpack.DefinePlugin(envKeys),
