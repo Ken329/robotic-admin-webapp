@@ -1,25 +1,30 @@
-import axios from "axios";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { resetApp } from "./slices/app";
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+
+import axios from 'axios';
+
+import { resetApp } from './slices/app';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.REACT_APP_BASE_API,
   prepareHeaders: (headers, { endpoint }) => {
     // Check if this request should skip the token
-    const skipToken = endpoint === "maintenanceCheck";
+    const skipToken = endpoint === 'maintenanceCheck';
+
     if (!skipToken) {
-      const accessToken = JSON.parse(localStorage.getItem("token")).accessToken;
-      headers.set("Authorization", `Bearer ${accessToken}`);
+      const accessToken = JSON.parse(localStorage.getItem('token')).accessToken;
+
+      headers.set('Authorization', `Bearer ${accessToken}`);
     }
+
     return headers;
-  },
+  }
 });
 
 const baseQueryWithReauth = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
 
   if (result?.error?.status === 401) {
-    const refreshToken = JSON.parse(localStorage.getItem("token")).refreshToken;
+    const refreshToken = JSON.parse(localStorage.getItem('token')).refreshToken;
 
     try {
       const refreshResult = await axios.post(
@@ -27,22 +32,19 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
         { refreshToken },
         {
           headers: {
-            "Content-Type": "application/json",
-          },
+            'Content-Type': 'application/json'
+          }
         }
       );
 
       if (refreshResult.status === 200) {
-        localStorage.setItem(
-          "token",
-          JSON.stringify(refreshResult?.data?.data)
-        );
+        localStorage.setItem('token', JSON.stringify(refreshResult?.data?.data));
         result = await baseQuery(args, api, extraOptions);
       } else {
         await api.dispatch(resetApp());
       }
     } catch (error) {
-      console.error("Error refreshing token:", error);
+      console.error('Error refreshing token:', error);
       await api.dispatch(resetApp());
     }
   }
@@ -54,5 +56,5 @@ export const baseApiSlice = createApi({
   baseQuery: baseQueryWithReauth,
   endpoints: () => {
     return {};
-  },
+  }
 });

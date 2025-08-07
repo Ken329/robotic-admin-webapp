@@ -1,9 +1,9 @@
-import { createSelector } from "@reduxjs/toolkit";
+import { createSelector } from '@reduxjs/toolkit';
 
-const selectStudents = (state) => state.students;
+const selectStudents = state => state.students;
 
 export const makeSelectStudentData = () =>
-  createSelector(selectStudents, (appState) => appState.students);
+  createSelector(selectStudents, appState => appState.students);
 
 export const makeSelectLevelsData = () =>
-  createSelector(selectStudents, (appState) => appState.levels);
+  createSelector(selectStudents, appState => appState.levels);

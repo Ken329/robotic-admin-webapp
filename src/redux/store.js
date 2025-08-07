@@ -1,11 +1,11 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore } from '@reduxjs/toolkit';
 
-import { baseApiSlice } from "./createAppApi";
-import appReducer from "./slices/app";
-import studentsReducer from "./slices/students";
-import centresReducer from "./slices/centre";
-import achievementsReducer from "./slices/achievements";
-import postsReducer from "./slices/posts";
+import { baseApiSlice } from './createAppApi';
+import achievementsReducer from './slices/achievements';
+import appReducer from './slices/app';
+import centresReducer from './slices/centre';
+import postsReducer from './slices/posts';
+import studentsReducer from './slices/students';
 
 const store = configureStore({
   reducer: {
@@ -14,11 +14,10 @@ const store = configureStore({
     students: studentsReducer,
     centres: centresReducer,
     achievements: achievementsReducer,
-    posts: postsReducer,
+    posts: postsReducer
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(baseApiSlice.middleware),
-  devTools: true,
+  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(baseApiSlice.middleware),
+  devTools: true
 });
 
 export default store;

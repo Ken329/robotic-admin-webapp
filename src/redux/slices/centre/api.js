@@ -1,33 +1,30 @@
-import { baseApiSlice } from "../../createAppApi";
+import { baseApiSlice } from '../../createAppApi';
 
 export const centresApi = baseApiSlice.injectEndpoints({
-  endpoints: (builder) => {
+  endpoints: builder => {
     return {
       getCentresList: builder.query({
         query: () => ({
-          url: "/user/centers",
-        }),
+          url: '/user/centers'
+        })
       }),
       createCentre: builder.mutation({
-        query: (payload) => ({
+        query: payload => ({
           url: `/user/center`,
-          method: "POST",
-          body: payload,
-        }),
+          method: 'POST',
+          body: payload
+        })
       }),
       updateCentre: builder.mutation({
         query: ({ id, body }) => ({
           url: `/center/${id}`,
-          method: "PUT",
-          body: body,
-        }),
-      }),
+          method: 'PUT',
+          body: body
+        })
+      })
     };
-  },
+  }
 });
 
-export const {
-  useGetCentresListQuery,
-  useCreateCentreMutation,
-  useUpdateCentreMutation,
-} = centresApi;
+export const { useGetCentresListQuery, useCreateCentreMutation, useUpdateCentreMutation } =
+  centresApi;

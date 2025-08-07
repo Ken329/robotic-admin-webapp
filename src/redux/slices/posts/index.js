@@ -1,12 +1,12 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   blogs: [],
-  files: [],
+  files: []
 };
 
 const postsSlice = createSlice({
-  name: "posts",
+  name: 'posts',
   initialState: initialState,
   reducers: {
     saveBlogsData(state, action) {
@@ -14,9 +14,10 @@ const postsSlice = createSlice({
     },
     saveFilesData(state, action) {
       state.files = action.payload;
-    },
-  },
+    }
+  }
 });
 
 export const { saveBlogsData, saveFilesData } = postsSlice.actions;
+
 export default postsSlice.reducer;

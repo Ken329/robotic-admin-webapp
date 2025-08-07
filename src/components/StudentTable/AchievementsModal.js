@@ -1,34 +1,34 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import {
-  useGetAchievementListQuery,
-  useAssignAchievementMutation,
-  useGetAssignedAchievementsQuery,
-} from "../../redux/slices/achievements/api";
+import React, { useEffect, useState } from 'react';
+
 import {
   Box,
   Button,
+  Checkbox,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
-  Checkbox,
-  Text,
-} from "@chakra-ui/react";
-import useCustomToast from "../CustomToast";
-import Spin from "../Spin";
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text
+} from '@chakra-ui/react';
+
+import PropTypes from 'prop-types';
+
+import useCustomToast from '../CustomToast';
+import Spin from '../Spin';
+import {
+  useAssignAchievementMutation,
+  useGetAchievementListQuery,
+  useGetAssignedAchievementsQuery
+} from '../../redux/slices/achievements/api';
 
 const AchievementsModal = ({ isOpen, onClose, rowData }) => {
   const { data } = useGetAchievementListQuery();
-  const { data: userAchievements, refetch } = useGetAssignedAchievementsQuery(
-    rowData?.studentId,
-    {
-      skip: !isOpen,
-    }
-  );
+  const { data: userAchievements, refetch } = useGetAssignedAchievementsQuery(rowData?.studentId, {
+    skip: !isOpen
+  });
   const toast = useCustomToast();
   const [assignAchievement] = useAssignAchievementMutation();
   const [achievements, setAchievements] = useState([]);
@@ -51,17 +51,15 @@ const AchievementsModal = ({ isOpen, onClose, rowData }) => {
     if (userAchievements) {
       const userAssignedAchievements = userAchievements.data;
 
-      setSelectedAchievements(
-        userAssignedAchievements.map((a) => a.achievementId)
-      );
+      setSelectedAchievements(userAssignedAchievements.map(a => a.achievementId));
       setLoading(false);
     }
   }, [userAchievements]);
 
-  const handleCheckboxChange = (achievementId) => {
-    setSelectedAchievements((prevSelected) =>
+  const handleCheckboxChange = achievementId => {
+    setSelectedAchievements(prevSelected =>
       prevSelected.includes(achievementId)
-        ? prevSelected.filter((id) => id !== achievementId)
+        ? prevSelected.filter(id => id !== achievementId)
         : [...prevSelected, achievementId]
     );
   };
@@ -70,24 +68,24 @@ const AchievementsModal = ({ isOpen, onClose, rowData }) => {
     try {
       const payload = {
         id: rowData?.studentId,
-        achievementIds: selectedAchievements,
+        achievementIds: selectedAchievements
       };
 
       const response = await assignAchievement(payload);
 
       if (response?.data?.success) {
         toast({
-          title: "Achievement(s)",
-          description: "Successfully assigned achievement(s)",
-          status: "success",
+          title: 'Achievement(s)',
+          description: 'Successfully assigned achievement(s)',
+          status: 'success'
         });
       }
       onClose();
     } catch (error) {
       toast({
-        title: "Achievement(s)",
+        title: 'Achievement(s)',
         description: error,
-        status: "error",
+        status: 'error'
       });
     }
   };
@@ -104,7 +102,7 @@ const AchievementsModal = ({ isOpen, onClose, rowData }) => {
           ) : (
             <Box>
               {achievements.length > 0 ? (
-                achievements.map((achievement) => (
+                achievements.map(achievement => (
                   <Checkbox
                     margin="10px"
                     key={achievement.id}
@@ -136,7 +134,7 @@ const AchievementsModal = ({ isOpen, onClose, rowData }) => {
 AchievementsModal.propTypes = {
   isOpen: PropTypes.any.isRequired,
   onClose: PropTypes.func.isRequired,
-  rowData: PropTypes.object,
+  rowData: PropTypes.object
 };
 
 export default AchievementsModal;

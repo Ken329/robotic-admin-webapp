@@ -1,55 +1,52 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import SteamCupLogo from "../../assets/images/STEAM Cup+.webp";
+import React, { useEffect, useState } from 'react';
+
+import { ArrowBackIcon, ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import {
+  Alert,
+  AlertIcon,
   Box,
   Button,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Image,
   Input,
-  Text,
-  VStack,
-  Flex,
-  Alert,
-  AlertIcon,
-  Spinner,
   InputGroup,
   InputRightElement,
   Link,
-  Image,
-} from "@chakra-ui/react";
-import { ViewIcon, ViewOffIcon, ArrowBackIcon } from "@chakra-ui/icons";
-import { Formik, Field } from "formik";
-import { forgotPassword, resetPasswordWithOTP } from "../../services/awsAuth";
-import {
-  forgotPasswordSchema,
-  resetPasswordSchema,
-} from "../../utils/validationSchema";
-import { useMaintenanceCheckQuery } from "../../redux/slices/app/api";
+  Spinner,
+  Text,
+  VStack
+} from '@chakra-ui/react';
+
+import { Field, Formik } from 'formik';
+import { useNavigate } from 'react-router-dom';
+
+import SteamCupLogo from '../../assets/images/STEAM Cup+.webp';
+import { useMaintenanceCheckQuery } from '../../redux/slices/app/api';
+import { forgotPassword, resetPasswordWithOTP } from '../../services/awsAuth';
+import { forgotPasswordSchema, resetPasswordSchema } from '../../utils/validationSchema';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [currentEmail, setCurrentEmail] = useState("");
+  const [currentEmail, setCurrentEmail] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [step, setStep] = useState(1);
 
   const {
     data: maintenanceData,
     isLoading: maintenanceIsLoading,
-    isError: maintenanceIsError,
+    isError: maintenanceIsError
   } = useMaintenanceCheckQuery();
 
   useEffect(() => {
-    if (
-      !maintenanceIsLoading &&
-      !maintenanceIsError &&
-      maintenanceData?.data !== null
-    ) {
-      navigate("/admin/maintenance");
+    if (!maintenanceIsLoading && !maintenanceIsError && maintenanceData?.data !== null) {
+      navigate('/admin/maintenance');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maintenanceData, maintenanceIsLoading, maintenanceIsError]);
 
   const handleForgotPassword = ({ email }) => {
@@ -60,7 +57,7 @@ const ForgotPassword = () => {
       .then(() => {
         setStep(2);
       })
-      .catch((err) => {
+      .catch(err => {
         setError(err);
       })
       .finally(() => {
@@ -73,9 +70,9 @@ const ForgotPassword = () => {
     setLoading(true);
     resetPasswordWithOTP(currentEmail, newPassword, otp)
       .then(() => {
-        navigate("/admin/login");
+        navigate('/admin/login');
       })
-      .catch((err) => {
+      .catch(err => {
         setError(err);
       })
       .finally(() => {
@@ -102,9 +99,9 @@ const ForgotPassword = () => {
       {step && step === 1 && (
         <Formik
           initialValues={{
-            email: "",
+            email: ''
           }}
-          onSubmit={(values) => {
+          onSubmit={values => {
             handleForgotPassword(values);
           }}
           validationSchema={forgotPasswordSchema}
@@ -113,23 +110,17 @@ const ForgotPassword = () => {
             <form onSubmit={handleSubmit}>
               <VStack spacing={4} align="flex-start">
                 <Text fontSize="14px" fontWeight="500">
-                  Please enter your login email below and we&apos;ll send you a
-                  verification code to reset your password.
+                  Please enter your login email below and we&apos;ll send you a verification code to
+                  reset your password.
                 </Text>
 
                 <FormControl isInvalid={errors.email && touched.email} w="100%">
                   <FormLabel htmlFor="email">Email</FormLabel>
-                  <Field
-                    as={Input}
-                    id="email"
-                    name="email"
-                    type="email"
-                    variant="filled"
-                  />
+                  <Field as={Input} id="email" name="email" type="email" variant="filled" />
                   <FormErrorMessage>{errors.email}</FormErrorMessage>
                 </FormControl>
                 <Button type="submit" colorScheme="blue" w="full">
-                  {loading ? <Spinner size="sm" color="white" /> : "Submit"}
+                  {loading ? <Spinner size="sm" color="white" /> : 'Submit'}
                 </Button>
               </VStack>
             </form>
@@ -139,10 +130,10 @@ const ForgotPassword = () => {
       {step && step === 2 && (
         <Formik
           initialValues={{
-            newPassword: "",
-            otp: "",
+            newPassword: '',
+            otp: ''
           }}
-          onSubmit={(values) => {
+          onSubmit={values => {
             handleResetPassword(values);
           }}
           validationSchema={resetPasswordSchema}
@@ -151,29 +142,23 @@ const ForgotPassword = () => {
             <form onSubmit={handleSubmit}>
               <VStack spacing={4} align="flex-start">
                 <Text fontSize="14px" fontWeight="500">
-                  Enter your new password and verification otp sent to your
-                  email.
+                  Enter your new password and verification otp sent to your email.
                 </Text>
 
-                <FormControl
-                  isInvalid={errors.newPassword && touched.newPassword}
-                  w="100%"
-                >
+                <FormControl isInvalid={errors.newPassword && touched.newPassword} w="100%">
                   <FormLabel htmlFor="newPassword">New Password</FormLabel>
                   <InputGroup>
                     <Field
                       as={Input}
                       id="newPassword"
                       name="newPassword"
-                      type={showPassword ? "text" : "password"}
+                      type={showPassword ? 'text' : 'password'}
                       variant="filled"
                     />
-                    <InputRightElement h={"full"}>
+                    <InputRightElement h={'full'}>
                       <Button
-                        variant={"ghost"}
-                        onClick={() =>
-                          setShowPassword((showPassword) => !showPassword)
-                        }
+                        variant={'ghost'}
+                        onClick={() => setShowPassword(showPassword => !showPassword)}
                       >
                         {showPassword ? <ViewIcon /> : <ViewOffIcon />}
                       </Button>
@@ -183,26 +168,20 @@ const ForgotPassword = () => {
                 </FormControl>
                 <FormControl isInvalid={errors.otp && touched.otp} w="100%">
                   <FormLabel htmlFor="otp">Verification OTP</FormLabel>
-                  <Field
-                    as={Input}
-                    id="otp"
-                    name="otp"
-                    type="text"
-                    variant="filled"
-                  />
+                  <Field as={Input} id="otp" name="otp" type="text" variant="filled" />
                   <FormErrorMessage>{errors.otp}</FormErrorMessage>
                 </FormControl>
                 <Button type="submit" colorScheme="blue" w="full">
-                  {loading ? <Spinner size="sm" color="white" /> : "Submit"}
+                  {loading ? <Spinner size="sm" color="white" /> : 'Submit'}
                 </Button>
               </VStack>
             </form>
           )}
         </Formik>
       )}
-      <Flex justifyContent="center" alignItems="center" w="100%" mt={"15px"}>
-        <ArrowBackIcon mr={1} color={"blue.500"} />
-        <Link href="/admin/login" color={"blue.500"}>
+      <Flex justifyContent="center" alignItems="center" w="100%" mt={'15px'}>
+        <ArrowBackIcon mr={1} color={'blue.500'} />
+        <Link href="/admin/login" color={'blue.500'}>
           Back to Login
         </Link>
       </Flex>

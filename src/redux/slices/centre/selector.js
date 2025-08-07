@@ -1,6 +1,6 @@
-import { createSelector } from "@reduxjs/toolkit";
+import { createSelector } from '@reduxjs/toolkit';
 
-const selectCentres = (state) => state.centres;
+const selectCentres = state => state.centres;
 
 export const makeSelectCentresData = () =>
-  createSelector(selectCentres, (appState) => appState.centres);
+  createSelector(selectCentres, appState => appState.centres);

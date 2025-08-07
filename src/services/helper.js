@@ -1,49 +1,46 @@
-import axios from "axios";
+import axios from 'axios';
 
 const getAchievementImage = async (url, token) => {
   try {
     const response = await axios.get(url, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`
       },
-      responseType: "blob",
+      responseType: 'blob'
     });
+
     return response?.data;
   } catch (error) {
-    throw new Error(
-      "Get achievement image failed: " + error.response?.data?.message
-    );
+    throw new Error('Get achievement image failed: ' + error.response?.data?.message);
   }
 };
 
-const exportToExcel = async (token) => {
+const exportToExcel = async token => {
   try {
-    const response = await axios.get(
-      `${process.env.REACT_APP_BASE_API}/file/excel`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        responseType: "blob",
-      }
-    );
+    const response = await axios.get(`${process.env.REACT_APP_BASE_API}/file/excel`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      responseType: 'blob'
+    });
 
     if (response.status === 200) {
       const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
+      const link = document.createElement('a');
+
       link.href = url;
-      link.setAttribute("download", "steamcupplus_students.xlsx"); // Set the file name
+      link.setAttribute('download', 'steamcupplus_students.xlsx'); // Set the file name
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
 
       return {
         status: response.status,
-        message: "Successfully exported students data",
+        message: 'Successfully exported students data'
       };
     }
   } catch (error) {
-    throw new Error("Failed to export students data: " + error.message);
+    throw new Error('Failed to export students data: ' + error.message);
   }
 };
 
@@ -53,33 +50,35 @@ const exportCompetitionToExcel = async (token, competitionId, fileName) => {
       `${process.env.REACT_APP_BASE_API}/file/excel/${competitionId}`,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`
         },
-        responseType: "blob",
+        responseType: 'blob'
       }
     );
+
     if (response.status === 200) {
       const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
+      const link = document.createElement('a');
+
       link.href = url;
-      link.setAttribute("download", `${fileName}.xlsx`); // Set the file name
+      link.setAttribute('download', `${fileName}.xlsx`); // Set the file name
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
 
       return {
         status: response.status,
-        message: "Successfully exported competition data",
+        message: 'Successfully exported competition data'
       };
     }
   } catch (error) {
     const errorMessage =
       error.response?.status === 500
-        ? "Cannot export empty sign-up data"
-        : error.message || "An unknown error occurred";
+        ? 'Cannot export empty sign-up data'
+        : error.message || 'An unknown error occurred';
 
     throw new Error(`Failed to export competition data: ${errorMessage}`);
   }
 };
 
-export { getAchievementImage, exportToExcel, exportCompetitionToExcel };
+export { exportCompetitionToExcel, exportToExcel, getAchievementImage };

@@ -1,25 +1,28 @@
-import React from "react";
+import React, { lazy, Suspense } from 'react';
+
 import {
-  Route,
-  RouterProvider,
   createBrowserRouter,
   createRoutesFromElements,
-} from "react-router-dom";
+  Route,
+  RouterProvider
+} from 'react-router-dom';
 
-import Centres from "./pages/Centres";
-import Students from "./pages/Students";
-import Achievements from "./pages/Achievements";
-import CreatePost from "./pages/CreatePost";
-import Post from "./pages/Post";
-import LoginPage from "./pages/LoginPage";
-import IndexPage from "./pages/IndexPage";
-import Dashboard from "./pages/Dashboard";
-import LogoutPage from "./pages/LogoutPage";
-import ForgotPassword from "./pages/ForgotPassword";
-import PrivateRoute from "./components/PrivateRoute";
-import AuthLayout from "./components/Layout/AuthLayout";
-import Verify from "./pages/Verify";
-import Maintenance from "./pages/Maintenance";
+import AuthLayout from './components/Layout/AuthLayout';
+import PrivateRoute from './components/PrivateRoute';
+import Spin from './components/Spin';
+
+const Achievements = lazy(() => import('./pages/Achievements'));
+const Centres = lazy(() => import('./pages/Centres'));
+const CreatePost = lazy(() => import('./pages/CreatePost'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const IndexPage = lazy(() => import('./pages/IndexPage'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const LogoutPage = lazy(() => import('./pages/LogoutPage'));
+const Maintenance = lazy(() => import('./pages/Maintenance'));
+const Post = lazy(() => import('./pages/Post'));
+const Students = lazy(() => import('./pages/Students'));
+const Verify = lazy(() => import('./pages/Verify'));
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -33,7 +36,7 @@ const router = createBrowserRouter(
         <Route path="maintenance" element={<Maintenance />} />
       </Route>
 
-      {/* protected routes */}
+      {/* Protected routes */}
       <Route path="/admin" element={<PrivateRoute />}>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="students" element={<Students />} />
@@ -48,7 +51,11 @@ const router = createBrowserRouter(
 );
 
 const App = () => {
-  return <RouterProvider router={router} />;
+  return (
+    <Suspense fallback={<Spin />}>
+      <RouterProvider router={router} />
+    </Suspense>
+  );
 };
 
 export default App;

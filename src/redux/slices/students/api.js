@@ -1,7 +1,7 @@
-import { baseApiSlice } from "../../createAppApi";
+import { baseApiSlice } from '../../createAppApi';
 
 export const studentsApi = baseApiSlice.injectEndpoints({
-  endpoints: (builder) => {
+  endpoints: builder => {
     return {
       getStudentList: builder.query({
         query: ({ page = 1, limit = 10, status, name }) => {
@@ -9,79 +9,79 @@ export const studentsApi = baseApiSlice.injectEndpoints({
             ...(page && { page }),
             ...(limit && { limit }),
             ...(status && { status }),
-            ...(name && { name }),
+            ...(name && { name })
           };
 
           const params = new URLSearchParams(queryParams).toString();
 
-          const url = params ? `/user/students?${params}` : "/user/students";
+          const url = params ? `/user/students?${params}` : '/user/students';
 
           return {
-            url,
+            url
           };
-        },
+        }
       }),
 
       approveStudent: builder.mutation({
         query: ({ id, body }) => ({
           url: `/user/${id}/approve`,
-          method: "POST",
-          body: body,
-        }),
+          method: 'POST',
+          body: body
+        })
       }),
       rejectStudent: builder.mutation({
         query: ({ id }) => ({
           url: `/user/${id}/reject`,
-          method: "POST",
-        }),
+          method: 'POST'
+        })
       }),
       updateStudent: builder.mutation({
         query: ({ id, body }) => ({
           url: `/user/student/${id}`,
-          method: "PUT",
-          body: body,
-        }),
+          method: 'PUT',
+          body: body
+        })
       }),
       deleteStudent: builder.mutation({
-        query: (id) => ({
+        query: id => ({
           url: `/user/student/${id}`,
-          method: "DELETE",
-        }),
+          method: 'DELETE'
+        })
       }),
       renewMembership: builder.mutation({
-        query: (id) => ({
+        query: id => ({
           url: `/user/renew?id=${id}`,
-          method: "POST",
-        }),
+          method: 'POST'
+        })
       }),
       expireStudentAccount: builder.mutation({
-        query: (id) => ({
+        query: id => ({
           url: `/user/${id}/expired`,
-          method: "POST",
-        }),
+          method: 'POST'
+        })
       }),
       getStudentLevels: builder.query({
         query: () => ({
-          url: "/level",
-        }),
+          url: '/level'
+        })
       }),
       createStudentLevel: builder.mutation({
         query: ({ name }) => ({
           url: `/level`,
-          method: "POST",
+          method: 'POST',
           body: {
-            name,
-          },
-        }),
+            name
+          }
+        })
       }),
       deleteStudentLevel: builder.mutation({
-        query: (id) => ({
+        query: id => ({
           url: `/level/${id}`,
-          method: "DELETE",
-        }),
-      }),
+          method: 'DELETE'
+        })
+      })
     };
-  },
+  }
 });
 
 export const {
@@ -94,5 +94,5 @@ export const {
   useExpireStudentAccountMutation,
   useGetStudentLevelsQuery,
   useCreateStudentLevelMutation,
-  useDeleteStudentLevelMutation,
+  useDeleteStudentLevelMutation
 } = studentsApi;

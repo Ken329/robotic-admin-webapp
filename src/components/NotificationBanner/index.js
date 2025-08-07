@@ -1,5 +1,6 @@
-import React from "react";
-import { Box, Text } from "@chakra-ui/react";
+import React from 'react';
+
+import { Box, Text } from '@chakra-ui/react';
 
 const NotificationBanner = () => {
   return (
@@ -7,7 +8,7 @@ const NotificationBanner = () => {
       overflow="hidden"
       position="relative"
       width="100%"
-      height={{ base: "35px", md: "35px", lg: "50px" }}
+      height={{ base: '35px', md: '35px', lg: '50px' }}
       borderRadius="5px"
       bg="blue.400"
       display="flex"
@@ -26,14 +27,9 @@ const NotificationBanner = () => {
         justifyContent="center"
         height="100%"
       >
-        <Text
-          color="white"
-          fontWeight="bold"
-          fontSize={{ base: "sm", md: "md", lg: "lg" }}
-          mx={4}
-        >
-          🎉 Welcome to STEAM Cup+ Admin Portal! We have daily scheduled
-          maintenance from 12 AM to 8 AM.
+        <Text color="white" fontWeight="bold" fontSize={{ base: 'sm', md: 'md', lg: 'lg' }} mx={4}>
+          🎉 Welcome to STEAM Cup+ Admin Portal! We have daily scheduled maintenance from 12 AM to 8
+          AM.
         </Text>
       </Box>
 

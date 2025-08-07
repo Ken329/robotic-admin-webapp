@@ -1,46 +1,46 @@
-import React, { useEffect, useMemo, useState } from "react";
-import PropTypes from "prop-types";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect, useMemo, useState } from 'react';
+
+import { QuestionOutlineIcon } from '@chakra-ui/icons';
 import {
-  makeSelectToken,
-  makeSelectUserRole,
-} from "../../redux/slices/app/selector";
-import { makeSelectLevelsData } from "../../redux/slices/students/selector";
+  Button,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Grid,
+  Heading,
+  HStack,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
+  Select,
+  Spinner,
+  Stack,
+  Tooltip,
+  VStack
+} from '@chakra-ui/react';
+
+import { Field, Formik } from 'formik';
+import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+
+import useCustomToast from '../CustomToast';
+import Spin from '../Spin';
+import { makeSelectToken, makeSelectUserRole } from '../../redux/slices/app/selector';
+import { saveLevelsData } from '../../redux/slices/students';
 import {
   useApproveStudentMutation,
-  useRejectStudentMutation,
-  useUpdateStudentMutation,
   useGetStudentLevelsQuery,
-} from "../../redux/slices/students/api";
-import { saveLevelsData } from "../../redux/slices/students";
-import { Formik, Field } from "formik";
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalCloseButton,
-  ModalBody,
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  Input,
-  Button,
-  Heading,
-  Stack,
-  HStack,
-  Flex,
-  Grid,
-  VStack,
-  Spinner,
-  Select,
-  Tooltip,
-} from "@chakra-ui/react";
-import { QuestionOutlineIcon } from "@chakra-ui/icons";
-import Spin from "../Spin";
-import { getUserById } from "../../services/auth";
-import { createSignUpSchema } from "../../utils/validationSchema";
-import { USER_ROLE, STUDENT_STATUS } from "../../utils/constants";
-import useCustomToast from "../CustomToast";
+  useRejectStudentMutation,
+  useUpdateStudentMutation
+} from '../../redux/slices/students/api';
+import { makeSelectLevelsData } from '../../redux/slices/students/selector';
+import { getUserById } from '../../services/auth';
+import { STUDENT_STATUS, USER_ROLE } from '../../utils/constants';
+import { createSignUpSchema } from '../../utils/validationSchema';
 
 const DataModal = ({ isOpen, onClose, rowData }) => {
   const dispatch = useDispatch();
@@ -52,81 +52,73 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
   const [loading, setLoading] = useState(true);
   const [isEdit, setIsEdit] = useState(false);
   const { data } = useGetStudentLevelsQuery();
-  const [expiryDate, setExpiryDate] = useState(studentData?.expiryDate || "");
+  const [expiryDate, setExpiryDate] = useState(studentData?.expiryDate || '');
 
   const signUpSchema = createSignUpSchema(role);
 
-  const [approveStudent, { isLoading: approveLoading }] =
-    useApproveStudentMutation();
-  const [rejectStudent, { isLoading: rejectLoading }] =
-    useRejectStudentMutation();
-  const [updateStudent, { isLoading: updateLoading }] =
-    useUpdateStudentMutation();
+  const [approveStudent, { isLoading: approveLoading }] = useApproveStudentMutation();
+  const [rejectStudent, { isLoading: rejectLoading }] = useRejectStudentMutation();
+  const [updateStudent, { isLoading: updateLoading }] = useUpdateStudentMutation();
 
   useEffect(() => {
     if (data?.data) {
       dispatch(saveLevelsData(data?.data));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
-  const handleApprove = async (values) => {
+  const handleApprove = async values => {
     try {
       let payload = {};
-      Object.keys(values).forEach((key) => {
+
+      Object.keys(values).forEach(key => {
         if (values[key] !== studentData[key]) {
           payload[key] = values[key];
         }
       });
 
-      if (
-        role === USER_ROLE.CENTER &&
-        studentData.joinedDate &&
-        studentData.level
-      ) {
+      if (role === USER_ROLE.CENTER && studentData.joinedDate && studentData.level) {
         if (!payload.joinedDate) {
           payload = {
             ...payload,
-            joinedDate: studentData.joinedDate,
+            joinedDate: studentData.joinedDate
           };
         }
+
         if (!payload.level) {
           payload = {
             ...payload,
-            level: studentData.level,
+            level: studentData.level
           };
         }
       }
 
-      if (
-        role === USER_ROLE.ADMIN &&
-        studentData.roboticId &&
-        !payload.roboticId
-      ) {
+      if (role === USER_ROLE.ADMIN && studentData.roboticId && !payload.roboticId) {
         payload = {
           ...payload,
-          roboticId: studentData.roboticId,
+          roboticId: studentData.roboticId
         };
       }
 
       const response = await approveStudent({
         id: studentData.id,
-        body: payload,
+        body: payload
       }).unwrap();
 
       if (response.success) {
         toast({
-          title: "Student",
+          title: 'Student',
           description: response?.message,
-          status: "success",
+          status: 'success'
         });
 
         onClose();
       }
     } catch (error) {
       toast({
-        title: "Student",
+        title: 'Student',
         description: error?.data?.message,
-        status: "error",
+        status: 'error'
       });
     }
   };
@@ -134,31 +126,32 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
   const handleReject = async () => {
     try {
       const response = await rejectStudent({
-        id: studentData.id,
+        id: studentData.id
       });
 
       if (response.data.success) {
         toast({
-          title: "Student",
+          title: 'Student',
           description: response?.data?.message,
-          status: "success",
+          status: 'success'
         });
 
         onClose();
       }
     } catch (error) {
       toast({
-        title: "Student",
+        title: 'Student',
         description: error,
-        status: "error",
+        status: 'error'
       });
     }
   };
 
-  const handleUpdate = async (values) => {
+  const handleUpdate = async values => {
     try {
       const payload = {};
-      Object.keys(values).forEach((key) => {
+
+      Object.keys(values).forEach(key => {
         if (values[key] !== studentData[key]) {
           payload[key] = values[key];
         }
@@ -166,14 +159,14 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
 
       const response = await updateStudent({
         id: studentData.id,
-        body: payload,
+        body: payload
       });
 
       if (response.data.success) {
         toast({
-          title: "Student",
+          title: 'Student',
           description: response?.data?.message,
-          status: "success",
+          status: 'success'
         });
 
         setIsEdit(false);
@@ -181,23 +174,17 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
       }
     } catch (error) {
       toast({
-        title: "Student",
+        title: 'Student',
         description: error?.message,
-        status: "error",
+        status: 'error'
       });
     }
   };
 
   const isReadOnly = useMemo(() => {
-    if (
-      role === USER_ROLE.ADMIN &&
-      studentData?.status === STUDENT_STATUS.PENDING_ADMIN
-    ) {
+    if (role === USER_ROLE.ADMIN && studentData?.status === STUDENT_STATUS.PENDING_ADMIN) {
       return false;
-    } else if (
-      role === USER_ROLE.CENTER &&
-      studentData?.status === STUDENT_STATUS.PENDING_CENTER
-    ) {
+    } else if (role === USER_ROLE.CENTER && studentData?.status === STUDENT_STATUS.PENDING_CENTER) {
       return false;
     } else if (
       role === USER_ROLE.ADMIN &&
@@ -214,15 +201,17 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
     if (isOpen) {
       const fetchStudentData = async () => {
         setLoading(true);
+
         try {
           const response = await getUserById(rowData?.id, token);
+
           setStudentData(response);
           setExpiryDate(response?.expiryDate);
         } catch (error) {
           toast({
-            title: "Student",
+            title: 'Student',
             description: error?.message,
-            status: "error",
+            status: 'error'
           });
         } finally {
           setLoading(false);
@@ -231,6 +220,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
 
       fetchStudentData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rowData, isOpen]);
 
   return (
@@ -239,9 +229,9 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
       <ModalContent>
         <ModalCloseButton />
         <ModalBody>
-          <Flex minH={"100vh"} justify={"center"} borderRadius={"xl"}>
-            <Stack spacing={4} w={"100%"} p={6}>
-              <Heading lineHeight={1.1} fontSize={{ base: "xl", sm: "2xl" }}>
+          <Flex minH={'100vh'} justify={'center'} borderRadius={'xl'}>
+            <Stack spacing={4} w={'100%'} p={6}>
+              <Heading lineHeight={1.1} fontSize={{ base: 'xl', sm: '2xl' }}>
                 Student Info
               </Heading>
               {loading ? (
@@ -249,28 +239,28 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
               ) : (
                 <Formik
                   initialValues={{
-                    fullName: studentData?.fullName || "",
-                    dob: studentData?.dob || "",
-                    gender: studentData?.gender || "",
-                    center: studentData?.centerName || "",
-                    nric: studentData?.nric || "",
-                    passport: studentData?.passport || "",
-                    contact: studentData?.contact || "",
-                    race: studentData?.race || "",
-                    moeEmail: studentData?.moeEmail || "",
-                    personalEmail: studentData?.personalEmail || "",
-                    school: studentData?.school || "",
-                    nationality: studentData?.nationality || "",
-                    parentName: studentData?.parentName || "",
-                    relationship: studentData?.relationship || "",
-                    parentEmail: studentData?.parentEmail || "",
-                    parentContact: studentData?.parentContact || "",
-                    size: studentData?.size || "",
-                    level: studentData?.level || "",
-                    roboticId: studentData?.roboticId || "",
-                    joinedDate: studentData?.joinedDate || "",
+                    fullName: studentData?.fullName || '',
+                    dob: studentData?.dob || '',
+                    gender: studentData?.gender || '',
+                    center: studentData?.centerName || '',
+                    nric: studentData?.nric || '',
+                    passport: studentData?.passport || '',
+                    contact: studentData?.contact || '',
+                    race: studentData?.race || '',
+                    moeEmail: studentData?.moeEmail || '',
+                    personalEmail: studentData?.personalEmail || '',
+                    school: studentData?.school || '',
+                    nationality: studentData?.nationality || '',
+                    parentName: studentData?.parentName || '',
+                    relationship: studentData?.relationship || '',
+                    parentEmail: studentData?.parentEmail || '',
+                    parentContact: studentData?.parentContact || '',
+                    size: studentData?.size || '',
+                    level: studentData?.level || '',
+                    roboticId: studentData?.roboticId || '',
+                    joinedDate: studentData?.joinedDate || ''
                   }}
-                  onSubmit={(values) => {
+                  onSubmit={values => {
                     if (studentData?.status === STUDENT_STATUS.APPROVED) {
                       handleUpdate(values);
                     } else {
@@ -282,10 +272,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                   {({ handleSubmit, values, errors, touched }) => (
                     <form onSubmit={handleSubmit}>
                       <VStack spacing={4} align="flex-start">
-                        <FormControl
-                          isInvalid={errors.fullName && touched.fullName}
-                          w="100%"
-                        >
+                        <FormControl isInvalid={errors.fullName && touched.fullName} w="100%">
                           <FormLabel htmlFor="fullName">Full Name</FormLabel>
                           <Field
                             as={Input}
@@ -299,10 +286,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                         </FormControl>
 
                         <Grid templateColumns="repeat(2, 1fr)" gap={4} w="100%">
-                          <FormControl
-                            isInvalid={errors.race && touched.race}
-                            w="100%"
-                          >
+                          <FormControl isInvalid={errors.race && touched.race} w="100%">
                             <FormLabel htmlFor="race">Race</FormLabel>
                             <Field
                               as={Select}
@@ -312,7 +296,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                               variant="filled"
                               isDisabled={isReadOnly}
                               _disabled={{
-                                opacity: 1,
+                                opacity: 1
                               }}
                             >
                               <option value="Malay">Malay</option>
@@ -325,14 +309,10 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                           </FormControl>
 
                           <FormControl
-                            isInvalid={
-                              errors.nationality && touched.nationality
-                            }
+                            isInvalid={errors.nationality && touched.nationality}
                             w="100%"
                           >
-                            <FormLabel htmlFor="nationality">
-                              Nationality
-                            </FormLabel>
+                            <FormLabel htmlFor="nationality">Nationality</FormLabel>
                             <Field
                               as={Select}
                               id="nationality"
@@ -341,23 +321,18 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                               variant="filled"
                               isDisabled={isReadOnly}
                               _disabled={{
-                                opacity: 1,
+                                opacity: 1
                               }}
                             >
                               <option value="malaysia">Malaysian</option>
                               <option value="others">Others</option>
                             </Field>
-                            <FormErrorMessage>
-                              {errors.nationality}
-                            </FormErrorMessage>
+                            <FormErrorMessage>{errors.nationality}</FormErrorMessage>
                           </FormControl>
                         </Grid>
 
-                        {values.nationality === "malaysia" ? (
-                          <FormControl
-                            isInvalid={errors.nric && touched.nric}
-                            w="100%"
-                          >
+                        {values.nationality === 'malaysia' ? (
+                          <FormControl isInvalid={errors.nric && touched.nric} w="100%">
                             <FormLabel htmlFor="nric">My Kad / Nric</FormLabel>
                             <Field
                               as={Input}
@@ -370,10 +345,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                             <FormErrorMessage>{errors.nric}</FormErrorMessage>
                           </FormControl>
                         ) : (
-                          <FormControl
-                            isInvalid={errors.passport && touched.passport}
-                            w="100%"
-                          >
+                          <FormControl isInvalid={errors.passport && touched.passport} w="100%">
                             <FormLabel htmlFor="passport">Passport</FormLabel>
                             <Field
                               as={Input}
@@ -383,16 +355,11 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                               variant="filled"
                               isReadOnly={isReadOnly}
                             />
-                            <FormErrorMessage>
-                              {errors.passport}
-                            </FormErrorMessage>
+                            <FormErrorMessage>{errors.passport}</FormErrorMessage>
                           </FormControl>
                         )}
                         <Grid templateColumns="repeat(2, 1fr)" gap={4} w="100%">
-                          <FormControl
-                            isInvalid={errors.gender && touched.gender}
-                            w="100%"
-                          >
+                          <FormControl isInvalid={errors.gender && touched.gender} w="100%">
                             <FormLabel htmlFor="gender">Gender</FormLabel>
                             <Field
                               as={Select}
@@ -402,7 +369,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                               variant="filled"
                               isDisabled={isReadOnly}
                               _disabled={{
-                                opacity: 1,
+                                opacity: 1
                               }}
                             >
                               <option value="male">Male</option>
@@ -410,10 +377,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                             </Field>
                             <FormErrorMessage>{errors.gender}</FormErrorMessage>
                           </FormControl>
-                          <FormControl
-                            isInvalid={errors.dob && touched.dob}
-                            w="100%"
-                          >
+                          <FormControl isInvalid={errors.dob && touched.dob} w="100%">
                             <FormLabel htmlFor="dob">Date of Birth</FormLabel>
                             <Field
                               as={Input}
@@ -427,10 +391,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                           </FormControl>
                         </Grid>
 
-                        <FormControl
-                          isInvalid={errors.school && touched.school}
-                          w="100%"
-                        >
+                        <FormControl isInvalid={errors.school && touched.school} w="100%">
                           <FormLabel htmlFor="school">School</FormLabel>
                           <Field
                             as={Input}
@@ -443,10 +404,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                           <FormErrorMessage>{errors.school}</FormErrorMessage>
                         </FormControl>
 
-                        <FormControl
-                          isInvalid={errors.moeEmail && touched.moeEmail}
-                          w="100%"
-                        >
+                        <FormControl isInvalid={errors.moeEmail && touched.moeEmail} w="100%">
                           <FormLabel htmlFor="moeEmail">MOE Email</FormLabel>
                           <Field
                             as={Input}
@@ -460,14 +418,10 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                         </FormControl>
 
                         <FormControl
-                          isInvalid={
-                            errors.personalEmail && touched.personalEmail
-                          }
+                          isInvalid={errors.personalEmail && touched.personalEmail}
                           w="100%"
                         >
-                          <FormLabel htmlFor="personalEmail">
-                            Personal Email
-                          </FormLabel>
+                          <FormLabel htmlFor="personalEmail">Personal Email</FormLabel>
                           <Field
                             as={Input}
                             id="personalEmail"
@@ -476,19 +430,12 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                             variant="filled"
                             isReadOnly={isReadOnly}
                           />
-                          <FormErrorMessage>
-                            {errors.personalEmail}
-                          </FormErrorMessage>
+                          <FormErrorMessage>{errors.personalEmail}</FormErrorMessage>
                         </FormControl>
 
                         <Grid templateColumns="repeat(2, 1fr)" gap={4} w="100%">
-                          <FormControl
-                            isInvalid={errors.contact && touched.contact}
-                            w="100%"
-                          >
-                            <FormLabel htmlFor="contact">
-                              Contact Number
-                            </FormLabel>
+                          <FormControl isInvalid={errors.contact && touched.contact} w="100%">
+                            <FormLabel htmlFor="contact">Contact Number</FormLabel>
                             <Field
                               as={Input}
                               id="contact"
@@ -497,15 +444,10 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                               variant="filled"
                               isReadOnly={isReadOnly}
                             />
-                            <FormErrorMessage>
-                              {errors.contact}
-                            </FormErrorMessage>
+                            <FormErrorMessage>{errors.contact}</FormErrorMessage>
                           </FormControl>
 
-                          <FormControl
-                            isInvalid={errors.size && touched.size}
-                            w="100%"
-                          >
+                          <FormControl isInvalid={errors.size && touched.size} w="100%">
                             <FormLabel htmlFor="size">T-Shirt Size</FormLabel>
                             <Field
                               as={Select}
@@ -515,7 +457,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                               variant="filled"
                               isDisabled={isReadOnly}
                               _disabled={{
-                                opacity: 1,
+                                opacity: 1
                               }}
                             >
                               <option value="4XS">4XS</option>
@@ -531,10 +473,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                           </FormControl>
                         </Grid>
 
-                        <FormControl
-                          isInvalid={errors.center && touched.center}
-                          w="100%"
-                        >
+                        <FormControl isInvalid={errors.center && touched.center} w="100%">
                           <FormLabel htmlFor="center">Centre</FormLabel>
                           <Field
                             as={Input}
@@ -548,13 +487,8 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                         </FormControl>
 
                         <Grid templateColumns="repeat(2, 1fr)" gap={4} w="100%">
-                          <FormControl
-                            isInvalid={errors.joinedDate && touched.joinedDate}
-                            w="100%"
-                          >
-                            <FormLabel htmlFor="joinedDate">
-                              Joined Date
-                            </FormLabel>
+                          <FormControl isInvalid={errors.joinedDate && touched.joinedDate} w="100%">
+                            <FormLabel htmlFor="joinedDate">Joined Date</FormLabel>
                             <Field
                               as={Input}
                               id="joinedDate"
@@ -563,17 +497,11 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                               variant="filled"
                               isReadOnly={isReadOnly}
                             />
-                            <FormErrorMessage>
-                              {errors.joinedDate}
-                            </FormErrorMessage>
+                            <FormErrorMessage>{errors.joinedDate}</FormErrorMessage>
                           </FormControl>
 
                           <FormControl w="100%">
-                            <FormLabel
-                              display="flex"
-                              alignItems="center"
-                              gap={2}
-                            >
+                            <FormLabel display="flex" alignItems="center" gap={2}>
                               Membership Expiry Date
                               <Tooltip
                                 label="This field will be calculated and assigned automatically."
@@ -589,9 +517,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
 
                             <Field
                               as={Input}
-                              value={new Date(expiryDate).toLocaleDateString(
-                                "en-GB"
-                              )}
+                              value={new Date(expiryDate).toLocaleDateString('en-GB')}
                               type="text"
                               variant="filled"
                               isReadOnly={true}
@@ -599,10 +525,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                           </FormControl>
                         </Grid>
 
-                        <FormControl
-                          isInvalid={errors.roboticId && touched.roboticId}
-                          w="100%"
-                        >
+                        <FormControl isInvalid={errors.roboticId && touched.roboticId} w="100%">
                           <FormLabel htmlFor="roboticId">Student ID</FormLabel>
                           <Field
                             as={Input}
@@ -613,15 +536,10 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                             isReadOnly={isReadOnly}
                           />
 
-                          <FormErrorMessage>
-                            {errors.roboticId}
-                          </FormErrorMessage>
+                          <FormErrorMessage>{errors.roboticId}</FormErrorMessage>
                         </FormControl>
 
-                        <FormControl
-                          isInvalid={errors.level && touched.level}
-                          w="100%"
-                        >
+                        <FormControl isInvalid={errors.level && touched.level} w="100%">
                           <FormLabel htmlFor="level">Student Level</FormLabel>
                           <Field
                             as={Select}
@@ -631,11 +549,11 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                             variant="filled"
                             isDisabled={isReadOnly}
                             _disabled={{
-                              opacity: 1,
+                              opacity: 1
                             }}
                           >
                             {levels &&
-                              levels.map((level) => (
+                              levels.map(level => (
                                 <option key={level.id} value={level.id}>
                                   {level.name}
                                 </option>
@@ -646,15 +564,12 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                         </FormControl>
                         <Heading
                           lineHeight={1.1}
-                          fontSize={{ base: "xl", sm: "2xl" }}
-                          marginTop={"10px"}
+                          fontSize={{ base: 'xl', sm: '2xl' }}
+                          marginTop={'10px'}
                         >
                           Parent Info
                         </Heading>
-                        <FormControl
-                          isInvalid={errors.parentName && touched.parentName}
-                          w="100%"
-                        >
+                        <FormControl isInvalid={errors.parentName && touched.parentName} w="100%">
                           <FormLabel htmlFor="parentName">Name</FormLabel>
                           <Field
                             as={Input}
@@ -664,19 +579,13 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                             variant="filled"
                             isReadOnly={isReadOnly}
                           />
-                          <FormErrorMessage>
-                            {errors.parentName}
-                          </FormErrorMessage>
+                          <FormErrorMessage>{errors.parentName}</FormErrorMessage>
                         </FormControl>
                         <FormControl
-                          isInvalid={
-                            errors.relationship && touched.relationship
-                          }
+                          isInvalid={errors.relationship && touched.relationship}
                           w="100%"
                         >
-                          <FormLabel htmlFor="relationship">
-                            Relationship to student
-                          </FormLabel>
+                          <FormLabel htmlFor="relationship">Relationship to student</FormLabel>
                           <Field
                             as={Select}
                             id="relationship"
@@ -685,21 +594,16 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                             variant="filled"
                             isDisabled={isReadOnly}
                             _disabled={{
-                              opacity: 1,
+                              opacity: 1
                             }}
                           >
                             <option value="father">Father</option>
                             <option value="mother">Mother</option>
                             <option value="others">Legal Guardian</option>
                           </Field>
-                          <FormErrorMessage>
-                            {errors.relationship}
-                          </FormErrorMessage>
+                          <FormErrorMessage>{errors.relationship}</FormErrorMessage>
                         </FormControl>
-                        <FormControl
-                          isInvalid={errors.parentEmail && touched.parentEmail}
-                          w="100%"
-                        >
+                        <FormControl isInvalid={errors.parentEmail && touched.parentEmail} w="100%">
                           <FormLabel htmlFor="parentEmail">Email</FormLabel>
                           <Field
                             as={Input}
@@ -709,19 +613,13 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                             variant="filled"
                             isReadOnly={isReadOnly}
                           />
-                          <FormErrorMessage>
-                            {errors.parentEmail}
-                          </FormErrorMessage>
+                          <FormErrorMessage>{errors.parentEmail}</FormErrorMessage>
                         </FormControl>
                         <FormControl
-                          isInvalid={
-                            errors.parentContact && touched.parentContact
-                          }
+                          isInvalid={errors.parentContact && touched.parentContact}
                           w="100%"
                         >
-                          <FormLabel htmlFor="parentContact">
-                            Contact Number
-                          </FormLabel>
+                          <FormLabel htmlFor="parentContact">Contact Number</FormLabel>
                           <Field
                             as={Input}
                             id="parentContact"
@@ -730,35 +628,23 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                             variant="filled"
                             isReadOnly={isReadOnly}
                           />
-                          <FormErrorMessage>
-                            {errors.parentContact}
-                          </FormErrorMessage>
+                          <FormErrorMessage>{errors.parentContact}</FormErrorMessage>
                         </FormControl>
 
                         {studentData?.status === STUDENT_STATUS.APPROVED &&
                           role === USER_ROLE.ADMIN && (
                             <>
                               {isEdit ? (
-                                <HStack spacing={4} w={"100%"}>
+                                <HStack spacing={4} w={'100%'}>
                                   <Button type="submit" colorScheme="green">
-                                    {updateLoading ? (
-                                      <Spinner size="sm" color="white" />
-                                    ) : (
-                                      "Submit"
-                                    )}
+                                    {updateLoading ? <Spinner size="sm" color="white" /> : 'Submit'}
                                   </Button>
-                                  <Button
-                                    colorScheme="red"
-                                    onClick={() => setIsEdit(false)}
-                                  >
+                                  <Button colorScheme="red" onClick={() => setIsEdit(false)}>
                                     Cancel
                                   </Button>
                                 </HStack>
                               ) : (
-                                <Button
-                                  colorScheme="blue"
-                                  onClick={() => setIsEdit(true)}
-                                >
+                                <Button colorScheme="blue" onClick={() => setIsEdit(true)}>
                                   Edit
                                 </Button>
                               )}
@@ -767,20 +653,12 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                         {studentData?.status !== STUDENT_STATUS.APPROVED &&
                           studentData?.status !== STUDENT_STATUS.REJECTED &&
                           !isReadOnly && (
-                            <HStack spacing={4} w={"100%"}>
+                            <HStack spacing={4} w={'100%'}>
                               <Button type="submit" colorScheme="green">
-                                {approveLoading ? (
-                                  <Spinner size="sm" color="white" />
-                                ) : (
-                                  "Approve"
-                                )}
+                                {approveLoading ? <Spinner size="sm" color="white" /> : 'Approve'}
                               </Button>
                               <Button colorScheme="red" onClick={handleReject}>
-                                {rejectLoading ? (
-                                  <Spinner size="sm" color="white" />
-                                ) : (
-                                  "Reject"
-                                )}
+                                {rejectLoading ? <Spinner size="sm" color="white" /> : 'Reject'}
                               </Button>
                             </HStack>
                           )}
@@ -800,7 +678,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
 DataModal.propTypes = {
   isOpen: PropTypes.any.isRequired,
   onClose: PropTypes.func.isRequired,
-  rowData: PropTypes.object,
+  rowData: PropTypes.object
 };
 
 export default DataModal;

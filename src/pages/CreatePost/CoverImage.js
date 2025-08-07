@@ -1,30 +1,33 @@
-import React, { useState, useEffect, useRef } from "react";
-import PropTypes from "prop-types";
+import React, { useEffect, useRef, useState } from 'react';
+
 import {
   Button,
   Flex,
+  HStack,
+  Image,
   Modal,
-  ModalOverlay,
+  ModalBody,
+  ModalCloseButton,
   ModalContent,
   ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  useDisclosure,
-  HStack,
-  VStack,
-  Image,
-  Text,
+  ModalOverlay,
   Spinner,
-} from "@chakra-ui/react";
-import { useSelector, useDispatch } from "react-redux";
+  Text,
+  useDisclosure,
+  VStack
+} from '@chakra-ui/react';
+
+import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+
+import useCustomToast from '../../components/CustomToast';
+import { saveFilesData } from '../../redux/slices/posts';
 import {
-  useGetAllFilesQuery,
-  useUploadFileMutation,
   useDeleteFileMutation,
-} from "../../redux/slices/posts/api";
-import { makeSelectFilesData } from "../../redux/slices/posts/selector";
-import { saveFilesData } from "../../redux/slices/posts";
-import useCustomToast from "../../components/CustomToast";
+  useGetAllFilesQuery,
+  useUploadFileMutation
+} from '../../redux/slices/posts/api';
+import { makeSelectFilesData } from '../../redux/slices/posts/selector';
 
 const CoverImage = ({ onCoverImageSelect }) => {
   const dispatch = useDispatch();
@@ -37,9 +40,9 @@ const CoverImage = ({ onCoverImageSelect }) => {
     data: imagesData,
     isLoading,
     isError,
-    refetch,
+    refetch
   } = useGetAllFilesQuery({
-    skip: !isOpen,
+    skip: !isOpen
   });
   const [uploadFile] = useUploadFileMutation();
   const [deleteFile] = useDeleteFileMutation();
@@ -49,11 +52,12 @@ const CoverImage = ({ onCoverImageSelect }) => {
       dispatch(saveFilesData(imagesData?.data));
     } else if (isError) {
       toast({
-        title: "Fetch Images",
+        title: 'Fetch Images',
         description: `Error fetching images`,
-        status: "error",
+        status: 'error'
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imagesData, isLoading, isError]);
 
   useEffect(() => {
@@ -62,24 +66,25 @@ const CoverImage = ({ onCoverImageSelect }) => {
     }
   }, [isOpen, refetch]);
 
-  const handleImageUpload = async (e) => {
+  const handleImageUpload = async e => {
     const file = e.target.files[0];
     const formData = new FormData();
-    formData.append("file", file);
+
+    formData.append('file', file);
 
     try {
       setImageLoading(true);
       await uploadFile(formData).unwrap();
       toast({
-        title: "Upload Image",
-        description: "Image uploaded successfully",
-        status: "success",
+        title: 'Upload Image',
+        description: 'Image uploaded successfully',
+        status: 'success'
       });
     } catch (error) {
       toast({
-        title: "Upload Image",
+        title: 'Upload Image',
         description: `Error uploading image: ${error?.data?.message}`,
-        status: "error",
+        status: 'error'
       });
     } finally {
       setImageLoading(false);
@@ -88,24 +93,24 @@ const CoverImage = ({ onCoverImageSelect }) => {
     }
   };
 
-  const handleImageSelect = (image) => {
+  const handleImageSelect = image => {
     onCoverImageSelect(image.url, image.id);
     onClose();
   };
 
-  const handleImageDelete = async (fileId) => {
+  const handleImageDelete = async fileId => {
     try {
       await deleteFile(fileId).unwrap();
       toast({
-        title: "Cover Image",
-        description: "Image deleted successfully",
-        status: "success",
+        title: 'Cover Image',
+        description: 'Image deleted successfully',
+        status: 'success'
       });
     } catch (error) {
       toast({
-        title: "Cover Image",
+        title: 'Cover Image',
         description: `Error deleting image: ${error?.data?.message}`,
-        status: "error",
+        status: 'error'
       });
     } finally {
       refetch();
@@ -132,7 +137,7 @@ const CoverImage = ({ onCoverImageSelect }) => {
               ref={fileInputRef}
               type="file"
               accept="image/*"
-              style={{ display: "none" }}
+              style={{ display: 'none' }}
               onChange={handleImageUpload}
             />
             {imageLoading ? (
@@ -142,7 +147,7 @@ const CoverImage = ({ onCoverImageSelect }) => {
               </Flex>
             ) : (
               <Flex wrap="wrap" gap={4}>
-                {images.map((image) => (
+                {images.map(image => (
                   <VStack
                     key={image.id}
                     spacing={2}
@@ -153,11 +158,7 @@ const CoverImage = ({ onCoverImageSelect }) => {
                   >
                     <Image src={image.url} alt={image.name} maxWidth="100px" />
                     <HStack spacing={2}>
-                      <Button
-                        size="sm"
-                        colorScheme="blue"
-                        onClick={() => handleImageSelect(image)}
-                      >
+                      <Button size="sm" colorScheme="blue" onClick={() => handleImageSelect(image)}>
                         Select
                       </Button>
                       <Button
@@ -180,7 +181,7 @@ const CoverImage = ({ onCoverImageSelect }) => {
 };
 
 CoverImage.propTypes = {
-  onCoverImageSelect: PropTypes.func.isRequired,
+  onCoverImageSelect: PropTypes.func.isRequired
 };
 
 export default CoverImage;

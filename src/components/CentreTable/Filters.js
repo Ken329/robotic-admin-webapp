@@ -1,77 +1,79 @@
-import React, { useState } from "react";
-import { useCreateCentreMutation } from "../../redux/slices/centre/api";
-import NodeRSA from "node-rsa";
-import PropTypes from "prop-types";
+import React, { useState } from 'react';
+
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import {
-  HStack,
   Button,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Heading,
+  HStack,
   Input,
   InputGroup,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalCloseButton,
-  ModalBody,
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  Heading,
-  Stack,
-  Flex,
-  VStack,
-  Spinner,
   InputRightElement,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
+  Spinner,
+  Stack,
   Text,
-} from "@chakra-ui/react";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { useFormik } from "formik";
-import { FiPlus } from "react-icons/fi";
-import { createCentreSchema, verifySchema } from "../../utils/validationSchema";
-import { generatePublicKey, verifyOtp } from "../../services/auth";
-import useCustomToast from "../CustomToast";
+  VStack
+} from '@chakra-ui/react';
+
+import { useFormik } from 'formik';
+import NodeRSA from 'node-rsa';
+import PropTypes from 'prop-types';
+import { FiPlus } from 'react-icons/fi';
+
+import useCustomToast from '../CustomToast';
+import { useCreateCentreMutation } from '../../redux/slices/centre/api';
+import { generatePublicKey, verifyOtp } from '../../services/auth';
+import { createCentreSchema, verifySchema } from '../../utils/validationSchema';
 
 const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
   const toast = useCustomToast();
-  const taskName =
-    columnFilters.find((f) => f.id === "centerName")?.value || "";
+  const taskName = columnFilters.find(f => f.id === 'centerName')?.value || '';
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [centreId, setCentreId] = useState("");
+  const [centreId, setCentreId] = useState('');
   const [isVerify, setIsVerify] = useState(false);
   const [createCentre] = useCreateCentreMutation();
 
   const performRSAEncryption = async (payload, actions) => {
     try {
       const publicKey = await generatePublicKey();
+
       if (publicKey) {
         const key = new NodeRSA(publicKey);
-        const encryptedPassword = key.encrypt(payload, "base64");
+        const encryptedPassword = key.encrypt(payload, 'base64');
+
         return encryptedPassword;
       }
     } catch (error) {
       setLoading(false);
       actions.resetForm();
       toast({
-        title: "Centre",
+        title: 'Centre',
         description: error,
-        status: "error",
+        status: 'error'
       });
     }
   };
 
   const handleCreateNewCentre = async (values, actions) => {
     setLoading(true);
+
     try {
-      const encryptedPassword = await performRSAEncryption(
-        values.password,
-        actions
-      );
+      const encryptedPassword = await performRSAEncryption(values.password, actions);
 
       if (encryptedPassword) {
         const updatedValues = {
           ...values,
-          password: encryptedPassword,
+          password: encryptedPassword
         };
         const response = await createCentre(updatedValues).unwrap();
 
@@ -85,9 +87,9 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
     } catch (error) {
       setLoading(false);
       toast({
-        title: "Centre",
+        title: 'Centre',
         description: error?.data?.message,
-        status: "error",
+        status: 'error'
       });
       actions.resetForm();
     }
@@ -95,19 +97,21 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
 
   const handleVerify = async (values, actions) => {
     setLoading(true);
+
     try {
       const payload = {
         id: centreId,
-        code: values.code,
+        code: values.code
       };
 
       const response = await verifyOtp(payload);
+
       if (response?.success) {
         setLoading(false);
         toast({
-          title: "Centre",
-          description: "Sucessfully registered account!",
-          status: "success",
+          title: 'Centre',
+          description: 'Sucessfully registered account!',
+          status: 'success'
         });
         refetch();
         closeModal();
@@ -117,9 +121,9 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
     } catch (error) {
       setLoading(false);
       toast({
-        title: "Centre",
+        title: 'Centre',
         description: error,
-        status: "error",
+        status: 'error'
       });
       actions.resetForm();
     }
@@ -127,25 +131,25 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
 
   const createCentreFormik = useFormik({
     initialValues: {
-      name: "",
-      location: "",
-      email: "",
-      password: "",
+      name: '',
+      location: '',
+      email: '',
+      password: ''
     },
     validationSchema: createCentreSchema,
     onSubmit: (values, actions) => {
       handleCreateNewCentre(values, actions);
-    },
+    }
   });
 
   const verifyOTPFormik = useFormik({
     initialValues: {
-      code: "",
+      code: ''
     },
     validationSchema: verifySchema,
     onSubmit: (values, actions) => {
       handleVerify(values, actions);
-    },
+    }
   });
 
   const openModal = () => {
@@ -159,28 +163,28 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
   };
 
   const onFilterChange = (id, value) =>
-    setColumnFilters((prev) =>
+    setColumnFilters(prev =>
       prev
-        .filter((f) => f.id !== id)
+        .filter(f => f.id !== id)
         .concat({
           id,
-          value,
+          value
         })
     );
 
   return (
     <HStack mb={6} spacing={3}>
-      <InputGroup size={"sm"} maxW={"12rem"}>
+      <InputGroup size={'sm'} maxW={'12rem'}>
         <Input
           type="text"
-          variant={"filled"}
+          variant={'filled'}
           placeholder="Centre Name"
           borderWidth={1.5}
           borderColor="grey"
           borderRadius="md"
           height="2.5rem"
           value={taskName}
-          onChange={(e) => onFilterChange("centerName", e.target.value)}
+          onChange={e => onFilterChange('centerName', e.target.value)}
         />
       </InputGroup>
       <Button
@@ -197,9 +201,9 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
         <ModalContent>
           <ModalCloseButton />
           <ModalBody>
-            <Flex minH={"50vh"} justify={"center"} borderRadius={"xl"}>
-              <Stack spacing={4} w={"100%"} p={6}>
-                <Heading lineHeight={1.1} fontSize={{ base: "xl", sm: "2xl" }}>
+            <Flex minH={'50vh'} justify={'center'} borderRadius={'xl'}>
+              <Stack spacing={4} w={'100%'} p={6}>
+                <Heading lineHeight={1.1} fontSize={{ base: 'xl', sm: '2xl' }}>
                   Create New Centre
                 </Heading>
                 {isVerify ? (
@@ -211,37 +215,24 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
                     justifyContent="center"
                     onSubmit={verifyOTPFormik.handleSubmit}
                   >
-                    <Text
-                      fontSize="14px"
-                      fontWeight="500"
-                      alignSelf="flex-start"
-                    >
+                    <Text fontSize="14px" fontWeight="500" alignSelf="flex-start">
                       Enter the verification otp sent to the registered email.
                     </Text>
                     <FormControl
-                      isInvalid={
-                        verifyOTPFormik.errors.code &&
-                        verifyOTPFormik.touched.code
-                      }
+                      isInvalid={verifyOTPFormik.errors.code && verifyOTPFormik.touched.code}
                     >
                       <FormLabel>Verification OTP</FormLabel>
                       <Input
                         name="code"
                         placeholder="6 digit OTP code"
-                        {...verifyOTPFormik.getFieldProps("code")}
+                        {...verifyOTPFormik.getFieldProps('code')}
                       ></Input>
-                      <FormErrorMessage>
-                        {verifyOTPFormik.errors.code}
-                      </FormErrorMessage>
+                      <FormErrorMessage>{verifyOTPFormik.errors.code}</FormErrorMessage>
                     </FormControl>
 
                     <Flex>
                       <Button type="submit" colorScheme="green">
-                        {loading ? (
-                          <Spinner size="sm" color="white" />
-                        ) : (
-                          "Submit"
-                        )}
+                        {loading ? <Spinner size="sm" color="white" /> : 'Submit'}
                       </Button>
                     </Flex>
                   </VStack>
@@ -255,57 +246,45 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
                     onSubmit={createCentreFormik.handleSubmit}
                   >
                     <FormControl
-                      isInvalid={
-                        createCentreFormik.errors.name &&
-                        createCentreFormik.touched.name
-                      }
+                      isInvalid={createCentreFormik.errors.name && createCentreFormik.touched.name}
                     >
                       <FormLabel>Name</FormLabel>
                       <Input
                         name="name"
                         placeholder="Centre Name"
-                        {...createCentreFormik.getFieldProps("name")}
+                        {...createCentreFormik.getFieldProps('name')}
                       ></Input>
-                      <FormErrorMessage>
-                        {createCentreFormik.errors.name}
-                      </FormErrorMessage>
+                      <FormErrorMessage>{createCentreFormik.errors.name}</FormErrorMessage>
                     </FormControl>
                     <FormControl
                       isInvalid={
-                        createCentreFormik.errors.location &&
-                        createCentreFormik.touched.location
+                        createCentreFormik.errors.location && createCentreFormik.touched.location
                       }
                     >
                       <FormLabel>Location</FormLabel>
                       <Input
                         name="location"
                         placeholder="Centre Location"
-                        {...createCentreFormik.getFieldProps("location")}
+                        {...createCentreFormik.getFieldProps('location')}
                       ></Input>
-                      <FormErrorMessage>
-                        {createCentreFormik.errors.location}
-                      </FormErrorMessage>
+                      <FormErrorMessage>{createCentreFormik.errors.location}</FormErrorMessage>
                     </FormControl>
                     <FormControl
                       isInvalid={
-                        createCentreFormik.errors.email &&
-                        createCentreFormik.touched.email
+                        createCentreFormik.errors.email && createCentreFormik.touched.email
                       }
                     >
                       <FormLabel>Email</FormLabel>
                       <Input
                         name="email"
                         placeholder="Centre Email Address"
-                        {...createCentreFormik.getFieldProps("email")}
+                        {...createCentreFormik.getFieldProps('email')}
                       ></Input>
-                      <FormErrorMessage>
-                        {createCentreFormik.errors.email}
-                      </FormErrorMessage>
+                      <FormErrorMessage>{createCentreFormik.errors.email}</FormErrorMessage>
                     </FormControl>
                     <FormControl
                       isInvalid={
-                        createCentreFormik.errors.password &&
-                        createCentreFormik.touched.password
+                        createCentreFormik.errors.password && createCentreFormik.touched.password
                       }
                     >
                       <FormLabel>Password</FormLabel>
@@ -313,32 +292,23 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
                         <Input
                           name="password"
                           placeholder="Centre Password"
-                          {...createCentreFormik.getFieldProps("password")}
+                          {...createCentreFormik.getFieldProps('password')}
                           style={{
-                            WebkitTextSecurity: showPassword ? "none" : "disc", // Conditionally mask the text
+                            WebkitTextSecurity: showPassword ? 'none' : 'disc' // Conditionally mask the text
                           }}
                         />
                         <InputRightElement>
-                          <Button
-                            size="sm"
-                            onClick={() => setShowPassword(!showPassword)}
-                          >
+                          <Button size="sm" onClick={() => setShowPassword(!showPassword)}>
                             {showPassword ? <ViewIcon /> : <ViewOffIcon />}
                           </Button>
                         </InputRightElement>
                       </InputGroup>
-                      <FormErrorMessage>
-                        {createCentreFormik.errors.password}
-                      </FormErrorMessage>
+                      <FormErrorMessage>{createCentreFormik.errors.password}</FormErrorMessage>
                     </FormControl>
 
                     <Flex>
                       <Button type="submit" colorScheme="green">
-                        {loading ? (
-                          <Spinner size="sm" color="white" />
-                        ) : (
-                          "Submit"
-                        )}
+                        {loading ? <Spinner size="sm" color="white" /> : 'Submit'}
                       </Button>
                     </Flex>
                   </VStack>
@@ -355,7 +325,7 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
 Filters.propTypes = {
   columnFilters: PropTypes.any.isRequired,
   setColumnFilters: PropTypes.func.isRequired,
-  refetch: PropTypes.func.isRequired,
+  refetch: PropTypes.func.isRequired
 };
 
 export default Filters;
