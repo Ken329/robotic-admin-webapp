@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, Outlet } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { saveToken } from "../../redux/slices/app";
-import { Flex, Spinner } from "@chakra-ui/react";
-import userpool from "../../utils/userpool";
-import Layout from "../Layout/MainLayout";
+import React, { useEffect, useState } from 'react';
+
+import { Flex, Spinner } from '@chakra-ui/react';
+
+import { useDispatch } from 'react-redux';
+import { Outlet, useNavigate } from 'react-router-dom';
+
+import Layout from '../Layout/MainLayout';
+import { saveToken } from '../../redux/slices/app';
+import userpool from '../../utils/userpool';
 
 const PrivateRoute = () => {
   const navigate = useNavigate();
@@ -12,15 +15,16 @@ const PrivateRoute = () => {
   const [isReady, setIsReady] = useState(false);
 
   const user = userpool.getCurrentUser();
-  const authTokens = JSON.parse(localStorage.getItem("token"));
+  const authTokens = JSON.parse(localStorage.getItem('token'));
 
   useEffect(() => {
     if (user && authTokens?.accessToken) {
       dispatch(saveToken(authTokens?.accessToken));
       setIsReady(true);
     } else {
-      navigate("/admin/logout", { replace: true });
+      navigate('/admin/logout', { replace: true });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, authTokens]);
 
   if (!isReady) {
@@ -47,4 +51,5 @@ const PrivateRoute = () => {
 
   return null;
 };
+
 export default PrivateRoute;

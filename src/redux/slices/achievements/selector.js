@@ -1,6 +1,6 @@
-import { createSelector } from "@reduxjs/toolkit";
+import { createSelector } from '@reduxjs/toolkit';
 
-const selectAchievements = (state) => state.achievements;
+const selectAchievements = state => state.achievements;
 
 export const makeSelectAchievementsData = () =>
-  createSelector(selectAchievements, (appState) => appState.achievements);
+  createSelector(selectAchievements, appState => appState.achievements);

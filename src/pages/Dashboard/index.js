@@ -1,9 +1,10 @@
-import React from "react";
-import Layout from "../../components/Layout/MainLayout";
-import BlogList from "../../components/BlogPosts";
-import NotificationBanner from "../../components/NotificationBanner";
-import AdminPanel from "../../components/AdminPanel";
-import useDashboard from "./hook/useDashboard";
+import React from 'react';
+
+import useDashboard from './hook/useDashboard';
+import AdminPanel from '../../components/AdminPanel';
+import BlogList from '../../components/BlogPosts';
+import Layout from '../../components/Layout/MainLayout';
+import NotificationBanner from '../../components/NotificationBanner';
 
 const Dashboard = () => {
   const { isLoading, blogsData, isAdmin, handleDelete } = useDashboard();

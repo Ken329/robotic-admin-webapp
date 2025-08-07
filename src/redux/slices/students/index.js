@@ -1,12 +1,12 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   students: [],
-  levels: [],
+  levels: []
 };
 
 const studentSlice = createSlice({
-  name: "students",
+  name: 'students',
   initialState: initialState,
   reducers: {
     saveStudentsData(state, action) {
@@ -14,9 +14,10 @@ const studentSlice = createSlice({
     },
     saveLevelsData(state, action) {
       state.levels = action.payload;
-    },
-  },
+    }
+  }
 });
 
 export const { saveStudentsData, saveLevelsData } = studentSlice.actions;
+
 export default studentSlice.reducer;

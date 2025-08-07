@@ -4,11 +4,62 @@
     "es2021": true,
     "node": true
   },
-  "extends": ["eslint:recommended", "plugin:react/recommended"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:prettier/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended"
+  ],
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["react"],
-  "rules": {}
+  "plugins": ["prettier", "react-hooks", "simple-import-sort"],
+  "rules": {
+    "prettier/prettier": "error",
+
+    "simple-import-sort/imports": [
+      "error",
+      {
+        "groups": [
+          ["^react$", "^react-dom$"],
+          ["^@"],
+          ["^\\u0000"],
+          ["^\\w"],
+          ["^[^.]"],
+          ["^\\./", "^\\.\\./", "^\\.\\./\\.\\./"]
+        ]
+      }
+    ],
+    "simple-import-sort/exports": "error",
+
+    "padding-line-between-statements": [
+      "error",
+      { "blankLine": "always", "prev": "import", "next": "import" },
+      { "blankLine": "any", "prev": "import", "next": "import" },
+      { "blankLine": "always", "prev": "*", "next": "return" },
+      { "blankLine": "always", "prev": ["const", "let", "var"], "next": "*" },
+      { "blankLine": "any", "prev": ["const", "let", "var"], "next": ["const", "let", "var"] },
+      { "blankLine": "always", "prev": "*", "next": "block-like" },
+      { "blankLine": "always", "prev": "*", "next": "export" },
+      { "blankLine": "always", "prev": "export", "next": "*" }
+    ],
+
+    "no-multiple-empty-lines": ["error", { "max": 1 }],
+    "eol-last": ["error", "always"],
+    "arrow-spacing": ["error", { "before": true, "after": true }],
+    "comma-dangle": "off",
+    "object-curly-spacing": ["error", "always"],
+    "array-bracket-spacing": ["error", "never"],
+    "space-before-blocks": ["error", "always"],
+    "space-infix-ops": "error",
+    "spaced-comment": ["error", "always", { "markers": ["/"] }],
+    "key-spacing": ["error", { "beforeColon": false, "afterColon": true }],
+    "no-trailing-spaces": "error"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  }
 }

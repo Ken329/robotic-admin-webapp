@@ -1,12 +1,12 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   userData: {},
-  token: null,
+  token: null
 };
 
 const appSlice = createSlice({
-  name: "app",
+  name: 'app',
   initialState: initialState,
   reducers: {
     saveUserData(state, action) {
@@ -18,10 +18,11 @@ const appSlice = createSlice({
     resetApp(state) {
       state.userData = null;
       state.token = null;
-      localStorage.removeItem("token");
-    },
-  },
+      localStorage.removeItem('token');
+    }
+  }
 });
 
 export const { saveUserData, saveToken, resetApp } = appSlice.actions;
+
 export default appSlice.reducer;

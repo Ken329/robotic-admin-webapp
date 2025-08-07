@@ -1,23 +1,25 @@
-import { useEffect, useState } from "react";
-import { useGetPostByIdQuery } from "../../../redux/slices/posts/api";
+import { useEffect, useState } from 'react';
 
-const useGetPost = (id) => {
+import { useGetPostByIdQuery } from '../../../redux/slices/posts/api';
+
+const useGetPost = id => {
   const { data, isLoading, isError } = useGetPostByIdQuery(id);
   const [blog, setBlog] = useState(null);
-  const [remark, setRemark] = useState("");
+  const [remark, setRemark] = useState('');
 
   useEffect(() => {
     if (data && !isLoading && !isError) {
       setBlog(data.data);
 
-      let content = data.data.content || "";
+      let content = data.data.content || '';
       const remarkMatch = content.match(/\{remark:\s*([^}]+)\}/);
+
       if (remarkMatch) {
         setRemark(remarkMatch[1]);
-        content = content.replace(remarkMatch[0], "");
-        setBlog((prevBlog) => ({
+        content = content.replace(remarkMatch[0], '');
+        setBlog(prevBlog => ({
           ...prevBlog,
-          content: content,
+          content: content
         }));
       }
     }

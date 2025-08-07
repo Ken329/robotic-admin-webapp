@@ -1,45 +1,45 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect, useState } from 'react';
+
 import {
-  makeSelectToken,
-  makeSelectUserRole,
-} from "../../redux/slices/app/selector";
-import {
-  useGetStudentLevelsQuery,
-  useCreateStudentLevelMutation,
-  useDeleteStudentLevelMutation,
-} from "../../redux/slices/students/api";
-import { saveLevelsData } from "../../redux/slices/students";
-import { makeSelectLevelsData } from "../../redux/slices/students/selector";
-import {
-  HStack,
   Button,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Grid,
+  GridItem,
+  Heading,
+  HStack,
   Input,
   InputGroup,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalCloseButton,
   ModalBody,
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  Heading,
-  Stack,
-  Flex,
-  VStack,
-  Spinner,
-  Text,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
   Select,
-  Grid,
-  GridItem,
-} from "@chakra-ui/react";
-import { useFormik } from "formik";
-import { createLevelSchema } from "../../utils/validationSchema";
-import { FiSearch, FiPlus, FiDownload } from "react-icons/fi";
-import useCustomToast from "../CustomToast";
-import { exportToExcel } from "../../services/helper";
+  Spinner,
+  Stack,
+  Text,
+  VStack
+} from '@chakra-ui/react';
+
+import { useFormik } from 'formik';
+import PropTypes from 'prop-types';
+import { FiDownload, FiPlus, FiSearch } from 'react-icons/fi';
+import { useDispatch, useSelector } from 'react-redux';
+
+import useCustomToast from '../CustomToast';
+import { makeSelectToken, makeSelectUserRole } from '../../redux/slices/app/selector';
+import { saveLevelsData } from '../../redux/slices/students';
+import {
+  useCreateStudentLevelMutation,
+  useDeleteStudentLevelMutation,
+  useGetStudentLevelsQuery
+} from '../../redux/slices/students/api';
+import { makeSelectLevelsData } from '../../redux/slices/students/selector';
+import { exportToExcel } from '../../services/helper';
+import { createLevelSchema } from '../../utils/validationSchema';
 
 const Filters = ({ handleFilterChange }) => {
   const dispatch = useDispatch();
@@ -49,18 +49,17 @@ const Filters = ({ handleFilterChange }) => {
   const levels = useSelector(makeSelectLevelsData());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { data, refetch } = useGetStudentLevelsQuery();
-  const [createStudentLevel, { isLoading: createLevelIsLoading }] =
-    useCreateStudentLevelMutation();
+  const [createStudentLevel, { isLoading: createLevelIsLoading }] = useCreateStudentLevelMutation();
   const [deleteStudentLevel] = useDeleteStudentLevelMutation();
 
-  const [name, setName] = useState("");
-  const [status, setStatus] = useState("");
+  const [name, setName] = useState('');
+  const [status, setStatus] = useState('');
 
-  const handleSearchChange = (e) => {
+  const handleSearchChange = e => {
     setName(e.target.value);
   };
 
-  const handleStatusChange = (e) => {
+  const handleStatusChange = e => {
     setStatus(e.target.value);
   };
 
@@ -72,16 +71,17 @@ const Filters = ({ handleFilterChange }) => {
     if (data?.data) {
       dispatch(saveLevelsData(data?.data));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   const createLevelFormik = useFormik({
     initialValues: {
-      name: "",
+      name: ''
     },
     validationSchema: createLevelSchema,
     onSubmit: (values, actions) => {
       handleCreateLevel(values, actions);
-    },
+    }
   });
 
   const openModal = () => {
@@ -95,11 +95,12 @@ const Filters = ({ handleFilterChange }) => {
   const handleCreateLevel = async (values, actions) => {
     try {
       const response = await createStudentLevel(values).unwrap();
+
       if (response?.success) {
         toast({
-          title: "Student Level",
-          description: "Successfully created level",
-          status: "success",
+          title: 'Student Level',
+          description: 'Successfully created level',
+          status: 'success'
         });
 
         actions.resetForm();
@@ -107,32 +108,33 @@ const Filters = ({ handleFilterChange }) => {
       }
     } catch (error) {
       toast({
-        title: "Student Level",
+        title: 'Student Level',
         description: error?.data?.message,
-        status: "error",
+        status: 'error'
       });
 
       actions.resetForm();
     }
   };
 
-  const handleDeleteLevel = async (id) => {
+  const handleDeleteLevel = async id => {
     try {
       const response = await deleteStudentLevel(id).unwrap();
+
       if (response?.success) {
         toast({
-          title: "Student Level",
-          description: "Successfully deleted level",
-          status: "success",
+          title: 'Student Level',
+          description: 'Successfully deleted level',
+          status: 'success'
         });
 
         refetch();
       }
     } catch (error) {
       toast({
-        title: "Student Level",
+        title: 'Student Level',
         description: error?.data?.message,
-        status: "error",
+        status: 'error'
       });
     }
   };
@@ -143,33 +145,33 @@ const Filters = ({ handleFilterChange }) => {
 
       if (response.status === 200) {
         toast({
-          title: "Students",
+          title: 'Students',
           description: response.message,
-          status: "success",
+          status: 'success'
         });
       }
     } catch (err) {
       toast({
-        title: "Students",
+        title: 'Students',
         description: err.message,
-        status: "error",
+        status: 'error'
       });
     }
   };
 
   return (
     <Grid
-      templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
+      templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }}
       gap={4}
       mb={6}
-      alignItems={"center"}
+      alignItems={'center'}
     >
       <GridItem>
-        <Flex direction={{ base: "column", md: "row" }} gap={4}>
-          <InputGroup size={"sm"} mb={{ base: 4, md: 0 }}>
+        <Flex direction={{ base: 'column', md: 'row' }} gap={4}>
+          <InputGroup size={'sm'} mb={{ base: 4, md: 0 }}>
             <Input
               type="text"
-              variant={"filled"}
+              variant={'filled'}
               placeholder="Student Name"
               borderWidth={1.5}
               borderColor="gray"
@@ -196,11 +198,7 @@ const Filters = ({ handleFilterChange }) => {
         </Flex>
       </GridItem>
       <GridItem>
-        <HStack
-          spacing={3}
-          direction={{ base: "column", md: "row" }}
-          alignItems="center"
-        >
+        <HStack spacing={3} direction={{ base: 'column', md: 'row' }} alignItems="center">
           <Button
             colorScheme="orange"
             variant="solid"
@@ -210,7 +208,7 @@ const Filters = ({ handleFilterChange }) => {
           >
             Search
           </Button>
-          {role === "admin" && (
+          {role === 'admin' && (
             <Button
               colorScheme="teal"
               variant="solid"
@@ -238,9 +236,9 @@ const Filters = ({ handleFilterChange }) => {
         <ModalContent>
           <ModalCloseButton />
           <ModalBody>
-            <Flex minH={"50vh"} justify={"center"} borderRadius={"xl"}>
-              <Stack spacing={4} w={"100%"} p={6}>
-                <Heading lineHeight={1.1} fontSize={{ base: "xl", sm: "2xl" }}>
+            <Flex minH={'50vh'} justify={'center'} borderRadius={'xl'}>
+              <Stack spacing={4} w={'100%'} p={6}>
+                <Heading lineHeight={1.1} fontSize={{ base: 'xl', sm: '2xl' }}>
                   Create New Level
                 </Heading>
                 <VStack
@@ -252,10 +250,7 @@ const Filters = ({ handleFilterChange }) => {
                   onSubmit={createLevelFormik.handleSubmit}
                 >
                   <FormControl
-                    isInvalid={
-                      createLevelFormik.errors.name &&
-                      createLevelFormik.touched.name
-                    }
+                    isInvalid={createLevelFormik.errors.name && createLevelFormik.touched.name}
                   >
                     <FormLabel>Name</FormLabel>
                     <Flex w="100%" justifyContent="space-between">
@@ -263,30 +258,20 @@ const Filters = ({ handleFilterChange }) => {
                         <Input
                           name="name"
                           placeholder="Level Name"
-                          {...createLevelFormik.getFieldProps("name")}
+                          {...createLevelFormik.getFieldProps('name')}
                           flex="1"
                         />
                         <Button type="submit" colorScheme="green">
-                          {createLevelIsLoading ? (
-                            <Spinner size="sm" color="white" />
-                          ) : (
-                            "Submit"
-                          )}
+                          {createLevelIsLoading ? <Spinner size="sm" color="white" /> : 'Submit'}
                         </Button>
                       </HStack>
                     </Flex>
-                    <FormErrorMessage>
-                      {createLevelFormik.errors.name}
-                    </FormErrorMessage>
+                    <FormErrorMessage>{createLevelFormik.errors.name}</FormErrorMessage>
                   </FormControl>
                 </VStack>
                 <VStack align="start" w="100%" spacing={4} mt={4}>
-                  {levels?.map((level) => (
-                    <Flex
-                      key={level.id}
-                      w="100%"
-                      justifyContent="space-between"
-                    >
+                  {levels?.map(level => (
+                    <Flex key={level.id} w="100%" justifyContent="space-between">
                       <Text>{level.name}</Text>
                       <Button
                         colorScheme="red"
@@ -308,7 +293,7 @@ const Filters = ({ handleFilterChange }) => {
 };
 
 Filters.propTypes = {
-  handleFilterChange: PropTypes.func.isRequired,
+  handleFilterChange: PropTypes.func.isRequired
 };
 
 export default Filters;

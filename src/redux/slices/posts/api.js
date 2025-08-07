@@ -1,33 +1,33 @@
-import { baseApiSlice } from "../../createAppApi";
+import { baseApiSlice } from '../../createAppApi';
 
 export const postsApi = baseApiSlice.injectEndpoints({
-  endpoints: (builder) => {
+  endpoints: builder => {
     return {
       getAllFiles: builder.query({
         query: () => ({
-          url: "/file",
-        }),
+          url: '/file'
+        })
       }),
       getAllCategories: builder.query({
         query: () => ({
-          url: "/blog/category",
-        }),
+          url: '/blog/category'
+        })
       }),
       getAllBlogTypes: builder.query({
         query: () => ({
-          url: "/blog/type",
-        }),
+          url: '/blog/type'
+        })
       }),
       getALLParticipants: builder.query({
-        query: (id) => ({
-          url: `/blog/${id}/participants`,
-        }),
+        query: id => ({
+          url: `/blog/${id}/participants`
+        })
       }),
       deleteParticipantSignUp: builder.mutation({
-        query: (id) => ({
+        query: id => ({
           url: `/participants/${id}`,
-          method: "DELETE",
-        }),
+          method: 'DELETE'
+        })
       }),
       createPost: builder.mutation({
         query: ({
@@ -38,10 +38,10 @@ export const postsApi = baseApiSlice.injectEndpoints({
           assigned,
           coverImage,
           content,
-          customAttributes,
+          customAttributes
         }) => ({
           url: `/blog`,
-          method: "POST",
+          method: 'POST',
           body: {
             title: title,
             description: description,
@@ -50,9 +50,9 @@ export const postsApi = baseApiSlice.injectEndpoints({
             assigned: assigned,
             coverImage: coverImage,
             content: content,
-            customAttributes: customAttributes,
-          },
-        }),
+            customAttributes: customAttributes
+          }
+        })
       }),
       updatePost: builder.mutation({
         query: ({
@@ -64,10 +64,10 @@ export const postsApi = baseApiSlice.injectEndpoints({
           assigned,
           coverImage,
           content,
-          customAttributes,
+          customAttributes
         }) => ({
           url: `/blog/${id}`,
-          method: "PUT",
+          method: 'PUT',
           body: {
             title: title,
             description: description,
@@ -76,41 +76,41 @@ export const postsApi = baseApiSlice.injectEndpoints({
             assigned: assigned,
             coverImage: coverImage,
             content: content,
-            customAttributes: customAttributes,
-          },
-        }),
+            customAttributes: customAttributes
+          }
+        })
       }),
       deletePost: builder.mutation({
-        query: (id) => ({
+        query: id => ({
           url: `/blog/${id}`,
-          method: "DELETE",
-        }),
+          method: 'DELETE'
+        })
       }),
       getPostById: builder.query({
-        query: (id) => ({
-          url: `/blog/${id}`,
-        }),
+        query: id => ({
+          url: `/blog/${id}`
+        })
       }),
       getAllBlogs: builder.query({
         query: () => ({
-          url: "/blog",
-        }),
+          url: '/blog'
+        })
       }),
       uploadFile: builder.mutation({
-        query: (formdata) => ({
-          url: "/file",
-          method: "POST",
-          body: formdata,
-        }),
+        query: formdata => ({
+          url: '/file',
+          method: 'POST',
+          body: formdata
+        })
       }),
       deleteFile: builder.mutation({
-        query: (id) => ({
+        query: id => ({
           url: `/file/${id}`,
-          method: "DELETE",
-        }),
-      }),
+          method: 'DELETE'
+        })
+      })
     };
-  },
+  }
 });
 
 export const {
@@ -125,5 +125,5 @@ export const {
   useGetPostByIdQuery,
   useGetAllBlogsQuery,
   useUploadFileMutation,
-  useDeleteFileMutation,
+  useDeleteFileMutation
 } = postsApi;

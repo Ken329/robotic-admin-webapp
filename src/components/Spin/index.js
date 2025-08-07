@@ -1,5 +1,6 @@
-import React from "react";
-import { Spinner, Flex } from "@chakra-ui/react";
+import React from 'react';
+
+import { Flex, Spinner } from '@chakra-ui/react';
 
 const Spin = () => (
   <Flex

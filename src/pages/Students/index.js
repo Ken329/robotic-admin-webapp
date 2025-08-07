@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { Heading, Flex } from "@chakra-ui/react";
-import { useDispatch, useSelector } from "react-redux";
-import { makeSelectUserRole } from "../../redux/slices/app/selector";
-import { useGetStudentListQuery } from "../../redux/slices/students/api";
-import { makeSelectStudentData } from "../../redux/slices/students/selector";
-import { saveStudentsData } from "../../redux/slices/students";
-import Layout from "../../components/Layout/MainLayout";
-import DataTable from "../../components/StudentTable";
-import DataModal from "../../components/StudentTable/DataModel";
-import AchievementsModal from "../../components/StudentTable/AchievementsModal";
-import DeleteModal from "../../components/StudentTable/DeleteModal";
-import RenewMembershipModal from "../../components/StudentTable/RenewMembershipModal";
-import { USER_ROLE } from "../../utils/constants";
-import useCustomToast from "../../components/CustomToast";
+import React, { useEffect, useState } from 'react';
+
+import { Flex, Heading } from '@chakra-ui/react';
+
+import { useDispatch, useSelector } from 'react-redux';
+
+import useCustomToast from '../../components/CustomToast';
+import Layout from '../../components/Layout/MainLayout';
+import DataTable from '../../components/StudentTable';
+import AchievementsModal from '../../components/StudentTable/AchievementsModal';
+import DataModal from '../../components/StudentTable/DataModel';
+import DeleteModal from '../../components/StudentTable/DeleteModal';
+import RenewMembershipModal from '../../components/StudentTable/RenewMembershipModal';
+import { makeSelectUserRole } from '../../redux/slices/app/selector';
+import { saveStudentsData } from '../../redux/slices/students';
+import { useGetStudentListQuery } from '../../redux/slices/students/api';
+import { makeSelectStudentData } from '../../redux/slices/students/selector';
+import { USER_ROLE } from '../../utils/constants';
 
 const Students = () => {
   const dispatch = useDispatch();
@@ -25,7 +28,7 @@ const Students = () => {
   const { data, isLoading, isError, refetch } = useGetStudentListQuery({
     limit: pageSize,
     page: pageIndex + 1,
-    ...filters,
+    ...filters
   });
 
   const studentData = useSelector(makeSelectStudentData());
@@ -40,14 +43,15 @@ const Students = () => {
       dispatch(saveStudentsData(data?.data?.data));
     } else if (isError) {
       toast({
-        title: "Student",
-        description: "Error getting student list",
-        status: "error",
+        title: 'Student',
+        description: 'Error getting student list',
+        status: 'error'
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, isLoading, isError, dispatch]);
 
-  const openModal = (rowData) => {
+  const openModal = rowData => {
     setModalData(rowData);
     setIsModalOpen(true);
   };
@@ -57,7 +61,7 @@ const Students = () => {
     refetch();
   };
 
-  const openAchievementsModal = (rowData) => {
+  const openAchievementsModal = rowData => {
     setModalData(rowData);
     setIsAchievementsModalOpen(true);
   };
@@ -67,7 +71,7 @@ const Students = () => {
     refetch();
   };
 
-  const openDeleteModal = (rowData) => {
+  const openDeleteModal = rowData => {
     setModalData(rowData);
     setIsDeleteModalOpen(true);
   };
@@ -77,7 +81,7 @@ const Students = () => {
     refetch();
   };
 
-  const openRenewMembershipModal = (rowData) => {
+  const openRenewMembershipModal = rowData => {
     setModalData(rowData);
     setIsRenewModalOpen(true);
   };
@@ -87,21 +91,21 @@ const Students = () => {
     refetch();
   };
 
-  const handlePageChange = (newPageIndex) => {
+  const handlePageChange = newPageIndex => {
     setPageIndex(newPageIndex);
   };
 
-  const handlePageSizeChange = (newPageSize) => {
+  const handlePageSizeChange = newPageSize => {
     setPageSize(newPageSize);
   };
 
-  const handleFilterChange = (newFilters) => {
+  const handleFilterChange = newFilters => {
     setFilters(newFilters);
   };
 
   return (
     <Layout isLoading={isLoading}>
-      <Flex flexDirection={"column"} paddingLeft={"20px"}>
+      <Flex flexDirection={'column'} paddingLeft={'20px'}>
         <Heading as="h2" size="lg" mb="4">
           Students
         </Heading>
@@ -118,11 +122,7 @@ const Students = () => {
           onPageSizeChange={handlePageSizeChange}
           onFilterChange={handleFilterChange}
         />
-        <DataModal
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          rowData={modalData}
-        />
+        <DataModal isOpen={isModalOpen} onClose={closeModal} rowData={modalData} />
         {role === USER_ROLE.ADMIN && (
           <>
             <AchievementsModal
@@ -146,4 +146,5 @@ const Students = () => {
     </Layout>
   );
 };
+
 export default Students;

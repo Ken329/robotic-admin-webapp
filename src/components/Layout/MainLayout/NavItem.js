@@ -1,15 +1,12 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Box, Flex, Icon } from "@chakra-ui/react";
+import React from 'react';
+
+import { Box, Flex, Icon } from '@chakra-ui/react';
+
+import PropTypes from 'prop-types';
 
 const NavItem = ({ icon, path, children }) => {
   return (
-    <Box
-      as="a"
-      href={path}
-      style={{ textDecoration: "none" }}
-      _focus={{ boxShadow: "none" }}
-    >
+    <Box as="a" href={path} style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
       <Flex
         align="center"
         p="4"
@@ -18,8 +15,8 @@ const NavItem = ({ icon, path, children }) => {
         role="group"
         cursor="pointer"
         _hover={{
-          bg: "#27374d",
-          color: "#dde6ed",
+          bg: '#27374d',
+          color: '#dde6ed'
         }}
       >
         {icon && (
@@ -27,7 +24,7 @@ const NavItem = ({ icon, path, children }) => {
             mr="4"
             fontSize="16"
             _groupHover={{
-              color: "#27374d",
+              color: '#27374d'
             }}
             as={icon}
           />
@@ -41,7 +38,7 @@ const NavItem = ({ icon, path, children }) => {
 NavItem.propTypes = {
   icon: PropTypes.any,
   path: PropTypes.string.isRequired,
-  children: PropTypes.any.isRequired,
+  children: PropTypes.any.isRequired
 };
 
 export default NavItem;

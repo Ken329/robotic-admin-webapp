@@ -1,25 +1,28 @@
-import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
-import { makeSelectToken } from "../../redux/slices/app/selector";
+import React, { useEffect, useState } from 'react';
+
 import {
-  //  useRenewMembershipMutation,
-  useExpireStudentAccountMutation,
-} from "../../redux/slices/students/api";
-import { getUserById } from "../../services/auth";
-import {
+  Box,
   Button,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
-  Box,
-} from "@chakra-ui/react";
-import useCustomToast from "../CustomToast";
-import Spin from "../Spin";
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay
+} from '@chakra-ui/react';
+
+import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
+
+import useCustomToast from '../CustomToast';
+import Spin from '../Spin';
+import { makeSelectToken } from '../../redux/slices/app/selector';
+import {
+  //  useRenewMembershipMutation,
+  useExpireStudentAccountMutation
+} from '../../redux/slices/students/api';
+import { getUserById } from '../../services/auth';
 
 const RenewMembershipModal = ({ isOpen, onClose, rowData }) => {
   // const [renewMembership] = useRenewMembershipMutation();
@@ -31,7 +34,7 @@ const RenewMembershipModal = ({ isOpen, onClose, rowData }) => {
 
   const toast = useCustomToast();
 
-  const isRenewed = (expiryDate) => {
+  const isRenewed = expiryDate => {
     const expiryYear = new Date(expiryDate).getFullYear();
 
     return currentYear === expiryYear;
@@ -43,21 +46,22 @@ const RenewMembershipModal = ({ isOpen, onClose, rowData }) => {
     }
   }, [studentData]);
 
-  const handleRenewMembership = async (id) => {
+  const handleRenewMembership = async id => {
     try {
       const response = await expireStudentAccount(id).unwrap();
+
       if (response?.success) {
         toast({
-          title: "Student",
-          description: "Successfully renewed membership",
-          status: "success",
+          title: 'Student',
+          description: 'Successfully renewed membership',
+          status: 'success'
         });
       }
     } catch (error) {
       toast({
-        title: "Student",
+        title: 'Student',
         description: error?.data?.message,
-        status: "error",
+        status: 'error'
       });
     }
   };
@@ -66,14 +70,16 @@ const RenewMembershipModal = ({ isOpen, onClose, rowData }) => {
     if (isOpen) {
       const fetchStudentData = async () => {
         setLoading(true);
+
         try {
           const response = await getUserById(rowData?.id, token);
+
           setStudentData(response);
         } catch (error) {
           toast({
-            title: "Student",
+            title: 'Student',
             description: error?.message,
-            status: "error",
+            status: 'error'
           });
         } finally {
           setLoading(false);
@@ -82,6 +88,7 @@ const RenewMembershipModal = ({ isOpen, onClose, rowData }) => {
 
       fetchStudentData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rowData, isOpen]);
 
   return (
@@ -95,16 +102,14 @@ const RenewMembershipModal = ({ isOpen, onClose, rowData }) => {
         ) : studentData.expiryDate && !isRenewed(studentData.expiryDate) ? (
           <Box m={2}>
             <ModalBody>
-              This account has already renewed their membership for this year (
-              {currentYear}).
+              This account has already renewed their membership for this year ({currentYear}).
             </ModalBody>
           </Box>
         ) : (
           <>
             <ModalBody>
-              Do you want to renew membership for this student account? This
-              action cannot be undone. The account status will be set to
-              &quot;Expired&quot;.
+              Do you want to renew membership for this student account? This action cannot be
+              undone. The account status will be set to &quot;Expired&quot;.
             </ModalBody>
 
             <ModalFooter>
@@ -132,7 +137,7 @@ const RenewMembershipModal = ({ isOpen, onClose, rowData }) => {
 RenewMembershipModal.propTypes = {
   isOpen: PropTypes.any.isRequired,
   onClose: PropTypes.func.isRequired,
-  rowData: PropTypes.object,
+  rowData: PropTypes.object
 };
 
 export default RenewMembershipModal;

@@ -1,12 +1,14 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { makeSelectToken } from "../../redux/slices/app/selector";
-import { appApi } from "../../redux/slices/app/api";
-import { resetApp } from "../../redux/slices/app";
-import { logout } from "../../services/auth";
-import Spin from "../../components/Spin";
-import userpool from "../../utils/userpool";
+import React, { useEffect, useRef, useState } from 'react';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
+
+import Spin from '../../components/Spin';
+import { resetApp } from '../../redux/slices/app';
+import { appApi } from '../../redux/slices/app/api';
+import { makeSelectToken } from '../../redux/slices/app/selector';
+import { logout } from '../../services/auth';
+import userpool from '../../utils/userpool';
 
 const LogoutPage = () => {
   const navigate = useNavigate();
@@ -30,18 +32,19 @@ const LogoutPage = () => {
     dispatch(appApi.util.resetApiState());
     dispatch(resetApp());
     setIsLoading(false);
-    navigate("/admin/login", { replace: true });
+    navigate('/admin/login', { replace: true });
   };
 
   useEffect(() => {
     if (token) {
       handleLogout();
     } else {
-      navigate("/admin/login", {
+      navigate('/admin/login', {
         replace: true,
-        state: { unauthorized: location?.state?.unauthorized ? true : false },
+        state: { unauthorized: location?.state?.unauthorized ? true : false }
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, location]);
 
   return isLoading ? <Spin /> : null;

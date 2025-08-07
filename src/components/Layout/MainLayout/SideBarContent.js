@@ -1,29 +1,30 @@
-import React, { useMemo } from "react";
-import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
-import {
-  Box,
-  Flex,
-  CloseButton,
-  useColorModeValue,
-  Image,
-} from "@chakra-ui/react";
-import { FiHome, FiUser, FiMonitor, FiAward } from "react-icons/fi";
-import { makeSelectUserRole } from "../../../redux/slices/app/selector";
-import SteamCupLogoEdited from "../../../assets/images/STEAM Cup+edited.webp";
-import NavItem from "./NavItem";
+import React, { useMemo } from 'react';
+
+import { Box, CloseButton, Flex, Image, useColorModeValue } from '@chakra-ui/react';
+
+import PropTypes from 'prop-types';
+import { FiAward, FiHome, FiMonitor, FiUser } from 'react-icons/fi';
+import { useSelector } from 'react-redux';
+
+import NavItem from './NavItem';
+import SteamCupLogoEdited from '../../../assets/images/STEAM Cup+edited.webp';
+import { makeSelectUserRole } from '../../../redux/slices/app/selector';
 
 const SidebarContent = ({ onClose, ...props }) => {
   const useUserRole = () => {
     const role = useSelector(makeSelectUserRole());
     const userRole = useMemo(() => {
-      const storedRole = localStorage.getItem("adminUserRole");
+      const storedRole = localStorage.getItem('adminUserRole');
+
       if (role && role !== storedRole) {
-        localStorage.setItem("adminUserRole", role);
+        localStorage.setItem('adminUserRole', role);
+
         return role;
       }
+
       return storedRole || role;
     }, [role]);
+
     return userRole;
   };
 
@@ -32,21 +33,21 @@ const SidebarContent = ({ onClose, ...props }) => {
 
     const linkItems = useMemo(() => {
       switch (userRole) {
-        case "admin":
+        case 'admin':
           return [
-            { name: "Dashboard", icon: FiHome, path: "/admin/dashboard" },
-            { name: "Students", icon: FiUser, path: "/admin/students" },
-            { name: "Centres", icon: FiMonitor, path: "/admin/centres" },
+            { name: 'Dashboard', icon: FiHome, path: '/admin/dashboard' },
+            { name: 'Students', icon: FiUser, path: '/admin/students' },
+            { name: 'Centres', icon: FiMonitor, path: '/admin/centres' },
             {
-              name: "Achievements",
+              name: 'Achievements',
               icon: FiAward,
-              path: "/admin/achievements",
-            },
+              path: '/admin/achievements'
+            }
           ];
-        case "center":
+        case 'center':
           return [
-            { name: "Dashboard", icon: FiHome, path: "/admin/dashboard" },
-            { name: "Students", icon: FiUser, path: "/admin/students" },
+            { name: 'Dashboard', icon: FiHome, path: '/admin/dashboard' },
+            { name: 'Students', icon: FiUser, path: '/admin/students' }
           ];
         default:
           return [];
@@ -61,17 +62,17 @@ const SidebarContent = ({ onClose, ...props }) => {
   return (
     <Box
       transition="3s ease"
-      bg={"#dde6ed"}
+      bg={'#dde6ed'}
       borderRight="1px"
-      borderRightColor={useColorModeValue("gray.200", "gray.700")}
-      w={{ base: "full", md: 60 }}
+      borderRightColor={useColorModeValue('gray.200', 'gray.700')}
+      w={{ base: 'full', md: 60 }}
       pos="fixed"
       h="full"
       {...props}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <Image src={SteamCupLogoEdited} alt="SteamCup Logo" maxH="12" />
-        <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
+        <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
       {linkItems.map((link, index) => (
         <NavItem key={index} icon={link.icon} path={link.path}>
@@ -83,7 +84,7 @@ const SidebarContent = ({ onClose, ...props }) => {
 };
 
 SidebarContent.propTypes = {
-  onClose: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired
 };
 
 export default SidebarContent;

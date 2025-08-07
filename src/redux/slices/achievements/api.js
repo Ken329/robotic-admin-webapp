@@ -1,55 +1,55 @@
-import { baseApiSlice } from "../../createAppApi";
+import { baseApiSlice } from '../../createAppApi';
 
 export const achievementsApi = baseApiSlice.injectEndpoints({
-  endpoints: (builder) => {
+  endpoints: builder => {
     return {
       getAchievementList: builder.query({
         query: () => ({
-          url: "/achievements",
-        }),
+          url: '/achievements'
+        })
       }),
       getAchievementImage: builder.query({
-        query: (url) => ({
+        query: url => ({
           url: url,
-          responseType: "blob",
-        }),
+          responseType: 'blob'
+        })
       }),
       createAchievement: builder.mutation({
         query: ({ formData }) => ({
           url: `/achievement`,
-          method: "POST",
-          body: formData,
-        }),
+          method: 'POST',
+          body: formData
+        })
       }),
       deleteAchievement: builder.mutation({
-        query: (id) => ({
+        query: id => ({
           url: `/achievement/${id}`,
-          method: "DELETE",
-        }),
+          method: 'DELETE'
+        })
       }),
       updateAchievement: builder.mutation({
         query: ({ id, formData }) => ({
           url: `/achievement/${id}`,
-          method: "PUT",
-          body: formData,
-        }),
+          method: 'PUT',
+          body: formData
+        })
       }),
       assignAchievement: builder.mutation({
         query: ({ id, achievementIds }) => ({
           url: `/achievement/assign/${id}`,
-          method: "PUT",
+          method: 'PUT',
           body: {
-            achievementIds: achievementIds,
-          },
-        }),
+            achievementIds: achievementIds
+          }
+        })
       }),
       getAssignedAchievements: builder.query({
-        query: (id) => ({
-          url: `/achievement/assign/${id}`,
-        }),
-      }),
+        query: id => ({
+          url: `/achievement/assign/${id}`
+        })
+      })
     };
-  },
+  }
 });
 
 export const {
@@ -59,5 +59,5 @@ export const {
   useDeleteAchievementMutation,
   useUpdateAchievementMutation,
   useAssignAchievementMutation,
-  useGetAssignedAchievementsQuery,
+  useGetAssignedAchievementsQuery
 } = achievementsApi;

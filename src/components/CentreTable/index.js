@@ -1,74 +1,79 @@
-import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
+import React, { useEffect, useState } from 'react';
+
+import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import {
-  getCoreRowModel,
-  useReactTable,
-  flexRender,
-  getFilteredRowModel,
-  getSortedRowModel,
-  getPaginationRowModel,
-} from "@tanstack/react-table";
-import {
+  Badge,
   Box,
   Button,
-  Icon,
-  Text,
-  TableContainer,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  Badge,
   Flex,
-} from "@chakra-ui/react";
-import Filters from "./Filters";
-import { FiSliders, FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { ArrowDownIcon, ArrowUpIcon } from "@chakra-ui/icons";
+  Icon,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr
+} from '@chakra-ui/react';
+import {
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable
+} from '@tanstack/react-table';
+
+import PropTypes from 'prop-types';
+import { FiChevronLeft, FiChevronRight, FiSliders } from 'react-icons/fi';
+
+import Filters from './Filters';
 
 const columns = [
   {
-    accessorKey: "centerName",
-    header: "Name",
+    accessorKey: 'centerName',
+    header: 'Name',
     size: 300,
-    cell: (props) => <p>{props.getValue()}</p>,
+    cell: props => <p>{props.getValue()}</p>,
     enableColumnFilter: true,
-    filterFn: "includesString",
+    filterFn: 'includesString'
   },
   {
-    accessorKey: "email",
-    header: "Email ID",
+    accessorKey: 'email',
+    header: 'Email ID',
     size: 300,
-    cell: (props) => <p>{props.getValue()}</p>,
+    cell: props => <p>{props.getValue()}</p>
   },
   {
-    accessorKey: "centerId",
-    header: "Centre ID",
+    accessorKey: 'centerId',
+    header: 'Centre ID',
     size: 300,
-    cell: (props) => <p>{props.getValue()}</p>,
+    cell: props => <p>{props.getValue()}</p>
   },
   {
-    accessorKey: "status",
-    header: "Status",
+    accessorKey: 'status',
+    header: 'Status',
     size: 100,
-    cell: (props) => {
+    cell: props => {
       const status = props.getValue();
       let color;
+
       switch (status) {
-        case "approved":
-          color = "green.600";
+        case 'approved':
+          color = 'green.600';
           break;
         default:
-          color = "black";
+          color = 'black';
       }
+
       return (
         <Flex justifyContent="center">
           <Badge
-            size={"xl"}
+            size={'xl'}
             px={2}
             py={2}
-            borderRadius={"10px"}
+            borderRadius={'10px'}
             color="white"
             backgroundColor={color}
           >
@@ -81,18 +86,19 @@ const columns = [
     filterFn: (row, columnId, filterStatuses) => {
       if (filterStatuses.length === 0) return true;
       const status = row.getValue(columnId);
+
       return filterStatuses.includes(status);
-    },
+    }
   },
   {
-    accessorKey: "actions",
-    header: "Actions",
+    accessorKey: 'actions',
+    header: 'Actions',
     size: 100,
     cell: ({ openModal, ...props }) => (
       <Flex justifyContent="center">
         <Button
           colorScheme="teal"
-          size={"sm"}
+          size={'sm'}
           onClick={() => {
             openModal(props.row.original);
           }}
@@ -100,8 +106,8 @@ const columns = [
           View
         </Button>
       </Flex>
-    ),
-  },
+    )
+  }
 ];
 
 const DataTable = ({ tableData, openModal, refetch }) => {
@@ -115,7 +121,7 @@ const DataTable = ({ tableData, openModal, refetch }) => {
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    getPaginationRowModel: getPaginationRowModel()
   });
 
   useEffect(() => {
@@ -134,27 +140,20 @@ const DataTable = ({ tableData, openModal, refetch }) => {
         <Text mb={2}>Total records: {totalRecords}</Text>
         <Table size="md" w={table.getTotalSize()}>
           <Thead>
-            {table.getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map(headerGroup => (
               <Tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <Th
-                    w={header.getSize()}
-                    key={header.id}
-                    backgroundColor="#CBD5E0"
-                  >
-                    <Flex align={"center"} gap={"10px"}>
+                {headerGroup.headers.map(header => (
+                  <Th w={header.getSize()} key={header.id} backgroundColor="#CBD5E0">
+                    <Flex align={'center'} gap={'10px'}>
                       <Box as="span">{header.column.columnDef.header}</Box>
                       {header.column.getCanSort() && (
-                        <Icon
-                          as={FiSliders}
-                          onClick={header.column.getToggleSortingHandler()}
-                        />
+                        <Icon as={FiSliders} onClick={header.column.getToggleSortingHandler()} />
                       )}
                       <Box as="span">
                         {
                           {
                             asc: <ArrowUpIcon boxSize={3} ml={2} />,
-                            desc: <ArrowDownIcon boxSize={3} ml={2} />,
+                            desc: <ArrowDownIcon boxSize={3} ml={2} />
                           }[header.column.getIsSorted()]
                         }
                       </Box>
@@ -167,26 +166,18 @@ const DataTable = ({ tableData, openModal, refetch }) => {
           <Tbody>
             {table.getRowModel().rows.length === 0 ? (
               <Tr>
-                <Td
-                  colSpan={columns.length}
-                  textAlign="center"
-                  backgroundColor="#F7FAFC"
-                >
+                <Td colSpan={columns.length} textAlign="center" backgroundColor="#F7FAFC">
                   No data found
                 </Td>
               </Tr>
             ) : (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map(row => (
                 <Tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <Td
-                      w={cell.column.getSize()}
-                      key={cell.id}
-                      backgroundColor="#F7FAFC"
-                    >
+                  {row.getVisibleCells().map(cell => (
+                    <Td w={cell.column.getSize()} key={cell.id} backgroundColor="#F7FAFC">
                       {flexRender(cell.column.columnDef.cell, {
                         ...cell.getContext(),
-                        openModal,
+                        openModal
                       })}
                     </Td>
                   ))}
@@ -195,23 +186,18 @@ const DataTable = ({ tableData, openModal, refetch }) => {
             )}
           </Tbody>
         </Table>
-        <Flex align={"center"} justify={"start"} mt={"40px"} gap={"5px"}>
+        <Flex align={'center'} justify={'start'} mt={'40px'} gap={'5px'}>
           <Text mr={2} fontSize="sm">
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
+            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
           </Text>
           <Button
-            size={"xs"}
+            size={'xs'}
             onClick={() => table.previousPage()}
             isDisabled={!table.getCanPreviousPage()}
           >
             <Icon boxSize={4} as={FiChevronLeft} />
           </Button>
-          <Button
-            size={"xs"}
-            onClick={() => table.nextPage()}
-            isDisabled={!table.getCanNextPage()}
-          >
+          <Button size={'xs'} onClick={() => table.nextPage()} isDisabled={!table.getCanNextPage()}>
             <Icon boxSize={4} as={FiChevronRight} />
           </Button>
         </Flex>
@@ -223,7 +209,7 @@ const DataTable = ({ tableData, openModal, refetch }) => {
 DataTable.propTypes = {
   tableData: PropTypes.array.isRequired,
   openModal: PropTypes.func.isRequired,
-  refetch: PropTypes.func.isRequired,
+  refetch: PropTypes.func.isRequired
 };
 
 export default DataTable;
