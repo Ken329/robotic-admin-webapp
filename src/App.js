@@ -1,5 +1,7 @@
 import React, { lazy, Suspense } from 'react';
 
+import { Flex } from '@chakra-ui/react';
+
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -52,7 +54,13 @@ const router = createBrowserRouter(
 
 const App = () => {
   return (
-    <Suspense fallback={<Spin />}>
+    <Suspense
+      fallback={
+        <Flex minH="100vh" align="center" justify="center">
+          <Spin />
+        </Flex>
+      }
+    >
       <RouterProvider router={router} />
     </Suspense>
   );
