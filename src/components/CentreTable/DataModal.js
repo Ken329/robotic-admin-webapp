@@ -18,17 +18,16 @@ import {
   Stack,
   VStack
 } from '@chakra-ui/react';
-
 import { Field, Formik } from 'formik';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
-import useCustomToast from '../CustomToast';
-import Spin from '../Spin';
-import { makeSelectToken, makeSelectUserRole } from '../../redux/slices/app/selector';
-import { useUpdateCentreMutation } from '../../redux/slices/centre/api';
-import { getUserById } from '../../services/auth';
-import { CENTRE_STATUS, USER_ROLE } from '../../utils/constants';
+import useCustomToast from '@components/CustomToast';
+import Spin from '@components/Spin';
+import { CENTRE_STATUS, USER_ROLE } from '@utils/constants';
+import { makeSelectToken, makeSelectUserRole } from '@redux/slices/app/selector';
+import { useUpdateCentreMutation } from '@redux/slices/centre/api';
+import { getUserById } from '@services/auth';
 
 const DataModal = ({ isOpen, onClose, rowData }) => {
   const toast = useCustomToast();

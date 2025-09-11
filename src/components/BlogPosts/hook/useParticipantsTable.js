@@ -7,17 +7,16 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
-
 import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 
-import { makeSelectUserRole } from '../../../redux/slices/app/selector';
+import useCustomToast from '@components/CustomToast';
+import { USER_ROLE } from '@utils/constants';
+import { makeSelectUserRole } from '@redux/slices/app/selector';
 import {
   useDeleteParticipantSignUpMutation,
   useGetALLParticipantsQuery
-} from '../../../redux/slices/posts/api';
-import { USER_ROLE } from '../../../utils/constants';
-import useCustomToast from '../../CustomToast';
+} from '@redux/slices/posts/api';
 
 const useParticipantsTable = (blogId, isOpen) => {
   const toast = useCustomToast();

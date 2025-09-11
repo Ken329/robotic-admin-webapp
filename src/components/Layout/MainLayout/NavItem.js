@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { Box, Flex, Icon } from '@chakra-ui/react';
-
 import PropTypes from 'prop-types';
 
 const NavItem = ({ icon, path, children }) => {

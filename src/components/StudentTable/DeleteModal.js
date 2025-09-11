@@ -10,11 +10,10 @@ import {
   ModalHeader,
   ModalOverlay
 } from '@chakra-ui/react';
-
 import PropTypes from 'prop-types';
 
-import useCustomToast from '../CustomToast';
-import { useDeleteStudentMutation } from '../../redux/slices/students/api';
+import useCustomToast from '@components/CustomToast';
+import { useDeleteStudentMutation } from '@redux/slices/students/api';
 
 const DeleteModal = ({ isOpen, onClose, rowData }) => {
   const [deleteStudent] = useDeleteStudentMutation();

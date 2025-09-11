@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
 
 import { Box, Drawer, DrawerContent, useColorModeValue } from '@chakra-ui/react';
-
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import MobileNav from './MobileNavItem';
-import SidebarContent from './SideBarContent';
-import { saveUserData } from '../../../redux/slices/app';
-import { useGetUserDataQuery } from '../../../redux/slices/app/api';
-import AnimatedPage from '../../AnimatedPage';
-import Spin from '../../Spin';
+import AnimatedPage from '@components/AnimatedPage';
+import MobileNav from '@components/Layout/MainLayout/MobileNavItem';
+import SidebarContent from '@components/Layout/MainLayout/SideBarContent';
+import Spin from '@components/Spin';
+import { saveUserData } from '@redux/slices/app';
+import { useGetUserDataQuery } from '@redux/slices/app/api';
 
 const Layout = ({ children, isLoading }) => {
   const navigate = useNavigate();

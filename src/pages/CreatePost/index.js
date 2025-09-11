@@ -19,30 +19,29 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Select,
   Text,
   useDisclosure
 } from '@chakra-ui/react';
-
-import 'react-quill/dist/quill.snow.css';
-
 import parse from 'html-react-parser';
 import QuillResizeImage from 'quill-resize-image';
 import ReactQuill, { Quill } from 'react-quill';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import CoverImage from './CoverImage';
-import useCustomToast from '../../components/CustomToast';
-import Layout from '../../components/Layout/MainLayout';
+import useCustomToast from '@components/CustomToast';
+import Layout from '@components/Layout/MainLayout';
+import ToggleButton from '@components/ToggleButton/ToggleButton';
+import CoverImage from '@pages/CreatePost/CoverImage';
+import { POST_ATTRIBUTE_TYPES } from '@utils/constants';
 import {
   useCreatePostMutation,
   useGetAllBlogTypesQuery,
   useGetAllCategoriesQuery,
   useGetPostByIdQuery,
   useUpdatePostMutation
-} from '../../redux/slices/posts/api';
-import { useGetStudentLevelsQuery } from '../../redux/slices/students/api';
-import { POST_ATTRIBUTE_TYPES } from '../../utils/constants';
+} from '@redux/slices/posts/api';
+import { useGetStudentLevelsQuery } from '@redux/slices/students/api';
+
+import 'react-quill/dist/quill.snow.css';
 
 Quill.register('modules/resize', QuillResizeImage);
 
@@ -337,6 +336,7 @@ const CreatePost = () => {
                 placeholder="Post title"
               />
             </FormControl>
+
             <FormControl isRequired>
               <FormLabel>Cover Photo: (landscape)</FormLabel>
               <CoverImage onCoverImageSelect={handleCoverImageSelect} />
@@ -354,6 +354,7 @@ const CreatePost = () => {
                 </Box>
               )}
             </FormControl>
+
             <FormControl isRequired>
               <FormLabel>Description:</FormLabel>
               <Input
@@ -363,34 +364,22 @@ const CreatePost = () => {
                 placeholder="Post description"
               />
             </FormControl>
+
             <FormControl isRequired>
               <FormLabel>Type:</FormLabel>
-              <Select
-                value={blogType}
-                placeholder="Post type"
-                onChange={e => setBlogType(e.target.value)}
-              >
-                {blogTypes.map(type => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </Select>
+              <ToggleButton value={blogType} options={blogTypes} onChange={setBlogType} size="sm" />
             </FormControl>
+
             <FormControl isRequired>
               <FormLabel>Category:</FormLabel>
-              <Select
+              <ToggleButton
                 value={category}
-                placeholder="Post category"
-                onChange={e => setCategory(e.target.value)}
-              >
-                {blogCategories.map(cat => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </Select>
+                options={blogCategories}
+                onChange={setCategory}
+                size="sm"
+              />
             </FormControl>
+
             <FormControl>
               <FormLabel>Send To:</FormLabel>
               <CheckboxGroup value={sendTo} onChange={handleSendToChange}>
@@ -403,6 +392,7 @@ const CreatePost = () => {
                 </Flex>
               </CheckboxGroup>
             </FormControl>
+
             <FormControl isRequired>
               <FormLabel>Content:</FormLabel>
               <ReactQuill

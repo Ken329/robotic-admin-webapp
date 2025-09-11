@@ -9,12 +9,11 @@ import {
   ModalFooter,
   ModalOverlay
 } from '@chakra-ui/react';
-
 import PropTypes from 'prop-types';
 import Cropper from 'react-easy-crop';
 
-import useCustomToast from '../CustomToast';
-import { cropImage } from '../../utils/helper';
+import useCustomToast from '@components/CustomToast';
+import { cropImage } from '@utils/helper';
 
 const ImageCrop = ({ open, image, onComplete, onClose }) => {
   const toast = useCustomToast();

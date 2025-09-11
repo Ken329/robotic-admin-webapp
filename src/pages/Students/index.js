@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from 'react';
 
 import { Flex, Heading } from '@chakra-ui/react';
-
 import { useDispatch, useSelector } from 'react-redux';
 
-import useCustomToast from '../../components/CustomToast';
-import Layout from '../../components/Layout/MainLayout';
-import DataTable from '../../components/StudentTable';
-import AchievementsModal from '../../components/StudentTable/AchievementsModal';
-import DataModal from '../../components/StudentTable/DataModel';
-import DeleteModal from '../../components/StudentTable/DeleteModal';
-import RenewMembershipModal from '../../components/StudentTable/RenewMembershipModal';
-import { makeSelectUserRole } from '../../redux/slices/app/selector';
-import { saveStudentsData } from '../../redux/slices/students';
-import { useGetStudentListQuery } from '../../redux/slices/students/api';
-import { makeSelectStudentData } from '../../redux/slices/students/selector';
-import { USER_ROLE } from '../../utils/constants';
+import useCustomToast from '@components/CustomToast';
+import Layout from '@components/Layout/MainLayout';
+import DataTable from '@components/StudentTable';
+import AchievementsModal from '@components/StudentTable/AchievementsModal';
+import DataModal from '@components/StudentTable/DataModel';
+import DeleteModal from '@components/StudentTable/DeleteModal';
+import RenewMembershipModal from '@components/StudentTable/RenewMembershipModal';
+import { USER_ROLE } from '@utils/constants';
+import { makeSelectUserRole } from '@redux/slices/app/selector';
+import { saveStudentsData } from '@redux/slices/students';
+import { useGetStudentListQuery } from '@redux/slices/students/api';
+import { makeSelectStudentData } from '@redux/slices/students/selector';
 
 const Students = () => {
   const dispatch = useDispatch();

@@ -26,18 +26,17 @@ import {
   useDisclosure,
   VStack
 } from '@chakra-ui/react';
-
 import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
 import { FiDownload } from 'react-icons/fi';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import ParticipantsModal from './ParticipantsModal';
-import useCustomToast from '../CustomToast';
-import { makeSelectToken, makeSelectUserRole } from '../../redux/slices/app/selector';
-import { exportCompetitionToExcel } from '../../services/helper';
-import { categoryMap, POST_TYPE, USER_ROLE } from '../../utils/constants';
+import ParticipantsModal from '@components/BlogPosts/ParticipantsModal';
+import useCustomToast from '@components/CustomToast';
+import { categoryMap, POST_TYPE, USER_ROLE } from '@utils/constants';
+import { makeSelectToken, makeSelectUserRole } from '@redux/slices/app/selector';
+import { exportCompetitionToExcel } from '@services/helper';
 
 const BlogCard = ({ blog, handleDelete }) => {
   const navigate = useNavigate();

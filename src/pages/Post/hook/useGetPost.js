@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { useGetPostByIdQuery } from '../../../redux/slices/posts/api';
+import { useGetPostByIdQuery } from '@redux/slices/posts/api';
 
 const useGetPost = id => {
   const { data, isLoading, isError } = useGetPostByIdQuery(id);

@@ -1,11 +1,10 @@
+import { baseApiSlice } from '@redux/createAppApi';
+import achievementsReducer from '@redux/slices/achievements';
+import appReducer from '@redux/slices/app';
+import centresReducer from '@redux/slices/centre';
+import postsReducer from '@redux/slices/posts';
+import studentsReducer from '@redux/slices/students';
 import { configureStore } from '@reduxjs/toolkit';
-
-import { baseApiSlice } from './createAppApi';
-import achievementsReducer from './slices/achievements';
-import appReducer from './slices/app';
-import centresReducer from './slices/centre';
-import postsReducer from './slices/posts';
-import studentsReducer from './slices/students';
 
 const store = configureStore({
   reducer: {

@@ -19,14 +19,13 @@ import {
   Text,
   VStack
 } from '@chakra-ui/react';
-
 import { Field, Formik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 
-import SteamCupLogo from '../../assets/images/STEAM Cup+.webp';
-import { useMaintenanceCheckQuery } from '../../redux/slices/app/api';
-import { forgotPassword, resetPasswordWithOTP } from '../../services/awsAuth';
-import { forgotPasswordSchema, resetPasswordSchema } from '../../utils/validationSchema';
+import { forgotPasswordSchema, resetPasswordSchema } from '@utils/validationSchema';
+import { useMaintenanceCheckQuery } from '@redux/slices/app/api';
+import { forgotPassword, resetPasswordWithOTP } from '@services/awsAuth';
+import SteamCupLogo from '@assets/images/STEAM Cup+.webp';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();

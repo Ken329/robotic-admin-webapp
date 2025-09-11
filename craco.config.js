@@ -1,5 +1,6 @@
 const dotenv = require("dotenv");
 const webpack = require("webpack");
+const path = require('path');
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 dotenv.config();
@@ -25,6 +26,15 @@ module.exports = {
     ],
     configure: {
       resolve: {
+        alias: {
+          '@': path.resolve(__dirname, 'src'),
+          '@components': path.resolve(__dirname, 'src/components'),
+          '@pages': path.resolve(__dirname, 'src/pages'),
+          '@utils': path.resolve(__dirname, 'src/utils'),
+          '@redux': path.resolve(__dirname, 'src/redux'),
+          '@services': path.resolve(__dirname, 'src/services'),
+          '@assets': path.resolve(__dirname, 'src/assets'),
+        },
         fallback: {},
       },
     },

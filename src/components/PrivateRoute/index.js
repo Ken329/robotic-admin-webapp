@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
 import { Flex, Spinner } from '@chakra-ui/react';
-
 import { useDispatch } from 'react-redux';
 import { Outlet, useNavigate } from 'react-router-dom';
 
-import Layout from '../Layout/MainLayout';
-import { saveToken } from '../../redux/slices/app';
-import userpool from '../../utils/userpool';
+import Layout from '@components/Layout/MainLayout';
+import userpool from '@utils/userpool';
+import { saveToken } from '@redux/slices/app';
 
 const PrivateRoute = () => {
   const navigate = useNavigate();

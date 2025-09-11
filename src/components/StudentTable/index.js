@@ -28,15 +28,14 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
-
 import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
 import { BiDotsHorizontalRounded } from 'react-icons/bi';
 import { useSelector } from 'react-redux';
 
-import Filters from './Filters';
-import { makeSelectUserRole } from '../../redux/slices/app/selector';
-import { STUDENT_STATUS, USER_ROLE } from '../../utils/constants';
+import Filters from '@components/StudentTable/Filters';
+import { STUDENT_STATUS, USER_ROLE } from '@utils/constants';
+import { makeSelectUserRole } from '@redux/slices/app/selector';
 
 const DataTable = ({
   tableData,

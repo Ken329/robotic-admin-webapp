@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 
-import { Box, Button, Collapse, Flex, Heading, IconButton, SimpleGrid } from '@chakra-ui/react';
-
+import { Box, Button, Flex, Heading, IconButton, SimpleGrid } from '@chakra-ui/react';
+import { AnimatePresence, motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import { FiChevronDown, FiChevronUp, FiPlus } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
-import StatCard from './StatCard';
-import useCustomToast from '../CustomToast';
-import { useGetAdminPanelDataQuery } from '../../redux/slices/app/api';
+import StatCard from '@components/AdminPanel/StatCard';
+import useCustomToast from '@components/CustomToast';
+import { useGetAdminPanelDataQuery } from '@redux/slices/app/api';
+
+const MotionBox = motion(Box);
 
 const AdminPanel = ({ isAdmin }) => {
   const navigate = useNavigate();
@@ -50,52 +52,67 @@ const AdminPanel = ({ isAdmin }) => {
         </Heading>
         <IconButton
           size="sm"
+          variant="ghost"
+          color="white"
           onClick={toggleCollapse}
-          icon={isCollapsed ? <FiChevronDown /> : <FiChevronUp />}
+          icon={isCollapsed ? <FiChevronDown size={24} /> : <FiChevronUp size={24} />}
           aria-label="Toggle Collapse"
+          _hover={{ bg: 'transparent' }}
+          _active={{ bg: 'transparent' }}
         />
       </Flex>
 
-      <Collapse in={!isCollapsed}>
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={{ base: 2, md: 4 }} mb={4}>
-          {isAdmin ? (
-            <StatCard
-              label="Pending Admin Approvals"
-              count={adminPanelData?.['pending admin'] || 0}
-              fontSize={{ base: 'sm', md: 'md' }}
-            />
-          ) : (
-            <StatCard
-              label="Pending Centre Approvals"
-              count={adminPanelData?.['pending center'] || 0}
-              fontSize={{ base: 'sm', md: 'md' }}
-            />
-          )}
-          <StatCard
-            label="Approved Students"
-            count={adminPanelData?.approved || 0}
-            fontSize={{ base: 'sm', md: 'md' }}
-          />
-          <StatCard
-            label="Rejected Students"
-            count={adminPanelData?.rejected || 0}
-            fontSize={{ base: 'sm', md: 'md' }}
-          />
-        </SimpleGrid>
-
-        {isAdmin && (
-          <Button
-            colorScheme="teal"
-            variant="solid"
-            size={{ base: 'sm', md: 'md' }}
-            leftIcon={<FiPlus />}
-            onClick={() => navigate('/admin/createPost')}
-            flex="1"
+      <AnimatePresence initial={false}>
+        {!isCollapsed && (
+          <MotionBox
+            key="admin-collapse"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            overflow="hidden"
           >
-            New Post
-          </Button>
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={{ base: 2, md: 4 }} mb={4}>
+              {isAdmin ? (
+                <StatCard
+                  label="Pending Admin Approvals"
+                  count={adminPanelData?.['pending admin'] || 0}
+                  fontSize={{ base: 'sm', md: 'md' }}
+                />
+              ) : (
+                <StatCard
+                  label="Pending Centre Approvals"
+                  count={adminPanelData?.['pending center'] || 0}
+                  fontSize={{ base: 'sm', md: 'md' }}
+                />
+              )}
+              <StatCard
+                label="Approved Students"
+                count={adminPanelData?.approved || 0}
+                fontSize={{ base: 'sm', md: 'md' }}
+              />
+              <StatCard
+                label="Rejected Students"
+                count={adminPanelData?.rejected || 0}
+                fontSize={{ base: 'sm', md: 'md' }}
+              />
+            </SimpleGrid>
+
+            {isAdmin && (
+              <Button
+                colorScheme="teal"
+                variant="solid"
+                size={{ base: 'sm', md: 'md' }}
+                leftIcon={<FiPlus />}
+                onClick={() => navigate('/admin/createPost')}
+                flex="1"
+              >
+                New Post
+              </Button>
+            )}
+          </MotionBox>
         )}
-      </Collapse>
+      </AnimatePresence>
     </Box>
   );
 };

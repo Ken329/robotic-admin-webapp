@@ -19,17 +19,16 @@ import {
   Text,
   VStack
 } from '@chakra-ui/react';
-
 import { Field, Formik } from 'formik';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import SteamCupLogo from '../../assets/images/STEAM Cup+.webp';
-import useCustomToast from '../../components/CustomToast';
-import { useMaintenanceCheckQuery } from '../../redux/slices/app/api';
-import { generateAccessToken } from '../../services/auth';
-import { authenticate } from '../../services/awsAuth';
-import userpool from '../../utils/userpool';
-import { loginSchema } from '../../utils/validationSchema';
+import useCustomToast from '@components/CustomToast';
+import userpool from '@utils/userpool';
+import { loginSchema } from '@utils/validationSchema';
+import { useMaintenanceCheckQuery } from '@redux/slices/app/api';
+import { generateAccessToken } from '@services/auth';
+import { authenticate } from '@services/awsAuth';
+import SteamCupLogo from '@assets/images/STEAM Cup+.webp';
 
 const LoginPage = () => {
   const navigate = useNavigate();

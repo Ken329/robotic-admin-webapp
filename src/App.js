@@ -1,7 +1,6 @@
 import React, { lazy, Suspense } from 'react';
 
 import { Flex } from '@chakra-ui/react';
-
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -9,22 +8,22 @@ import {
   RouterProvider
 } from 'react-router-dom';
 
-import AuthLayout from './components/Layout/AuthLayout';
-import PrivateRoute from './components/PrivateRoute';
-import Spin from './components/Spin';
+import AuthLayout from '@components/Layout/AuthLayout';
+import PrivateRoute from '@components/PrivateRoute';
+import Spin from '@components/Spin';
 
-const Achievements = lazy(() => import('./pages/Achievements'));
-const Centres = lazy(() => import('./pages/Centres'));
-const CreatePost = lazy(() => import('./pages/CreatePost'));
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
-const IndexPage = lazy(() => import('./pages/IndexPage'));
-const LoginPage = lazy(() => import('./pages/LoginPage'));
-const LogoutPage = lazy(() => import('./pages/LogoutPage'));
-const Maintenance = lazy(() => import('./pages/Maintenance'));
-const Post = lazy(() => import('./pages/Post'));
-const Students = lazy(() => import('./pages/Students'));
-const Verify = lazy(() => import('./pages/Verify'));
+const Achievements = lazy(() => import('@pages/Achievements'));
+const Centres = lazy(() => import('@pages/Centres'));
+const CreatePost = lazy(() => import('@pages/CreatePost'));
+const Dashboard = lazy(() => import('@pages/Dashboard'));
+const ForgotPassword = lazy(() => import('@pages/ForgotPassword'));
+const IndexPage = lazy(() => import('@pages/IndexPage'));
+const LoginPage = lazy(() => import('@pages/LoginPage'));
+const LogoutPage = lazy(() => import('@pages/LogoutPage'));
+const Maintenance = lazy(() => import('@pages/Maintenance'));
+const Post = lazy(() => import('@pages/Post'));
+const Students = lazy(() => import('@pages/Students'));
+const Verify = lazy(() => import('@pages/Verify'));
 
 const router = createBrowserRouter(
   createRoutesFromElements(

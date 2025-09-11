@@ -22,12 +22,12 @@
       "error",
       {
         "groups": [
-          ["^react$", "^react-dom$"],
-          ["^@"],
-          ["^\\u0000"],
-          ["^\\w"],
-          ["^[^.]"],
-          ["^\\./", "^\\.\\./", "^\\.\\./\\.\\./"]
+          ["^react$", "^react-dom$"], // React core
+          ["^@?\\w"], // Packages (node_modules)
+          ["^@components", "^@pages", "^@utils", "^@redux", "^@services", "^@assets", "^@/"], // Aliases
+          ["^\\u0000"], // Side effect imports
+          ["^\\.\\./"], // Parent imports
+          ["^\\./"] // Current directory imports
         ]
       }
     ],

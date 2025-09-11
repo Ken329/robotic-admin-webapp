@@ -15,14 +15,13 @@ import {
   Text,
   VStack
 } from '@chakra-ui/react';
-
 import parse from 'html-react-parser';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
-import useGetPost from './hook/useGetPost';
-import Layout from '../../components/Layout/MainLayout';
-import { POST_TYPE } from '../../utils/constants';
+import Layout from '@components/Layout/MainLayout';
+import useGetPost from '@pages/Post/hook/useGetPost';
+import { POST_TYPE } from '@utils/constants';
 
 const Post = () => {
   const navigate = useNavigate();

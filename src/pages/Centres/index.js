@@ -1,16 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { Flex, Heading } from '@chakra-ui/react';
-
 import { useDispatch, useSelector } from 'react-redux';
 
-import DataTable from '../../components/CentreTable';
-import DataModal from '../../components/CentreTable/DataModal';
-import useCustomToast from '../../components/CustomToast';
-import Layout from '../../components/Layout/MainLayout';
-import { saveCentresData } from '../../redux/slices/centre';
-import { useGetCentresListQuery } from '../../redux/slices/centre/api';
-import { makeSelectCentresData } from '../../redux/slices/centre/selector';
+import DataTable from '@components/CentreTable';
+import DataModal from '@components/CentreTable/DataModal';
+import useCustomToast from '@components/CustomToast';
+import Layout from '@components/Layout/MainLayout';
+import { saveCentresData } from '@redux/slices/centre';
+import { useGetCentresListQuery } from '@redux/slices/centre/api';
+import { makeSelectCentresData } from '@redux/slices/centre/selector';
 
 const Centres = () => {
   const dispatch = useDispatch();
