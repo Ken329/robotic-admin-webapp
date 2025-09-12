@@ -26,10 +26,6 @@ import { Field, Formik } from 'formik';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 
-import useCustomToast from '@components/CustomToast';
-import Spin from '@components/Spin';
-import { STUDENT_STATUS, USER_ROLE } from '@utils/constants';
-import { createSignUpSchema } from '@utils/validationSchema';
 import { makeSelectToken, makeSelectUserRole } from '@redux/slices/app/selector';
 import { saveLevelsData } from '@redux/slices/students';
 import {
@@ -40,6 +36,10 @@ import {
 } from '@redux/slices/students/api';
 import { makeSelectLevelsData } from '@redux/slices/students/selector';
 import { getUserById } from '@services/auth';
+import { STUDENT_STATUS, USER_ROLE } from '@utils/constants';
+import { createSignUpSchema } from '@utils/validationSchema';
+import useCustomToast from '@components/CustomToast';
+import Spin from '@components/Spin';
 
 const DataModal = ({ isOpen, onClose, rowData }) => {
   const dispatch = useDispatch();

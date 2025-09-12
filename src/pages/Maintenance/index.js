@@ -4,8 +4,8 @@ import { Box, Flex, Icon, Image, Text, VStack } from '@chakra-ui/react';
 import { FaTools } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
-import { useMaintenanceCheckQuery } from '@redux/slices/app/api';
 import SteamCupLogo from '@assets/images/STEAM Cup+.webp';
+import { useMaintenanceCheckQuery } from '@redux/slices/app/api';
 
 const Maintenance = () => {
   const navigate = useNavigate();

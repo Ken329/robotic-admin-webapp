@@ -19,7 +19,6 @@ import {
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 
-import useCustomToast from '@components/CustomToast';
 import { saveFilesData } from '@redux/slices/posts';
 import {
   useDeleteFileMutation,
@@ -27,6 +26,7 @@ import {
   useUploadFileMutation
 } from '@redux/slices/posts/api';
 import { makeSelectFilesData } from '@redux/slices/posts/selector';
+import useCustomToast from '@components/CustomToast';
 
 const CoverImage = ({ onCoverImageSelect }) => {
   const dispatch = useDispatch();

@@ -22,13 +22,13 @@ import {
 import { Field, Formik } from 'formik';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import useCustomToast from '@components/CustomToast';
-import userpool from '@utils/userpool';
-import { loginSchema } from '@utils/validationSchema';
+import SteamCupLogo from '@assets/images/STEAM Cup+.webp';
 import { useMaintenanceCheckQuery } from '@redux/slices/app/api';
 import { generateAccessToken } from '@services/auth';
 import { authenticate } from '@services/awsAuth';
-import SteamCupLogo from '@assets/images/STEAM Cup+.webp';
+import userpool from '@utils/userpool';
+import { loginSchema } from '@utils/validationSchema';
+import useCustomToast from '@components/CustomToast';
 
 const LoginPage = () => {
   const navigate = useNavigate();

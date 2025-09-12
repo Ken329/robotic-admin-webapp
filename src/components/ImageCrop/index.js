@@ -12,8 +12,8 @@ import {
 import PropTypes from 'prop-types';
 import Cropper from 'react-easy-crop';
 
-import useCustomToast from '@components/CustomToast';
 import { cropImage } from '@utils/helper';
+import useCustomToast from '@components/CustomToast';
 
 const ImageCrop = ({ open, image, onComplete, onClose }) => {
   const toast = useCustomToast();

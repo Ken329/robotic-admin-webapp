@@ -4,8 +4,8 @@ import { ChakraProvider } from '@chakra-ui/react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 
-import theme from '@utils/theme';
 import store from '@redux/store';
+import theme from '@utils/theme';
 import App from '@/App';
 
 import './pages/Post/Quill.css';

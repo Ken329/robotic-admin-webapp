@@ -22,10 +22,10 @@ import {
 import { Field, Formik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 
-import { forgotPasswordSchema, resetPasswordSchema } from '@utils/validationSchema';
+import SteamCupLogo from '@assets/images/STEAM Cup+.webp';
 import { useMaintenanceCheckQuery } from '@redux/slices/app/api';
 import { forgotPassword, resetPasswordWithOTP } from '@services/awsAuth';
-import SteamCupLogo from '@assets/images/STEAM Cup+.webp';
+import { forgotPasswordSchema, resetPasswordSchema } from '@utils/validationSchema';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();

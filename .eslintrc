@@ -24,7 +24,7 @@
         "groups": [
           ["^react$", "^react-dom$"], // React core
           ["^@?\\w"], // Packages (node_modules)
-          ["^@components", "^@pages", "^@utils", "^@redux", "^@services", "^@assets", "^@/"], // Aliases
+          ["^@assets", "^@redux", "^@services", "^@utils", "^@pages", "^@components", "^@/"], // Aliases
           ["^\\u0000"], // Side effect imports
           ["^\\.\\./"], // Parent imports
           ["^\\./"] // Current directory imports

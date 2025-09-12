@@ -6,9 +6,9 @@ import PropTypes from 'prop-types';
 import { FiChevronDown, FiChevronUp, FiPlus } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
+import { useGetAdminPanelDataQuery } from '@redux/slices/app/api';
 import StatCard from '@components/AdminPanel/StatCard';
 import useCustomToast from '@components/CustomToast';
-import { useGetAdminPanelDataQuery } from '@redux/slices/app/api';
 
 const MotionBox = motion(Box);
 

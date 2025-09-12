@@ -4,9 +4,9 @@ import { Flex, Spinner } from '@chakra-ui/react';
 import { useDispatch } from 'react-redux';
 import { Outlet, useNavigate } from 'react-router-dom';
 
-import Layout from '@components/Layout/MainLayout';
-import userpool from '@utils/userpool';
 import { saveToken } from '@redux/slices/app';
+import userpool from '@utils/userpool';
+import Layout from '@components/Layout/MainLayout';
 
 const PrivateRoute = () => {
   const navigate = useNavigate();
@@ -45,7 +45,11 @@ const PrivateRoute = () => {
   }
 
   if (isReady) {
-    return <Outlet />;
+    return (
+      <Layout>
+        <Outlet />
+      </Layout>
+    );
   }
 
   return null;

@@ -10,13 +10,13 @@ import {
 import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 
-import useCustomToast from '@components/CustomToast';
-import { USER_ROLE } from '@utils/constants';
 import { makeSelectUserRole } from '@redux/slices/app/selector';
 import {
   useDeleteParticipantSignUpMutation,
   useGetALLParticipantsQuery
 } from '@redux/slices/posts/api';
+import { USER_ROLE } from '@utils/constants';
+import useCustomToast from '@components/CustomToast';
 
 const useParticipantsTable = (blogId, isOpen) => {
   const toast = useCustomToast();

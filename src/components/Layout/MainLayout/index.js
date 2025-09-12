@@ -5,14 +5,14 @@ import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
+import { saveUserData } from '@redux/slices/app';
+import { useGetUserDataQuery } from '@redux/slices/app/api';
 import AnimatedPage from '@components/AnimatedPage';
 import MobileNav from '@components/Layout/MainLayout/MobileNavItem';
 import SidebarContent from '@components/Layout/MainLayout/SideBarContent';
-import Spin from '@components/Spin';
-import { saveUserData } from '@redux/slices/app';
-import { useGetUserDataQuery } from '@redux/slices/app/api';
+import Scrollbar from '@components/Scrollbar';
 
-const Layout = ({ children, isLoading }) => {
+const Layout = ({ children }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
@@ -58,16 +58,15 @@ const Layout = ({ children, isLoading }) => {
         </DrawerContent>
       </Drawer>
       <MobileNav onOpen={onOpen} onLogout={onLogout} />
-      <Box ml={{ base: 0, md: 60 }} p="4">
-        {isLoading ? <Spin /> : <AnimatedPage>{children}</AnimatedPage>}
-      </Box>
+      <Scrollbar ml={{ base: 0, md: 60 }} p="4">
+        <AnimatedPage>{children}</AnimatedPage>
+      </Scrollbar>
     </Box>
   );
 };
 
 Layout.propTypes = {
-  children: PropTypes.any.isRequired,
-  isLoading: PropTypes.bool
+  children: PropTypes.any.isRequired
 };
 
 Layout.defaultProps = {

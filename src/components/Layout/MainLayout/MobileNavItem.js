@@ -19,8 +19,8 @@ import { FiMenu } from 'react-icons/fi';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 
-import { PAGE_NAME } from '@utils/constants';
 import { makeSelectUserName, makeSelectUserRole } from '@redux/slices/app/selector';
+import { PAGE_NAME } from '@utils/constants';
 
 const MobileNav = ({ onOpen, onLogout, ...props }) => {
   const location = useLocation();

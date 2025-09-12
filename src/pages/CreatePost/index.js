@@ -27,11 +27,6 @@ import QuillResizeImage from 'quill-resize-image';
 import ReactQuill, { Quill } from 'react-quill';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import useCustomToast from '@components/CustomToast';
-import Layout from '@components/Layout/MainLayout';
-import ToggleButton from '@components/ToggleButton/ToggleButton';
-import CoverImage from '@pages/CreatePost/CoverImage';
-import { POST_ATTRIBUTE_TYPES } from '@utils/constants';
 import {
   useCreatePostMutation,
   useGetAllBlogTypesQuery,
@@ -40,6 +35,11 @@ import {
   useUpdatePostMutation
 } from '@redux/slices/posts/api';
 import { useGetStudentLevelsQuery } from '@redux/slices/students/api';
+import { POST_ATTRIBUTE_TYPES } from '@utils/constants';
+import CoverImage from '@pages/CreatePost/CoverImage';
+import useCustomToast from '@components/CustomToast';
+import PageLayout from '@components/Layout/PageLayout';
+import ToggleButton from '@components/ToggleButton/ToggleButton';
 
 import 'react-quill/dist/quill.snow.css';
 
@@ -59,7 +59,7 @@ const CreatePost = () => {
   const [blogType, setBlogType] = useState('');
   const [category, setCategory] = useState('');
   const [editorContent, setEditorContent] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const [sendTo, setSendTo] = useState(['All']);
   const [sendToOptions, setSendToOptions] = useState([]);
@@ -151,7 +151,7 @@ const CreatePost = () => {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    setLoading(true);
+    setIsLoading(true);
 
     if (!validatePostData()) {
       toast({
@@ -159,7 +159,7 @@ const CreatePost = () => {
         description: 'Please fill in all required fields.',
         status: 'error'
       });
-      setLoading(false);
+      setIsLoading(false);
 
       return;
     }
@@ -210,7 +210,7 @@ const CreatePost = () => {
         status: 'error'
       });
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -322,7 +322,7 @@ const CreatePost = () => {
   };
 
   return (
-    <Layout isLoading={loading}>
+    <PageLayout isLoading={isLoading}>
       <Flex minH="100vh" gap={6} flexWrap="wrap">
         <form onSubmit={handleSubmit} style={{ flex: '1 1 45%' }}>
           <Flex gap={6} boxShadow="lg" p={4} flexDir="column" width="100%">
@@ -564,7 +564,7 @@ const CreatePost = () => {
           </ModalContent>
         </Modal>
       </Flex>
-    </Layout>
+    </PageLayout>
   );
 };
 

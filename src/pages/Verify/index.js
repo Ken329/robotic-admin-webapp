@@ -21,12 +21,12 @@ import {
 import { useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 
-import useCustomToast from '@components/CustomToast';
-import { emailSchema, verifySchema } from '@utils/validationSchema';
+import SteamCupLogo from '@assets/images/STEAM Cup+.webp';
 import { useMaintenanceCheckQuery } from '@redux/slices/app/api';
 import { verifyOtp } from '@services/auth';
 import { resendVerificationOtp } from '@services/awsAuth';
-import SteamCupLogo from '@assets/images/STEAM Cup+.webp';
+import { emailSchema, verifySchema } from '@utils/validationSchema';
+import useCustomToast from '@components/CustomToast';
 
 const Verify = () => {
   const navigate = useNavigate();
