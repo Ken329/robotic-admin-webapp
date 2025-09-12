@@ -1,4 +1,4 @@
-import { baseApiSlice } from '../../createAppApi';
+import { baseApiSlice } from '@redux/createAppApi';
 
 export const centresApi = baseApiSlice.injectEndpoints({
   endpoints: builder => {

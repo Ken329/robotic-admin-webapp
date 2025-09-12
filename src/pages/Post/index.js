@@ -15,14 +15,13 @@ import {
   Text,
   VStack
 } from '@chakra-ui/react';
-
 import parse from 'html-react-parser';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
-import useGetPost from './hook/useGetPost';
-import Layout from '../../components/Layout/MainLayout';
-import { POST_TYPE } from '../../utils/constants';
+import { POST_TYPE } from '@utils/constants';
+import useGetPost from '@pages/Post/hook/useGetPost';
+import PageLayout from '@components/Layout/PageLayout';
 
 const Post = () => {
   const navigate = useNavigate();
@@ -30,7 +29,7 @@ const Post = () => {
   const { blog, isLoading, isError, remark } = useGetPost(id);
 
   return (
-    <Layout isLoading={isLoading}>
+    <PageLayout isLoading={isLoading}>
       <Container maxW="container.md" p={0}>
         <Button
           leftIcon={<ArrowBackIcon />}
@@ -154,7 +153,7 @@ const Post = () => {
           </Box>
         )}
       </Container>
-    </Layout>
+    </PageLayout>
   );
 };
 

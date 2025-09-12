@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { Box, Stat, StatLabel, StatNumber } from '@chakra-ui/react';
-
 import PropTypes from 'prop-types';
 
 const StatCard = ({ label, count }) => (

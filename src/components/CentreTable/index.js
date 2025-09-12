@@ -24,11 +24,10 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
-
 import PropTypes from 'prop-types';
 import { FiChevronLeft, FiChevronRight, FiSliders } from 'react-icons/fi';
 
-import Filters from './Filters';
+import Filters from '@components/CentreTable/Filters';
 
 const columns = [
   {

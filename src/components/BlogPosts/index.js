@@ -12,11 +12,10 @@ import {
   SimpleGrid,
   Text
 } from '@chakra-ui/react';
-
 import PropTypes from 'prop-types';
 
-import BlogCard from './BlogCard';
-import useBlogFilter from './hook/useBlogFilter';
+import BlogCard from '@components/BlogPosts/BlogCard';
+import useBlogFilter from '@components/BlogPosts/hook/useBlogFilter';
 
 const BlogList = ({ blogs, handleDelete }) => {
   const {

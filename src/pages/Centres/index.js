@@ -1,16 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { Flex, Heading } from '@chakra-ui/react';
-
 import { useDispatch, useSelector } from 'react-redux';
 
-import DataTable from '../../components/CentreTable';
-import DataModal from '../../components/CentreTable/DataModal';
-import useCustomToast from '../../components/CustomToast';
-import Layout from '../../components/Layout/MainLayout';
-import { saveCentresData } from '../../redux/slices/centre';
-import { useGetCentresListQuery } from '../../redux/slices/centre/api';
-import { makeSelectCentresData } from '../../redux/slices/centre/selector';
+import { saveCentresData } from '@redux/slices/centre';
+import { useGetCentresListQuery } from '@redux/slices/centre/api';
+import { makeSelectCentresData } from '@redux/slices/centre/selector';
+import DataTable from '@components/CentreTable';
+import DataModal from '@components/CentreTable/DataModal';
+import useCustomToast from '@components/CustomToast';
+import PageLayout from '@components/Layout/PageLayout';
 
 const Centres = () => {
   const dispatch = useDispatch();
@@ -46,7 +45,7 @@ const Centres = () => {
   };
 
   return (
-    <Layout isLoading={isLoading}>
+    <PageLayout isLoading={isLoading}>
       <Flex flexDirection={'column'} paddingLeft={'20px'}>
         <Heading as="h2" size="lg" mb="4">
           Centres
@@ -56,7 +55,7 @@ const Centres = () => {
         {/* view centre */}
         <DataModal isOpen={isModalOpen} onClose={closeModal} rowData={modalData} />
       </Flex>
-    </Layout>
+    </PageLayout>
   );
 };
 

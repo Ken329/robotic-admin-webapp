@@ -14,14 +14,13 @@ import {
   Text,
   useColorModeValue
 } from '@chakra-ui/react';
-
 import PropTypes from 'prop-types';
 import { FiMenu } from 'react-icons/fi';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 
-import { makeSelectUserName, makeSelectUserRole } from '../../../redux/slices/app/selector';
-import { PAGE_NAME } from '../../../utils/constants';
+import { makeSelectUserName, makeSelectUserRole } from '@redux/slices/app/selector';
+import { PAGE_NAME } from '@utils/constants';
 
 const MobileNav = ({ onOpen, onLogout, ...props }) => {
   const location = useLocation();

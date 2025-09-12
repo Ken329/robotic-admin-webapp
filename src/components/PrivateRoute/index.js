@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
-import { Flex, Spinner } from '@chakra-ui/react';
-
 import { useDispatch } from 'react-redux';
 import { Outlet, useNavigate } from 'react-router-dom';
 
-import Layout from '../Layout/MainLayout';
-import { saveToken } from '../../redux/slices/app';
-import userpool from '../../utils/userpool';
+import { saveToken } from '@redux/slices/app';
+import userpool from '@utils/userpool';
+import Layout from '@components/Layout/MainLayout';
+import Spin from '@components/Spin';
 
 const PrivateRoute = () => {
   const navigate = useNavigate();
@@ -30,23 +29,17 @@ const PrivateRoute = () => {
   if (!isReady) {
     return (
       <Layout>
-        <Flex
-          position="absolute"
-          top="50%"
-          left="50%"
-          transform="translate(-50%, -50%)"
-          zIndex="10"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Spinner size="xl" color="blue.500" thickness="4px" speed="0.65s" />
-        </Flex>
+        <Spin />
       </Layout>
     );
   }
 
   if (isReady) {
-    return <Outlet />;
+    return (
+      <Layout>
+        <Outlet />
+      </Layout>
+    );
   }
 
   return null;
