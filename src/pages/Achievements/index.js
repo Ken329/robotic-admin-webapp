@@ -22,23 +22,22 @@ import {
   Text,
   useDisclosure
 } from '@chakra-ui/react';
-
 import { useDispatch, useSelector } from 'react-redux';
 
-import useCustomToast from '../../components/CustomToast';
-import ImageCrop from '../../components/ImageCrop';
-import Layout from '../../components/Layout/MainLayout';
-import { saveAchievementsData } from '../../redux/slices/achievements';
+import { saveAchievementsData } from '@redux/slices/achievements';
 import {
   useCreateAchievementMutation,
   useDeleteAchievementMutation,
   useGetAchievementListQuery,
   useUpdateAchievementMutation
-} from '../../redux/slices/achievements/api';
-import { makeSelectAchievementsData } from '../../redux/slices/achievements/selector';
-import { makeSelectToken } from '../../redux/slices/app/selector';
-import { getAchievementImage } from '../../services/helper';
-import { dataURLtoFile, formatDate } from '../../utils/helper';
+} from '@redux/slices/achievements/api';
+import { makeSelectAchievementsData } from '@redux/slices/achievements/selector';
+import { makeSelectToken } from '@redux/slices/app/selector';
+import { getAchievementImage } from '@services/helper';
+import { dataURLtoFile, formatDate } from '@utils/helper';
+import useCustomToast from '@components/CustomToast';
+import ImageCrop from '@components/ImageCrop';
+import PageLayout from '@components/Layout/PageLayout';
 
 const Achievements = () => {
   const dispatch = useDispatch();
@@ -198,7 +197,7 @@ const Achievements = () => {
   };
 
   return (
-    <Layout isLoading={isLoading}>
+    <PageLayout isLoading={isLoading}>
       <Flex flexDirection={'column'} paddingLeft={'20px'}>
         <Box p={5}>
           <Heading as="h2" size="lg" mb="4">
@@ -366,7 +365,7 @@ const Achievements = () => {
           onClose={() => setShowCropModal(false)}
         />
       </Flex>
-    </Layout>
+    </PageLayout>
   );
 };
 

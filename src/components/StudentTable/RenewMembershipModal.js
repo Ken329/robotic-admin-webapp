@@ -11,18 +11,17 @@ import {
   ModalHeader,
   ModalOverlay
 } from '@chakra-ui/react';
-
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
-import useCustomToast from '../CustomToast';
-import Spin from '../Spin';
-import { makeSelectToken } from '../../redux/slices/app/selector';
+import { makeSelectToken } from '@redux/slices/app/selector';
 import {
   //  useRenewMembershipMutation,
   useExpireStudentAccountMutation
-} from '../../redux/slices/students/api';
-import { getUserById } from '../../services/auth';
+} from '@redux/slices/students/api';
+import { getUserById } from '@services/auth';
+import useCustomToast from '@components/CustomToast';
+import Spin from '@components/Spin';
 
 const RenewMembershipModal = ({ isOpen, onClose, rowData }) => {
   // const [renewMembership] = useRenewMembershipMutation();

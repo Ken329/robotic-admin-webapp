@@ -3,12 +3,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import Spin from '../../components/Spin';
-import { resetApp } from '../../redux/slices/app';
-import { appApi } from '../../redux/slices/app/api';
-import { makeSelectToken } from '../../redux/slices/app/selector';
-import { logout } from '../../services/auth';
-import userpool from '../../utils/userpool';
+import { resetApp } from '@redux/slices/app';
+import { appApi } from '@redux/slices/app/api';
+import { makeSelectToken } from '@redux/slices/app/selector';
+import { logout } from '@services/auth';
+import userpool from '@utils/userpool';
+import Spin from '@components/Spin';
 
 const LogoutPage = () => {
   const navigate = useNavigate();

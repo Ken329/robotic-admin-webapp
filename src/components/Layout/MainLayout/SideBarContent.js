@@ -1,14 +1,13 @@
 import React, { useMemo } from 'react';
 
 import { Box, CloseButton, Flex, Image, useColorModeValue } from '@chakra-ui/react';
-
 import PropTypes from 'prop-types';
 import { FiAward, FiHome, FiMonitor, FiUser } from 'react-icons/fi';
 import { useSelector } from 'react-redux';
 
-import NavItem from './NavItem';
-import SteamCupLogoEdited from '../../../assets/images/STEAM Cup+edited.webp';
-import { makeSelectUserRole } from '../../../redux/slices/app/selector';
+import SteamCupLogoEdited from '@assets/images/STEAM Cup+edited.webp';
+import { makeSelectUserRole } from '@redux/slices/app/selector';
+import NavItem from '@components/Layout/MainLayout/NavItem';
 
 const SidebarContent = ({ onClose, ...props }) => {
   const useUserRole = () => {

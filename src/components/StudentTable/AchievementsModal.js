@@ -13,16 +13,15 @@ import {
   ModalOverlay,
   Text
 } from '@chakra-ui/react';
-
 import PropTypes from 'prop-types';
 
-import useCustomToast from '../CustomToast';
-import Spin from '../Spin';
 import {
   useAssignAchievementMutation,
   useGetAchievementListQuery,
   useGetAssignedAchievementsQuery
-} from '../../redux/slices/achievements/api';
+} from '@redux/slices/achievements/api';
+import useCustomToast from '@components/CustomToast';
+import Spin from '@components/Spin';
 
 const AchievementsModal = ({ isOpen, onClose, rowData }) => {
   const { data } = useGetAchievementListQuery();

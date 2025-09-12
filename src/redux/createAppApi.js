@@ -1,8 +1,7 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-
 import axios from 'axios';
 
-import { resetApp } from './slices/app';
+import { resetApp } from '@redux/slices/app';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.REACT_APP_BASE_API,

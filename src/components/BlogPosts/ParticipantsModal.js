@@ -23,11 +23,10 @@ import {
   useDisclosure
 } from '@chakra-ui/react';
 import { flexRender } from '@tanstack/react-table';
-
 import PropTypes from 'prop-types';
 import { FiChevronLeft, FiChevronRight, FiSliders } from 'react-icons/fi';
 
-import useParticipantsTable from './hook/useParticipantsTable';
+import useParticipantsTable from '@components/BlogPosts/hook/useParticipantsTable';
 
 const ParticipantsModal = ({ blogId }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
