@@ -7,7 +7,12 @@ import { scrollbarStyles } from '@components/Scrollbar/views';
 
 const Scrollbar = ({ children, ...props }) => {
   return (
-    <Box height="100vh" overflowY="auto" css={scrollbarStyles} {...props}>
+    <Box
+      height="calc(100vh - 56px)" // 56px is the height of the MobileNav header
+      overflowY="auto"
+      css={scrollbarStyles}
+      {...props}
+    >
       {children}
     </Box>
   );
