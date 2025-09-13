@@ -9,13 +9,7 @@ const Scrollbar = ({ children, ...props }) => {
   const useScrollbar = useBreakpointValue({ base: false, md: true });
 
   return (
-    <Box
-      height="100%"
-      minHeight="100%"
-      overflowY="auto"
-      css={useScrollbar ? scrollbarStyles : undefined}
-      {...props}
-    >
+    <Box height="100%" overflowY="auto" css={useScrollbar ? scrollbarStyles : undefined} {...props}>
       {children}
     </Box>
   );
