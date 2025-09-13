@@ -89,6 +89,8 @@ const BlogCard = ({ blog, handleDelete }) => {
       boxShadow="md"
       overflow="hidden"
       position="relative"
+      transition="all 0.3s ease"
+      _hover={{ transform: 'scale(1.02)', boxShadow: '0px 8px 15px rgba(0, 0, 0, 0.25)' }}
     >
       {role === USER_ROLE.ADMIN && (
         <Box
