@@ -58,9 +58,18 @@ const Layout = ({ children }) => {
         </DrawerContent>
       </Drawer>
       <MobileNav onOpen={onOpen} onLogout={onLogout} />
-      <Scrollbar ml={{ base: 0, md: 60 }} p="4" height="calc(100vh - 56px)">
-        <AnimatedPage>{children}</AnimatedPage>
-      </Scrollbar>
+      <Box
+        ml={{ base: 0, md: 60 }}
+        position="relative"
+        height={{
+          base: 'calc(100dvh - 56px)', // dynamic viewport height for mobile
+          md: 'calc(100vh - 56px)' // regular viewport height for desktop
+        }}
+      >
+        <Scrollbar p="4">
+          <AnimatedPage>{children}</AnimatedPage>
+        </Scrollbar>
+      </Box>
     </Box>
   );
 };
