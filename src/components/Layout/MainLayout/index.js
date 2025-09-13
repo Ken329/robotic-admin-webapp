@@ -58,7 +58,7 @@ const Layout = ({ children }) => {
         </DrawerContent>
       </Drawer>
       <MobileNav onOpen={onOpen} onLogout={onLogout} />
-      <Scrollbar ml={{ base: 0, md: 60 }} p="4">
+      <Scrollbar ml={{ base: 0, md: 60 }} p="4" height="calc(100vh - 56px)">
         <AnimatedPage>{children}</AnimatedPage>
       </Scrollbar>
     </Box>
