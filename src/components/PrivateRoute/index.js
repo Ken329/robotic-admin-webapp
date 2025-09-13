@@ -26,23 +26,7 @@ const PrivateRoute = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, authTokens]);
 
-  if (!isReady) {
-    return (
-      <Layout>
-        <Spin />
-      </Layout>
-    );
-  }
-
-  if (isReady) {
-    return (
-      <Layout>
-        <Outlet />
-      </Layout>
-    );
-  }
-
-  return null;
+  return <Layout>{isReady ? <Outlet /> : <Spin />}</Layout>;
 };
 
 export default PrivateRoute;

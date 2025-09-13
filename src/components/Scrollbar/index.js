@@ -1,16 +1,19 @@
 import React from 'react';
 
-import { Box } from '@chakra-ui/react';
+import { Box, useBreakpointValue } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
 import { scrollbarStyles } from '@components/Scrollbar/views';
 
 const Scrollbar = ({ children, ...props }) => {
+  const useScrollbar = useBreakpointValue({ base: false, md: true });
+
   return (
     <Box
-      height="calc(100vh - 56px)" // 56px is the height of the MobileNav header
+      height="100%"
+      minHeight="100%"
       overflowY="auto"
-      css={scrollbarStyles}
+      css={useScrollbar ? scrollbarStyles : undefined}
       {...props}
     >
       {children}
