@@ -70,7 +70,7 @@ const SidebarContent = ({ onClose, ...props }) => {
       {...props}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Image src={SteamCupLogoEdited} alt="SteamCup Logo" maxH="12" />
+        <Image src={SteamCupLogoEdited} alt="SteamCup Logo" width={36} />
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
       {linkItems.map((link, index) => (
