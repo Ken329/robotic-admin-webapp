@@ -45,8 +45,8 @@ const Maintenance = () => {
           <Icon as={FaTools} color="orange.500" boxSize={8} />
         </Flex>
         <Text fontSize={{ base: 'md', md: 'lg' }} color="gray.600" maxWidth="500px">
-          STEAM Cup+ is under daily maintenance from {maintenanceTime?.startTime || '12.00 AM'} to{' '}
-          {maintenanceTime?.endTime || 'N/A'}. Please try again tomorrow.
+          STEAM Cup+ is under daily maintenance from {maintenanceTime?.startTime || '12.00 AM'} to
+          9:00 AM. Please try again tomorrow.
         </Text>
       </VStack>
     </Box>
