@@ -28,7 +28,7 @@ const NotificationBanner = () => {
         height="100%"
       >
         <Text color="white" fontWeight="bold" fontSize={{ base: 'sm', md: 'md', lg: 'lg' }} mx={4}>
-          🎉 Welcome to STEAM Cup+ Admin Portal! We have daily scheduled maintenance from 12 AM to 8
+          🎉 Welcome to STEAM Cup+ Admin Portal! We have daily scheduled maintenance from 12 AM to 9
           AM.
         </Text>
       </Box>
