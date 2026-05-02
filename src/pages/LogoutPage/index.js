@@ -44,7 +44,6 @@ const LogoutPage = () => {
         state: { unauthorized: location?.state?.unauthorized ? true : false }
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, location]);
 
   return isLoading ? <Spin /> : null;

@@ -87,7 +87,6 @@ const RenewMembershipModal = ({ isOpen, onClose, rowData }) => {
 
       fetchStudentData();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rowData, isOpen]);
 
   return (

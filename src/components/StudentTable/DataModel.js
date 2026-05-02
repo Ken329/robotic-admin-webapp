@@ -63,7 +63,6 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
     if (data?.data) {
       dispatch(saveLevelsData(data?.data));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   const handleApprove = async values => {
@@ -219,7 +218,6 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
 
       fetchStudentData();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rowData, isOpen]);
 
   return (
