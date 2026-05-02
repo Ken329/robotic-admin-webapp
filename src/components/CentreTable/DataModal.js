@@ -61,7 +61,6 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
 
       fetchCentreData();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rowData, isOpen]);
 
   const isReadOnly = useMemo(() => {

@@ -23,7 +23,6 @@ const PrivateRoute = () => {
     } else {
       navigate('/admin/logout', { replace: true });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, authTokens]);
 
   return <Layout>{isReady ? <Outlet /> : <Spin />}</Layout>;

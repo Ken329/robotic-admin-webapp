@@ -47,7 +47,6 @@ const Students = () => {
         status: 'error'
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, isLoading, isError, dispatch]);
 
   const openModal = rowData => {

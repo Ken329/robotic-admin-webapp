@@ -45,7 +45,6 @@ const Verify = () => {
     if (!maintenanceIsLoading && !maintenanceIsError && maintenanceData?.data !== null) {
       navigate('/admin/maintenance');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maintenanceData, maintenanceIsLoading, maintenanceIsError]);
 
   const handleSendVerificationCode = async (values, actions) => {
