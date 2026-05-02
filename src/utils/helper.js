@@ -26,7 +26,7 @@ const getCroppedImg = async (imageSrc, pixelCrop) => {
       0,
       0,
       pixelCrop.width,
-      pixelCrop.height
+      pixelCrop.height,
     );
 
     return canvas.toDataURL('image/jpeg');
@@ -69,4 +69,22 @@ const formatDate = value => {
   return `${day} ${month} ${year}`;
 };
 
-export { cropImage, dataURLtoFile, formatDate };
+const parseDDMMYYYY = value => {
+  if (!value) return null;
+
+  const [day, month, year] = value.split('/').map(Number);
+
+  return new Date(year, month - 1, day);
+};
+
+const formatDDMMYYYY = date => {
+  if (!date) return '';
+
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+};
+
+export { cropImage, dataURLtoFile, formatDate, formatDDMMYYYY, parseDDMMYYYY };

@@ -2,6 +2,7 @@ import React from 'react';
 
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import {
+  Badge,
   Box,
   Button,
   Card,
@@ -80,6 +81,42 @@ const BlogCard = ({ blog, handleDelete }) => {
     onOpen();
   };
 
+  const extractDueDate = description => {
+    const match = description?.match(/due_date=(\d{2}\/\d{2}\/\d{4})/);
+
+    if (!match) return null;
+
+    const [day, month, year] = match[1].split('/').map(Number);
+
+    const dueDate = new Date(year, month - 1, day);
+
+    const today = new Date();
+
+    today.setHours(0, 0, 0, 0);
+    dueDate.setHours(0, 0, 0, 0);
+
+    const isExpired = dueDate < today;
+
+    return {
+      label: isExpired ? 'Expired' : `Due Date ${match[1]}`,
+      colorScheme: isExpired ? 'red' : 'yellow'
+    };
+  };
+
+  const dueDateInfo = extractDueDate(blog?.description);
+
+  const normalizedDesc = description => {
+    let desc = '';
+
+    try {
+      desc = description.replace(/\s*due_date=\d{2}\/\d{2}\/\d{4}/, '');
+    } catch (err) {
+      desc = description;
+    }
+
+    return desc;
+  };
+
   return (
     <Card
       maxW="sm"
@@ -92,6 +129,22 @@ const BlogCard = ({ blog, handleDelete }) => {
       transition="all 0.3s ease"
       _hover={{ transform: 'scale(1.02)', boxShadow: '0px 8px 15px rgba(0, 0, 0, 0.25)' }}
     >
+      <Box
+        position="absolute"
+        top="10px"
+        right="10px"
+        display="flex"
+        flexDirection="row"
+        alignItems="flex-end"
+        gap="2"
+      >
+        {dueDateInfo && (
+          <Badge variant="subtle" colorScheme={dueDateInfo.colorScheme}>
+            {dueDateInfo.label}
+          </Badge>
+        )}
+      </Box>
+
       {role === USER_ROLE.ADMIN && (
         <Box
           position="absolute"
@@ -179,7 +232,7 @@ const BlogCard = ({ blog, handleDelete }) => {
         </HStack>
         <VStack alignItems="flex-start">
           <Heading fontSize="xl">{blog?.title}</Heading>
-          <Text fontSize="sm">{blog?.description}</Text>
+          <Text fontSize="sm">{normalizedDesc(blog?.description)}</Text>
         </VStack>
       </CardBody>
 
