@@ -24,6 +24,7 @@ import {
 } from '@chakra-ui/react';
 import parse from 'html-react-parser';
 import QuillResizeImage from 'quill-resize-image';
+import DatePicker from 'react-datepicker';
 import ReactQuill, { Quill } from 'react-quill';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -36,11 +37,13 @@ import {
 } from '@redux/slices/posts/api';
 import { useGetStudentLevelsQuery } from '@redux/slices/students/api';
 import { POST_ATTRIBUTE_TYPES } from '@utils/constants';
+import { formatDDMMYYYY, parseDDMMYYYY } from '@utils/helper';
 import CoverImage from '@pages/CreatePost/CoverImage';
 import useCustomToast from '@components/CustomToast';
 import PageLayout from '@components/Layout/PageLayout';
 import ToggleButton from '@components/ToggleButton/ToggleButton';
 
+import 'react-datepicker/dist/react-datepicker.css';
 import 'react-quill/dist/quill.snow.css';
 
 Quill.register('modules/resize', QuillResizeImage);
@@ -56,6 +59,7 @@ const CreatePost = () => {
   const [title, setTitle] = useState('');
   const [coverImage, setCoverImage] = useState(null);
   const [description, setDescription] = useState('');
+  const [dueDate, setDueDate] = useState(null); // For competition due date
   const [blogType, setBlogType] = useState('');
   const [category, setCategory] = useState('');
   const [editorContent, setEditorContent] = useState('');
@@ -97,8 +101,24 @@ const CreatePost = () => {
     if (isPostLoaded && postData.success) {
       const post = postData.data;
 
+      let desc = post.description || '';
+
+      // Extract DD/MM/YYYY
+      const match = desc.match(/due_date=(\d{2}\/\d{2}\/\d{4})/);
+
+      if (match) {
+        const formattedDate = match[1]; // DD/MM/YYYY
+
+        setDueDate(formattedDate);
+
+        // remove from description
+        desc = desc.replace(/\s*due_date=\d{2}\/\d{2}\/\d{4}/, '');
+      } else {
+        setDueDate(null);
+      }
+
+      setDescription(desc);
       setTitle(post.title);
-      setDescription(post.description);
       setCategory(post.category);
       setBlogType(post.type);
       setEditorContent(post.content);
@@ -110,6 +130,7 @@ const CreatePost = () => {
         const checkboxes = post.customAttributes.filter(
           attr => attr.type === POST_ATTRIBUTE_TYPES.CHECKBOX
         );
+
         const textInputs = post.customAttributes.filter(
           attr => attr.type === POST_ATTRIBUTE_TYPES.TEXT_INPUT
         );
@@ -142,6 +163,7 @@ const CreatePost = () => {
       return false;
     }
 
+    // Due date is optional, so no validation here
     return true;
   };
 
@@ -164,9 +186,19 @@ const CreatePost = () => {
       return;
     }
 
+    // Prepare description with due_date if needed
+    let desc = description || '';
+
+    // Remove any existing due_date=...
+    desc = desc.replace(/\s*due_date=\d{2}\/\d{2}\/\d{4}/, '');
+
+    if (category === 'competition' && dueDate) {
+      desc = desc.trim() + ` due_date=${dueDate}`;
+    }
+
     const postPayload = {
       title,
-      description,
+      description: desc,
       category,
       type: blogType,
       assigned: sendTo.join(', '),
@@ -364,6 +396,22 @@ const CreatePost = () => {
                 placeholder="Post description"
               />
             </FormControl>
+            {category === 'competition' && (
+              <FormControl mb={4}>
+                <FormLabel>Due Date (optional):</FormLabel>
+
+                <DatePicker
+                  selected={dueDate ? parseDDMMYYYY(dueDate) : null}
+                  onChange={date => {
+                    setDueDate(formatDDMMYYYY(date));
+                  }}
+                  dateFormat="dd/MM/yyyy"
+                  placeholderText="Select due date"
+                  customInput={<Input />}
+                  isClearable
+                />
+              </FormControl>
+            )}
 
             <FormControl isRequired>
               <FormLabel>Type:</FormLabel>
@@ -525,8 +573,14 @@ const CreatePost = () => {
               {title}
             </Heading>
             <Text mb={4}>
-              <strong>Description:</strong> {description}
+              <strong>Description:</strong>{' '}
+              {description.replace(/\s*due_date=\d{2}\/\d{2}\/\d{4}/, '')}
             </Text>
+            {category === 'competition' && dueDate && (
+              <Text mb={4} color="red.500">
+                <strong>Due Date:</strong> {dueDate}
+              </Text>
+            )}
             <Text mb={4}>
               <strong>Category:</strong> {category}
             </Text>
