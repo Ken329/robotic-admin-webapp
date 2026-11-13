@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 
 import { Box, CloseButton, Flex, Image, useColorModeValue } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
@@ -86,4 +86,4 @@ SidebarContent.propTypes = {
   onClose: PropTypes.func.isRequired
 };
 
-export default SidebarContent;
+export default memo(SidebarContent);

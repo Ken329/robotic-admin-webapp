@@ -28,6 +28,7 @@ import {
   VStack
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import PropTypes from 'prop-types';
 import { FiDownload } from 'react-icons/fi';
 import { useSelector } from 'react-redux';
@@ -38,6 +39,8 @@ import { exportCompetitionToExcel } from '@services/helper';
 import { categoryMap, POST_TYPE, USER_ROLE } from '@utils/constants';
 import ParticipantsModal from '@components/BlogPosts/ParticipantsModal';
 import useCustomToast from '@components/CustomToast';
+
+dayjs.extend(relativeTime);
 
 const DUE_DATE_PATTERN = /\s*due_date=\d{2}\/\d{2}\/\d{4}/;
 const DUE_DATE_CAPTURE = /due_date=(\d{2}\/\d{2}\/\d{4})/;
@@ -78,7 +81,7 @@ const BlogCard = ({ blog, handleDelete }) => {
     colorScheme: 'gray'
   };
 
-  const timeAgo = dayjs(blog.createdAt).format('DD/MM/YYYY');
+  const timeAgo = dayjs(blog.createdAt).fromNow();
 
   const handleExportData = async () => {
     try {
@@ -232,15 +235,9 @@ const BlogCard = ({ blog, handleDelete }) => {
       <CardFooter p="15px" pt="0" m="0">
         <Flex justifyContent="space-between" alignItems="center" w="100%">
           <VStack align="start">
-            <HStack wrap="wrap">
+            <HStack>
               <Text fontSize={{ base: 'xs', md: 'sm', lg: 'sm' }} color="gray.500">
-                By
-              </Text>
-              <Text fontSize={{ base: 'xs', md: 'sm', lg: 'sm' }} color="#27374d" fontWeight="600">
-                Admin
-              </Text>
-              <Text fontSize={{ base: 'xs', md: 'sm', lg: 'sm' }} color="gray.500">
-                • {timeAgo}
+                By Admin • {timeAgo}
               </Text>
             </HStack>
             <Text fontSize={{ base: 'xs', md: 'sm', lg: 'sm' }} color="gray.500">

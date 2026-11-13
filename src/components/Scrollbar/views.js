@@ -1,26 +1,14 @@
 import { css } from '@emotion/react';
 
+// Hide the scrollbar visually (content stays scrollable) so it never
+// flickers or shifts the layout.
 export const scrollbarStyles = css`
   &::-webkit-scrollbar {
-    width: 8px;
-    background-color: transparent;
+    display: none;
   }
 
-  &::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-    transition: background-color 0.2s;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(0, 0, 0, 0.4);
-  }
-
-  &::-webkit-scrollbar-track {
-    background-color: transparent;
-  }
-
-  /* Firefox scrollbar styling */
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  /* Firefox */
+  scrollbar-width: none;
+  /* Legacy Edge / IE */
+  -ms-overflow-style: none;
 `;
