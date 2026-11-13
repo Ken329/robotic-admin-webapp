@@ -14,7 +14,7 @@ import {
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
-import { makeSelectToken } from '@redux/slices/app/selector';
+import { selectToken } from '@redux/slices/app/selector';
 import {
   //  useRenewMembershipMutation,
   useExpireStudentAccountMutation
@@ -27,7 +27,7 @@ const RenewMembershipModal = ({ isOpen, onClose, rowData }) => {
   // const [renewMembership] = useRenewMembershipMutation();
   const [loading, setLoading] = useState(true);
   const [studentData, setStudentData] = useState({});
-  const token = useSelector(makeSelectToken());
+  const token = useSelector(selectToken);
   const currentYear = new Date().getFullYear();
   const [expireStudentAccount] = useExpireStudentAccountMutation();
 

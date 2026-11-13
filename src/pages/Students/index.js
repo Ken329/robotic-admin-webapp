@@ -1,28 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import React, { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 
 import { Flex, Heading } from '@chakra-ui/react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-import { makeSelectUserRole } from '@redux/slices/app/selector';
-import { saveStudentsData } from '@redux/slices/students';
+import { selectUserRole } from '@redux/slices/app/selector';
 import { useGetStudentListQuery } from '@redux/slices/students/api';
-import { makeSelectStudentData } from '@redux/slices/students/selector';
-import { USER_ROLE } from '@utils/constants';
+import { EMPTY_ARRAY, USER_ROLE } from '@utils/constants';
 import useCustomToast from '@components/CustomToast';
 import PageLayout from '@components/Layout/PageLayout';
 import DataTable from '@components/StudentTable';
-import AchievementsModal from '@components/StudentTable/AchievementsModal';
-import DataModal from '@components/StudentTable/DataModel';
-import DeleteModal from '@components/StudentTable/DeleteModal';
-import RenewMembershipModal from '@components/StudentTable/RenewMembershipModal';
+
+const DataModal = lazy(() => import('@components/StudentTable/DataModel'));
+const AchievementsModal = lazy(() => import('@components/StudentTable/AchievementsModal'));
+const RenewMembershipModal = lazy(() => import('@components/StudentTable/RenewMembershipModal'));
+const DeleteModal = lazy(() => import('@components/StudentTable/DeleteModal'));
+
+const MODAL = {
+  VIEW: 'view',
+  ACHIEVEMENTS: 'achievements',
+  RENEW: 'renew',
+  DELETE: 'delete'
+};
 
 const Students = () => {
-  const dispatch = useDispatch();
   const toast = useCustomToast();
-  const role = useSelector(makeSelectUserRole());
+  const role = useSelector(selectUserRole);
   const [pageSize, setPageSize] = useState(10);
   const [pageIndex, setPageIndex] = useState(0);
   const [filters, setFilters] = useState({});
+  const [modal, setModal] = useState({ type: null, rowData: null });
 
   const { data, isLoading, isError, refetch } = useGetStudentListQuery({
     limit: pageSize,
@@ -30,17 +36,11 @@ const Students = () => {
     ...filters
   });
 
-  const studentData = useSelector(makeSelectStudentData());
-  const [modalData, setModalData] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAchievementsModalOpen, setIsAchievementsModalOpen] = useState(false);
-  const [isRenewModalOpen, setIsRenewModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const studentData = data?.data?.data ?? EMPTY_ARRAY;
+  const isAdmin = role === USER_ROLE.ADMIN;
 
   useEffect(() => {
-    if (!isLoading && !isError && data) {
-      dispatch(saveStudentsData(data?.data?.data));
-    } else if (isError) {
+    if (isError) {
       toast({
         title: 'Student',
         description: 'Error getting student list',
@@ -48,59 +48,24 @@ const Students = () => {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, isLoading, isError, dispatch]);
+  }, [isError]);
 
-  const openModal = rowData => {
-    setModalData(rowData);
-    setIsModalOpen(true);
-  };
+  const openModal = useCallback(rowData => setModal({ type: MODAL.VIEW, rowData }), []);
+  const openAchievementsModal = useCallback(
+    rowData => setModal({ type: MODAL.ACHIEVEMENTS, rowData }),
+    []
+  );
+  const openRenewMembershipModal = useCallback(
+    rowData => setModal({ type: MODAL.RENEW, rowData }),
+    []
+  );
+  const openDeleteModal = useCallback(rowData => setModal({ type: MODAL.DELETE, rowData }), []);
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  // Modals mount only while open, so each opening starts with fresh state.
+  const closeModal = useCallback(() => {
+    setModal(prev => ({ ...prev, type: null }));
     refetch();
-  };
-
-  const openAchievementsModal = rowData => {
-    setModalData(rowData);
-    setIsAchievementsModalOpen(true);
-  };
-
-  const closeAchievementsModal = () => {
-    setIsAchievementsModalOpen(false);
-    refetch();
-  };
-
-  const openDeleteModal = rowData => {
-    setModalData(rowData);
-    setIsDeleteModalOpen(true);
-  };
-
-  const closeDeleteModal = () => {
-    setIsDeleteModalOpen(false);
-    refetch();
-  };
-
-  const openRenewMembershipModal = rowData => {
-    setModalData(rowData);
-    setIsRenewModalOpen(true);
-  };
-
-  const closeRenewMembershipModal = () => {
-    setIsRenewModalOpen(false);
-    refetch();
-  };
-
-  const handlePageChange = newPageIndex => {
-    setPageIndex(newPageIndex);
-  };
-
-  const handlePageSizeChange = newPageSize => {
-    setPageSize(newPageSize);
-  };
-
-  const handleFilterChange = newFilters => {
-    setFilters(newFilters);
-  };
+  }, [refetch]);
 
   return (
     <PageLayout isLoading={isLoading}>
@@ -117,30 +82,24 @@ const Students = () => {
           totalRecords={data?.data?.totalUser || 0}
           pageSize={pageSize}
           pageIndex={pageIndex}
-          onPageChange={handlePageChange}
-          onPageSizeChange={handlePageSizeChange}
-          onFilterChange={handleFilterChange}
+          onPageChange={setPageIndex}
+          onPageSizeChange={setPageSize}
+          onFilterChange={setFilters}
         />
-        <DataModal isOpen={isModalOpen} onClose={closeModal} rowData={modalData} />
-        {role === USER_ROLE.ADMIN && (
-          <>
-            <AchievementsModal
-              isOpen={isAchievementsModalOpen}
-              onClose={closeAchievementsModal}
-              rowData={modalData}
-            />
-            <RenewMembershipModal
-              isOpen={isRenewModalOpen}
-              onClose={closeRenewMembershipModal}
-              rowData={modalData}
-            />
-            <DeleteModal
-              isOpen={isDeleteModalOpen}
-              onClose={closeDeleteModal}
-              rowData={modalData}
-            />
-          </>
-        )}
+        <Suspense fallback={null}>
+          {modal.type === MODAL.VIEW && (
+            <DataModal isOpen onClose={closeModal} rowData={modal.rowData} />
+          )}
+          {isAdmin && modal.type === MODAL.ACHIEVEMENTS && (
+            <AchievementsModal isOpen onClose={closeModal} rowData={modal.rowData} />
+          )}
+          {isAdmin && modal.type === MODAL.RENEW && (
+            <RenewMembershipModal isOpen onClose={closeModal} rowData={modal.rowData} />
+          )}
+          {isAdmin && modal.type === MODAL.DELETE && (
+            <DeleteModal isOpen onClose={closeModal} rowData={modal.rowData} />
+          )}
+        </Suspense>
       </Flex>
     </PageLayout>
   );

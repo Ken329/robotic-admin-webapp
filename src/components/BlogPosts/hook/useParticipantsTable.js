@@ -10,7 +10,7 @@ import {
 import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 
-import { makeSelectUserRole } from '@redux/slices/app/selector';
+import { selectUserRole } from '@redux/slices/app/selector';
 import {
   useDeleteParticipantSignUpMutation,
   useGetALLParticipantsQuery
@@ -20,7 +20,7 @@ import useCustomToast from '@components/CustomToast';
 
 const useParticipantsTable = (blogId, isOpen) => {
   const toast = useCustomToast();
-  const role = useSelector(makeSelectUserRole());
+  const role = useSelector(selectUserRole);
   const [data, setData] = useState([]);
   const [nameFilter, setNameFilter] = useState('');
   const [sorting, setSorting] = useState([]);

@@ -22,7 +22,7 @@ import { Field, Formik } from 'formik';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
-import { makeSelectToken, makeSelectUserRole } from '@redux/slices/app/selector';
+import { selectToken, selectUserRole } from '@redux/slices/app/selector';
 import { useUpdateCentreMutation } from '@redux/slices/centre/api';
 import { getUserById } from '@services/auth';
 import { CENTRE_STATUS, USER_ROLE } from '@utils/constants';
@@ -31,8 +31,8 @@ import Spin from '@components/Spin';
 
 const DataModal = ({ isOpen, onClose, rowData }) => {
   const toast = useCustomToast();
-  const role = useSelector(makeSelectUserRole());
-  const token = useSelector(makeSelectToken());
+  const role = useSelector(selectUserRole);
+  const token = useSelector(selectToken);
   const [centreData, setCentreData] = useState({});
   const [loading, setLoading] = useState(true);
   const [isEdit, setIsEdit] = useState(false);

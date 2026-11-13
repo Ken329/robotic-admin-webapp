@@ -13,18 +13,17 @@ const PrivateRoute = () => {
   const dispatch = useDispatch();
   const [isReady, setIsReady] = useState(false);
 
-  const user = userpool.getCurrentUser();
-  const authTokens = JSON.parse(localStorage.getItem('token'));
-
   useEffect(() => {
+    const user = userpool.getCurrentUser();
+    const authTokens = JSON.parse(localStorage.getItem('token'));
+
     if (user && authTokens?.accessToken) {
-      dispatch(saveToken(authTokens?.accessToken));
+      dispatch(saveToken(authTokens.accessToken));
       setIsReady(true);
     } else {
       navigate('/admin/logout', { replace: true });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, authTokens]);
+  }, [dispatch, navigate]);
 
   return <Layout>{isReady ? <Outlet /> : <Spin />}</Layout>;
 };

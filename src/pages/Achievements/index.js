@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import {
@@ -31,8 +31,8 @@ import {
   useGetAchievementListQuery,
   useUpdateAchievementMutation
 } from '@redux/slices/achievements/api';
-import { makeSelectAchievementsData } from '@redux/slices/achievements/selector';
-import { makeSelectToken } from '@redux/slices/app/selector';
+import { selectAchievementsData } from '@redux/slices/achievements/selector';
+import { selectToken } from '@redux/slices/app/selector';
 import { getAchievementImage } from '@services/helper';
 import { dataURLtoFile, formatDate } from '@utils/helper';
 import useCustomToast from '@components/CustomToast';
@@ -42,14 +42,15 @@ import PageLayout from '@components/Layout/PageLayout';
 const Achievements = () => {
   const dispatch = useDispatch();
   const toast = useCustomToast();
-  const token = useSelector(makeSelectToken());
+  const token = useSelector(selectToken);
   const { data, isLoading, isError, refetch } = useGetAchievementListQuery();
-  const achievements = useSelector(makeSelectAchievementsData());
+  const achievements = useSelector(selectAchievementsData);
   const [createAchievement] = useCreateAchievementMutation();
   const [deleteAchievement] = useDeleteAchievementMutation();
   const [updateAchievement] = useUpdateAchievementMutation();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedAchievement, setSelectedAchievement] = useState(null);
+  const objectUrlsRef = useRef([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [createdDate, setCreatedDate] = useState('');
@@ -59,7 +60,16 @@ const Achievements = () => {
   const [showCropModal, setShowCropModal] = useState(false);
 
   useEffect(() => {
+    const urls = objectUrlsRef;
+
+    return () => urls.current.forEach(url => URL.revokeObjectURL(url));
+  }, []);
+
+  useEffect(() => {
+    let isStale = false;
+
     const fetchImages = async achievements => {
+      const createdUrls = [];
       const updatedAchievements = await Promise.all(
         achievements?.map(async achievement => {
           const imageUrl = achievement?.imageUrl;
@@ -67,6 +77,8 @@ const Achievements = () => {
           try {
             const imageBlob = await getAchievementImage(imageUrl, token);
             const imageObjectURL = URL.createObjectURL(imageBlob);
+
+            createdUrls.push(imageObjectURL);
 
             return { ...achievement, imageUrl: imageObjectURL };
           } catch (error) {
@@ -81,6 +93,14 @@ const Achievements = () => {
         })
       );
 
+      if (isStale) {
+        createdUrls.forEach(url => URL.revokeObjectURL(url));
+
+        return;
+      }
+
+      objectUrlsRef.current.forEach(url => URL.revokeObjectURL(url));
+      objectUrlsRef.current = createdUrls;
       dispatch(saveAchievementsData(updatedAchievements));
     };
 
@@ -95,6 +115,10 @@ const Achievements = () => {
         status: 'error'
       });
     }
+
+    return () => {
+      isStale = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, isLoading, isError]);
 
@@ -227,9 +251,9 @@ const Achievements = () => {
             >
               <Text fontWeight="bold">+ New Achievement</Text>
             </Box>
-            {achievements?.map((achievement, index) => (
+            {achievements?.map(achievement => (
               <Box
-                key={index}
+                key={achievement.id}
                 p={5}
                 border="1px"
                 borderColor="gray.200"
