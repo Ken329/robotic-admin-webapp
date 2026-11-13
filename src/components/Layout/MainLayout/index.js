@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useCallback, useEffect, useState } from 'react';
 
 import { Box, Drawer, DrawerContent, useColorModeValue } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
@@ -11,6 +11,9 @@ import AnimatedPage from '@components/AnimatedPage';
 import MobileNav from '@components/Layout/MainLayout/MobileNavItem';
 import SidebarContent from '@components/Layout/MainLayout/SideBarContent';
 import Scrollbar from '@components/Scrollbar';
+import Spin from '@components/Spin';
+
+const SIDEBAR_DISPLAY = { base: 'none', md: 'block' };
 
 const Layout = ({ children }) => {
   const navigate = useNavigate();
@@ -36,16 +39,16 @@ const Layout = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, isUserLoading, isError, dispatch]);
 
-  const onClose = () => setIsOpen(false);
-  const onOpen = () => setIsOpen(true);
+  const onClose = useCallback(() => setIsOpen(false), []);
+  const onOpen = useCallback(() => setIsOpen(true), []);
 
-  const onLogout = () => {
+  const onLogout = useCallback(() => {
     navigate('/admin/logout');
-  };
+  }, [navigate]);
 
   return (
     <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
-      <SidebarContent onClose={onClose} display={{ base: 'none', md: 'block' }} />
+      <SidebarContent onClose={onClose} display={SIDEBAR_DISPLAY} />
       <Drawer
         isOpen={isOpen}
         placement="left"
@@ -68,7 +71,9 @@ const Layout = ({ children }) => {
         }}
       >
         <Scrollbar p="4">
-          <AnimatedPage key={pathname}>{children}</AnimatedPage>
+          <Suspense fallback={<Spin />}>
+            <AnimatedPage key={pathname}>{children}</AnimatedPage>
+          </Suspense>
         </Scrollbar>
       </Box>
     </Box>

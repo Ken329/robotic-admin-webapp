@@ -1,6 +1,5 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy } from 'react';
 
-import { Flex } from '@chakra-ui/react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -10,7 +9,6 @@ import {
 
 import AuthLayout from '@components/Layout/AuthLayout';
 import PrivateRoute from '@components/PrivateRoute';
-import Spin from '@components/Spin';
 
 const Achievements = lazy(() => import('@pages/Achievements'));
 const Centres = lazy(() => import('@pages/Centres'));
@@ -51,18 +49,7 @@ const router = createBrowserRouter(
   )
 );
 
-const App = () => {
-  return (
-    <Suspense
-      fallback={
-        <Flex minH="100vh" align="center" justify="center">
-          <Spin />
-        </Flex>
-      }
-    >
-      <RouterProvider router={router} />
-    </Suspense>
-  );
-};
+// Suspense lives inside the layouts so the shell stays mounted while a lazy page loads.
+const App = () => <RouterProvider router={router} />;
 
 export default App;

@@ -1,11 +1,17 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 import { Box, Flex, Icon } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import { Link as RouterLink } from 'react-router-dom';
 
 const NavItem = ({ icon, path, children }) => {
   return (
-    <Box as="a" href={path} style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
+    <Box
+      as={RouterLink}
+      to={path}
+      style={{ textDecoration: 'none' }}
+      _focus={{ boxShadow: 'none' }}
+    >
       <Flex
         align="center"
         p="4"
@@ -40,4 +46,4 @@ NavItem.propTypes = {
   children: PropTypes.any.isRequired
 };
 
-export default NavItem;
+export default memo(NavItem);

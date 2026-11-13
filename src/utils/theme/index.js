@@ -8,9 +8,9 @@ const config = {
 };
 
 const fonts = {
-  body: "'Inter', sans-serif",
-  heading: "'Inter', sans-serif",
-  mono: "'Inter', monospace"
+  body: 'Segoe UI, sans-serif',
+  heading: 'Segoe UI, sans-serif',
+  mono: 'Segoe UI, monospace'
 };
 
 const globalStyles = {

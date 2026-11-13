@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 
 import {
   Avatar,
@@ -121,4 +121,4 @@ MobileNav.propTypes = {
   onLogout: PropTypes.func.isRequired
 };
 
-export default MobileNav;
+export default memo(MobileNav);
