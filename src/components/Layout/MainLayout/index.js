@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Drawer, DrawerContent, useColorModeValue } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { saveUserData } from '@redux/slices/app';
 import { useGetUserDataQuery } from '@redux/slices/app/api';
@@ -14,6 +14,7 @@ import Scrollbar from '@components/Scrollbar';
 
 const Layout = ({ children }) => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const { data, isLoading: isUserLoading, isError } = useGetUserDataQuery();
@@ -67,7 +68,7 @@ const Layout = ({ children }) => {
         }}
       >
         <Scrollbar p="4">
-          <AnimatedPage>{children}</AnimatedPage>
+          <AnimatedPage key={pathname}>{children}</AnimatedPage>
         </Scrollbar>
       </Box>
     </Box>
