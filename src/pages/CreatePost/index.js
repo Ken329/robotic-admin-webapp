@@ -1,3 +1,6 @@
+import 'react-datepicker/dist/react-datepicker.css';
+import 'react-quill/dist/quill.snow.css';
+
 import React, { useEffect, useRef, useState } from 'react';
 
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
@@ -42,9 +45,6 @@ import CoverImage from '@pages/CreatePost/CoverImage';
 import useCustomToast from '@components/CustomToast';
 import PageLayout from '@components/Layout/PageLayout';
 import ToggleButton from '@components/ToggleButton/ToggleButton';
-
-import 'react-datepicker/dist/react-datepicker.css';
-import 'react-quill/dist/quill.snow.css';
 
 Quill.register('modules/resize', QuillResizeImage);
 

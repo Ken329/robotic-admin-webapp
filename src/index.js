@@ -1,3 +1,5 @@
+import '@pages/Post/Quill.css';
+
 import React from 'react';
 
 import { ChakraProvider } from '@chakra-ui/react';
@@ -7,8 +9,6 @@ import { Provider } from 'react-redux';
 import store from '@redux/store';
 import theme from '@utils/theme';
 import App from '@/App';
-
-import './pages/Post/Quill.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 

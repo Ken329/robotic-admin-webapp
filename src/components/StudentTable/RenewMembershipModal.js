@@ -39,12 +39,6 @@ const RenewMembershipModal = ({ isOpen, onClose, rowData }) => {
     return currentYear === expiryYear;
   };
 
-  useEffect(() => {
-    if (studentData) {
-      console.log(studentData?.expiryDate);
-    }
-  }, [studentData]);
-
   const handleRenewMembership = async id => {
     try {
       const response = await expireStudentAccount(id).unwrap();
@@ -87,6 +81,7 @@ const RenewMembershipModal = ({ isOpen, onClose, rowData }) => {
 
       fetchStudentData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rowData, isOpen]);
 
   return (

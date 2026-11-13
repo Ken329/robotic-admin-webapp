@@ -56,6 +56,7 @@ const CoverImage = ({ onCoverImageSelect }) => {
         status: 'error'
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imagesData, isLoading, isError]);
 
   useEffect(() => {

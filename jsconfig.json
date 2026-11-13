@@ -1,15 +1,14 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
-    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["*"],
-      "@components/*": ["components/*"],
-      "@pages/*": ["pages/*"],
-      "@utils/*": ["utils/*"],
-      "@redux/*": ["redux/*"],
-      "@services/*": ["services/*"],
-      "@assets/*": ["assets/*"]
+      "@/*": ["src/*"],
+      "@components/*": ["src/components/*"],
+      "@pages/*": ["src/pages/*"],
+      "@utils/*": ["src/utils/*"],
+      "@redux/*": ["src/redux/*"],
+      "@services/*": ["src/services/*"],
+      "@assets/*": ["src/assets/*"]
     }
   },
   "include": ["src"]

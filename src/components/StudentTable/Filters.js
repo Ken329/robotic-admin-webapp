@@ -70,6 +70,7 @@ const Filters = ({ handleFilterChange }) => {
     if (data?.data) {
       dispatch(saveLevelsData(data?.data));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   const createLevelFormik = useFormik({
