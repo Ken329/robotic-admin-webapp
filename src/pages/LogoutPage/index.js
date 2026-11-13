@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { resetApp } from '@redux/slices/app';
 import { appApi } from '@redux/slices/app/api';
-import { makeSelectToken } from '@redux/slices/app/selector';
+import { selectToken } from '@redux/slices/app/selector';
 import { logout } from '@services/auth';
 import userpool from '@utils/userpool';
 import Spin from '@components/Spin';
@@ -18,7 +18,7 @@ const LogoutPage = () => {
   const hasLoggedOut = useRef(false);
 
   const user = userpool.getCurrentUser();
-  const token = useSelector(makeSelectToken());
+  const token = useSelector(selectToken);
 
   const handleLogout = async () => {
     if (hasLoggedOut.current) return;
@@ -44,6 +44,7 @@ const LogoutPage = () => {
         state: { unauthorized: location?.state?.unauthorized ? true : false }
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, location]);
 
   return isLoading ? <Spin /> : null;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import {
@@ -110,11 +110,10 @@ const columns = [
 ];
 
 const DataTable = ({ tableData, openModal, refetch }) => {
-  const [data, setData] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
-  const [totalRecords, setTotalRecords] = useState(0);
+  const totalRecords = tableData.length;
   const table = useReactTable({
-    data,
+    data: tableData,
     columns,
     state: { columnFilters },
     getCoreRowModel: getCoreRowModel(),
@@ -122,11 +121,6 @@ const DataTable = ({ tableData, openModal, refetch }) => {
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel()
   });
-
-  useEffect(() => {
-    setData(tableData);
-    setTotalRecords(tableData.length);
-  }, [tableData]);
 
   return (
     <Box>

@@ -24,46 +24,60 @@ import {
 } from '@chakra-ui/react';
 import { Field, Formik } from 'formik';
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-import { makeSelectToken, makeSelectUserRole } from '@redux/slices/app/selector';
-import { saveLevelsData } from '@redux/slices/students';
+import { selectToken, selectUserRole } from '@redux/slices/app/selector';
 import {
   useApproveStudentMutation,
   useGetStudentLevelsQuery,
   useRejectStudentMutation,
   useUpdateStudentMutation
 } from '@redux/slices/students/api';
-import { makeSelectLevelsData } from '@redux/slices/students/selector';
 import { getUserById } from '@services/auth';
-import { STUDENT_STATUS, USER_ROLE } from '@utils/constants';
+import { EMPTY_ARRAY, STUDENT_STATUS, USER_ROLE } from '@utils/constants';
 import { createSignUpSchema } from '@utils/validationSchema';
 import useCustomToast from '@components/CustomToast';
 import Spin from '@components/Spin';
 
+const getInitialValues = studentData => ({
+  fullName: studentData?.fullName || '',
+  dob: studentData?.dob || '',
+  gender: studentData?.gender || '',
+  center: studentData?.centerName || '',
+  nric: studentData?.nric || '',
+  passport: studentData?.passport || '',
+  contact: studentData?.contact || '',
+  race: studentData?.race || '',
+  moeEmail: studentData?.moeEmail || '',
+  personalEmail: studentData?.personalEmail || '',
+  school: studentData?.school || '',
+  nationality: studentData?.nationality || '',
+  parentName: studentData?.parentName || '',
+  relationship: studentData?.relationship || '',
+  parentEmail: studentData?.parentEmail || '',
+  parentContact: studentData?.parentContact || '',
+  size: studentData?.size || '',
+  level: studentData?.level || '',
+  roboticId: studentData?.roboticId || '',
+  joinedDate: studentData?.joinedDate || ''
+});
+
 const DataModal = ({ isOpen, onClose, rowData }) => {
-  const dispatch = useDispatch();
   const toast = useCustomToast();
-  const role = useSelector(makeSelectUserRole());
-  const token = useSelector(makeSelectToken());
-  const levels = useSelector(makeSelectLevelsData());
+  const role = useSelector(selectUserRole);
+  const token = useSelector(selectToken);
   const [studentData, setStudentData] = useState({});
   const [loading, setLoading] = useState(true);
   const [isEdit, setIsEdit] = useState(false);
   const { data } = useGetStudentLevelsQuery();
+  const levels = data?.data ?? EMPTY_ARRAY;
   const [expiryDate, setExpiryDate] = useState(studentData?.expiryDate || '');
 
-  const signUpSchema = createSignUpSchema(role);
+  const signUpSchema = useMemo(() => createSignUpSchema(role), [role]);
 
   const [approveStudent, { isLoading: approveLoading }] = useApproveStudentMutation();
   const [rejectStudent, { isLoading: rejectLoading }] = useRejectStudentMutation();
   const [updateStudent, { isLoading: updateLoading }] = useUpdateStudentMutation();
-
-  useEffect(() => {
-    if (data?.data) {
-      dispatch(saveLevelsData(data?.data));
-    }
-  }, [data]);
 
   const handleApprove = async values => {
     try {
@@ -218,6 +232,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
 
       fetchStudentData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rowData, isOpen]);
 
   return (
@@ -235,28 +250,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                 <Spin />
               ) : (
                 <Formik
-                  initialValues={{
-                    fullName: studentData?.fullName || '',
-                    dob: studentData?.dob || '',
-                    gender: studentData?.gender || '',
-                    center: studentData?.centerName || '',
-                    nric: studentData?.nric || '',
-                    passport: studentData?.passport || '',
-                    contact: studentData?.contact || '',
-                    race: studentData?.race || '',
-                    moeEmail: studentData?.moeEmail || '',
-                    personalEmail: studentData?.personalEmail || '',
-                    school: studentData?.school || '',
-                    nationality: studentData?.nationality || '',
-                    parentName: studentData?.parentName || '',
-                    relationship: studentData?.relationship || '',
-                    parentEmail: studentData?.parentEmail || '',
-                    parentContact: studentData?.parentContact || '',
-                    size: studentData?.size || '',
-                    level: studentData?.level || '',
-                    roboticId: studentData?.roboticId || '',
-                    joinedDate: studentData?.joinedDate || ''
-                  }}
+                  initialValues={getInitialValues(studentData)}
                   onSubmit={values => {
                     if (studentData?.status === STUDENT_STATUS.APPROVED) {
                       handleUpdate(values);

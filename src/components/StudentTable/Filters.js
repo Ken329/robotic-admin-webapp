@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import {
   Button,
@@ -26,28 +26,26 @@ import {
 import { useFormik } from 'formik';
 import PropTypes from 'prop-types';
 import { FiDownload, FiPlus, FiSearch } from 'react-icons/fi';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-import { makeSelectToken, makeSelectUserRole } from '@redux/slices/app/selector';
-import { saveLevelsData } from '@redux/slices/students';
+import { selectToken, selectUserRole } from '@redux/slices/app/selector';
 import {
   useCreateStudentLevelMutation,
   useDeleteStudentLevelMutation,
   useGetStudentLevelsQuery
 } from '@redux/slices/students/api';
-import { makeSelectLevelsData } from '@redux/slices/students/selector';
 import { exportToExcel } from '@services/helper';
+import { EMPTY_ARRAY } from '@utils/constants';
 import { createLevelSchema } from '@utils/validationSchema';
 import useCustomToast from '@components/CustomToast';
 
 const Filters = ({ handleFilterChange }) => {
-  const dispatch = useDispatch();
   const toast = useCustomToast();
-  const role = useSelector(makeSelectUserRole());
-  const token = useSelector(makeSelectToken());
-  const levels = useSelector(makeSelectLevelsData());
+  const role = useSelector(selectUserRole);
+  const token = useSelector(selectToken);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { data, refetch } = useGetStudentLevelsQuery();
+  const levels = data?.data ?? EMPTY_ARRAY;
   const [createStudentLevel, { isLoading: createLevelIsLoading }] = useCreateStudentLevelMutation();
   const [deleteStudentLevel] = useDeleteStudentLevelMutation();
 
@@ -65,12 +63,6 @@ const Filters = ({ handleFilterChange }) => {
   const applyFilters = () => {
     handleFilterChange({ name, status });
   };
-
-  useEffect(() => {
-    if (data?.data) {
-      dispatch(saveLevelsData(data?.data));
-    }
-  }, [data]);
 
   const createLevelFormik = useFormik({
     initialValues: {

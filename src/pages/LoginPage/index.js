@@ -51,6 +51,7 @@ const LoginPage = () => {
     if (!maintenanceIsLoading && !maintenanceIsError && maintenanceData?.data !== null) {
       navigate('/admin/maintenance');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maintenanceData, maintenanceIsLoading, maintenanceIsError]);
 
   useEffect(() => {
@@ -66,6 +67,7 @@ const LoginPage = () => {
       });
       location.state.unauthorized = false;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, authTokens, location]);
 
   const initAuth = async cognitoToken => {
