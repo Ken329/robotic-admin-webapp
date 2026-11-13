@@ -33,17 +33,44 @@ import { FiDownload } from 'react-icons/fi';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { makeSelectToken, makeSelectUserRole } from '@redux/slices/app/selector';
+import { selectToken, selectUserRole } from '@redux/slices/app/selector';
 import { exportCompetitionToExcel } from '@services/helper';
 import { categoryMap, POST_TYPE, USER_ROLE } from '@utils/constants';
 import ParticipantsModal from '@components/BlogPosts/ParticipantsModal';
 import useCustomToast from '@components/CustomToast';
 
+const DUE_DATE_PATTERN = /\s*due_date=\d{2}\/\d{2}\/\d{4}/;
+const DUE_DATE_CAPTURE = /due_date=(\d{2}\/\d{2}\/\d{4})/;
+
+const extractDueDate = description => {
+  const match = description?.match(DUE_DATE_CAPTURE);
+
+  if (!match) return null;
+
+  const [day, month, year] = match[1].split('/').map(Number);
+
+  const dueDate = new Date(year, month - 1, day);
+
+  const today = new Date();
+
+  today.setHours(0, 0, 0, 0);
+  dueDate.setHours(0, 0, 0, 0);
+
+  const isExpired = dueDate < today;
+
+  return {
+    label: isExpired ? 'Expired' : `Due Date ${match[1]}`,
+    colorScheme: isExpired ? 'red' : 'yellow'
+  };
+};
+
+const normalizedDesc = description => description?.replace(DUE_DATE_PATTERN, '') ?? description;
+
 const BlogCard = ({ blog, handleDelete }) => {
   const navigate = useNavigate();
   const toast = useCustomToast();
-  const role = useSelector(makeSelectUserRole());
-  const token = useSelector(makeSelectToken());
+  const role = useSelector(selectUserRole);
+  const token = useSelector(selectToken);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const category = categoryMap[blog.category] || {
@@ -81,41 +108,7 @@ const BlogCard = ({ blog, handleDelete }) => {
     onOpen();
   };
 
-  const extractDueDate = description => {
-    const match = description?.match(/due_date=(\d{2}\/\d{2}\/\d{4})/);
-
-    if (!match) return null;
-
-    const [day, month, year] = match[1].split('/').map(Number);
-
-    const dueDate = new Date(year, month - 1, day);
-
-    const today = new Date();
-
-    today.setHours(0, 0, 0, 0);
-    dueDate.setHours(0, 0, 0, 0);
-
-    const isExpired = dueDate < today;
-
-    return {
-      label: isExpired ? 'Expired' : `Due Date ${match[1]}`,
-      colorScheme: isExpired ? 'red' : 'yellow'
-    };
-  };
-
   const dueDateInfo = extractDueDate(blog?.description);
-
-  const normalizedDesc = description => {
-    let desc = '';
-
-    try {
-      desc = description.replace(/\s*due_date=\d{2}\/\d{2}\/\d{4}/, '');
-    } catch (err) {
-      desc = description;
-    }
-
-    return desc;
-  };
 
   return (
     <Card
@@ -310,4 +303,4 @@ BlogCard.propTypes = {
   handleDelete: PropTypes.func
 };
 
-export default BlogCard;
+export default React.memo(BlogCard);

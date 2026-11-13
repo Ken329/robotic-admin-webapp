@@ -33,7 +33,7 @@ import PropTypes from 'prop-types';
 import { BiDotsHorizontalRounded } from 'react-icons/bi';
 import { useSelector } from 'react-redux';
 
-import { makeSelectUserRole } from '@redux/slices/app/selector';
+import { selectUserRole } from '@redux/slices/app/selector';
 import { STUDENT_STATUS, USER_ROLE } from '@utils/constants';
 import Filters from '@components/StudentTable/Filters';
 
@@ -50,7 +50,8 @@ const DataTable = ({
   onPageSizeChange,
   onFilterChange
 }) => {
-  const role = useSelector(makeSelectUserRole());
+  const role = useSelector(selectUserRole);
+  const [sorting, setSorting] = React.useState([]);
 
   const columns = React.useMemo(
     () => [
@@ -128,6 +129,7 @@ const DataTable = ({
         accessorKey: 'actions',
         header: 'Actions',
         size: 100,
+        enableSorting: false,
         cell: ({ row }) => {
           const status = row.original.status;
 
@@ -196,7 +198,7 @@ const DataTable = ({
     pageCount: Math.ceil(totalRecords / pageSize),
     state: {
       pagination: { pageIndex, pageSize },
-      sorting: [] // Initial sorting state
+      sorting
     },
     onPaginationChange: updater => {
       const newState = updater({
@@ -212,16 +214,12 @@ const DataTable = ({
         onPageSizeChange(newState.pageSize);
       }
     },
-    onSortingChange: updater => {
-      const newSorting = updater(table.getState().sorting);
-
-      table.setSorting(newSorting);
-    },
+    // Pagination is server-side, so sorting orders the rows of the current page only.
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    manualPagination: true,
-    manualSorting: true
+    manualPagination: true
   });
 
   return (
@@ -254,7 +252,7 @@ const DataTable = ({
                     w={header.getSize()}
                     key={header.id}
                     backgroundColor="#CBD5E0"
-                    onClick={() => header.column.getToggleSortingHandler()}
+                    onClick={header.column.getToggleSortingHandler()}
                     cursor="pointer"
                   >
                     {flexRender(header.column.columnDef.header, header.getContext())}

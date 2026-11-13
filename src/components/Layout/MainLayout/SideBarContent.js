@@ -6,12 +6,12 @@ import { FiAward, FiHome, FiMonitor, FiUser } from 'react-icons/fi';
 import { useSelector } from 'react-redux';
 
 import SteamCupLogoEdited from '@assets/images/STEAM Cup+edited.webp';
-import { makeSelectUserRole } from '@redux/slices/app/selector';
+import { selectUserRole } from '@redux/slices/app/selector';
 import NavItem from '@components/Layout/MainLayout/NavItem';
 
 const SidebarContent = ({ onClose, ...props }) => {
   const useUserRole = () => {
-    const role = useSelector(makeSelectUserRole());
+    const role = useSelector(selectUserRole);
     const userRole = useMemo(() => {
       const storedRole = localStorage.getItem('adminUserRole');
 
@@ -73,8 +73,8 @@ const SidebarContent = ({ onClose, ...props }) => {
         <Image src={SteamCupLogoEdited} alt="SteamCup Logo" width={36} />
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
-      {linkItems.map((link, index) => (
-        <NavItem key={index} icon={link.icon} path={link.path}>
+      {linkItems.map(link => (
+        <NavItem key={link.path} icon={link.icon} path={link.path}>
           {link.name}
         </NavItem>
       ))}

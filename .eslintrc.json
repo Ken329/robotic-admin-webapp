@@ -1,0 +1,50 @@
+{
+  "root": true,
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "ecmaFeatures": { "jsx": true }
+  },
+  "plugins": ["simple-import-sort"],
+  "settings": {
+    "react": { "version": "detect" }
+  },
+  "rules": {
+    "react/prop-types": "off",
+    "react/react-in-jsx-scope": "off",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["./*", "../*"],
+            "message": "Use absolute imports (@components, @pages, @utils, @redux, @services, @assets) instead of relative imports."
+          }
+        ]
+      }
+    ],
+    "simple-import-sort/imports": [
+      "error",
+      {
+        "groups": [
+          ["^\\u0000"],
+          ["^react$", "^react-dom$"],
+          ["^@?\\w"],
+          ["^@assets", "^@redux", "^@services", "^@utils", "^@pages", "^@components", "^@/"]
+        ]
+      }
+    ],
+    "simple-import-sort/exports": "error"
+  }
+}

@@ -19,7 +19,7 @@ import { FiMenu } from 'react-icons/fi';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 
-import { makeSelectUserName, makeSelectUserRole } from '@redux/slices/app/selector';
+import { selectUserName, selectUserRole } from '@redux/slices/app/selector';
 import { PAGE_NAME } from '@utils/constants';
 
 const MobileNav = ({ onOpen, onLogout, ...props }) => {
@@ -41,8 +41,8 @@ const MobileNav = ({ onOpen, onLogout, ...props }) => {
     return result;
   };
 
-  const role = useSelector(makeSelectUserRole());
-  const userName = useSelector(makeSelectUserName());
+  const role = useSelector(selectUserRole);
+  const userName = useSelector(selectUserName);
 
   const displayName = useUserData(userName, 'adminUserName');
   const userRole = useUserData(role, 'adminUserRole');

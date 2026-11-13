@@ -38,3 +38,5 @@ export const POST_ATTRIBUTE_TYPES = {
   TEXT_INPUT: 'textInput',
   TEAM_MEMBER: 'Team Member'
 };
+
+export const EMPTY_ARRAY = Object.freeze([]);

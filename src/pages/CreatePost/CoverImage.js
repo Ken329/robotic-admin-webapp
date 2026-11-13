@@ -17,52 +17,42 @@ import {
   VStack
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
 
-import { saveFilesData } from '@redux/slices/posts';
 import {
   useDeleteFileMutation,
   useGetAllFilesQuery,
   useUploadFileMutation
 } from '@redux/slices/posts/api';
-import { makeSelectFilesData } from '@redux/slices/posts/selector';
+import { EMPTY_ARRAY } from '@utils/constants';
 import useCustomToast from '@components/CustomToast';
 
 const CoverImage = ({ onCoverImageSelect }) => {
-  const dispatch = useDispatch();
   const toast = useCustomToast();
-  const images = useSelector(makeSelectFilesData());
   const [imageLoading, setImageLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const fileInputRef = useRef(null);
   const {
     data: imagesData,
-    isLoading,
     isError,
     refetch
-  } = useGetAllFilesQuery({
-    skip: !isOpen
+  } = useGetAllFilesQuery(undefined, {
+    skip: !isOpen,
+    refetchOnMountOrArgChange: true
   });
+  const images = imagesData?.data ?? EMPTY_ARRAY;
   const [uploadFile] = useUploadFileMutation();
   const [deleteFile] = useDeleteFileMutation();
 
   useEffect(() => {
-    if (imagesData && !isLoading && !isError) {
-      dispatch(saveFilesData(imagesData?.data));
-    } else if (isError) {
+    if (isError) {
       toast({
         title: 'Fetch Images',
         description: `Error fetching images`,
         status: 'error'
       });
     }
-  }, [imagesData, isLoading, isError]);
-
-  useEffect(() => {
-    if (isOpen) {
-      refetch();
-    }
-  }, [isOpen, refetch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isError]);
 
   const handleImageUpload = async e => {
     const file = e.target.files[0];

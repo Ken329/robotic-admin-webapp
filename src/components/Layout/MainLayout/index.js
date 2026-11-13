@@ -32,6 +32,7 @@ const Layout = ({ children }) => {
     } else if (isError) {
       onLogout();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, isUserLoading, isError, dispatch]);
 
   const onClose = () => setIsOpen(false);

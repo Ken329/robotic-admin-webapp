@@ -1,47 +1,41 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { Flex, Heading } from '@chakra-ui/react';
-import { useDispatch, useSelector } from 'react-redux';
 
-import { saveCentresData } from '@redux/slices/centre';
 import { useGetCentresListQuery } from '@redux/slices/centre/api';
-import { makeSelectCentresData } from '@redux/slices/centre/selector';
+import { EMPTY_ARRAY } from '@utils/constants';
 import DataTable from '@components/CentreTable';
 import DataModal from '@components/CentreTable/DataModal';
 import useCustomToast from '@components/CustomToast';
 import PageLayout from '@components/Layout/PageLayout';
 
 const Centres = () => {
-  const dispatch = useDispatch();
   const toast = useCustomToast();
   const [modalData, setModalData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { data, isLoading, isError, refetch } = useGetCentresListQuery();
-  const centreData = useSelector(makeSelectCentresData());
-
-  const tableData = useMemo(() => centreData, [centreData]);
+  const tableData = data?.data ?? EMPTY_ARRAY;
 
   useEffect(() => {
-    if (!isLoading && !isError && data) {
-      dispatch(saveCentresData(data?.data));
-    } else if (isError) {
+    if (isError) {
       toast({
         title: 'Centre',
         description: 'Error getting centre list',
         status: 'error'
       });
     }
-  }, [data, isLoading, isError, dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isError]);
 
-  const openModal = rowData => {
+  const openModal = useCallback(rowData => {
     setModalData(rowData);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setIsModalOpen(false);
     refetch();
-  };
+  }, [refetch]);
 
   return (
     <PageLayout isLoading={isLoading}>

@@ -25,6 +25,14 @@ module.exports = {
       new NodePolyfillPlugin({ excludeAliases: ["console"] }),
     ],
     configure: {
+      // react-datepicker optionally requires date-fns-tz via a variable (only used with the
+      // `timeZone` prop, which this app does not use), which webpack flags as a critical dependency.
+      ignoreWarnings: [
+        {
+          module: /react-datepicker[\/]dist[\/]index.es.js/,
+          message: /Critical dependency: the request of a dependency is an expression/
+        }
+      ],
       resolve: {
         alias: {
           '@': path.resolve(__dirname, 'src'),

@@ -26,7 +26,7 @@ const getCroppedImg = async (imageSrc, pixelCrop) => {
       0,
       0,
       pixelCrop.width,
-      pixelCrop.height,
+      pixelCrop.height
     );
 
     return canvas.toDataURL('image/jpeg');

@@ -14,7 +14,7 @@ import {
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
-import { makeSelectToken } from '@redux/slices/app/selector';
+import { selectToken } from '@redux/slices/app/selector';
 import {
   //  useRenewMembershipMutation,
   useExpireStudentAccountMutation
@@ -27,7 +27,7 @@ const RenewMembershipModal = ({ isOpen, onClose, rowData }) => {
   // const [renewMembership] = useRenewMembershipMutation();
   const [loading, setLoading] = useState(true);
   const [studentData, setStudentData] = useState({});
-  const token = useSelector(makeSelectToken());
+  const token = useSelector(selectToken);
   const currentYear = new Date().getFullYear();
   const [expireStudentAccount] = useExpireStudentAccountMutation();
 
@@ -38,12 +38,6 @@ const RenewMembershipModal = ({ isOpen, onClose, rowData }) => {
 
     return currentYear === expiryYear;
   };
-
-  useEffect(() => {
-    if (studentData) {
-      console.log(studentData?.expiryDate);
-    }
-  }, [studentData]);
 
   const handleRenewMembership = async id => {
     try {
@@ -87,6 +81,7 @@ const RenewMembershipModal = ({ isOpen, onClose, rowData }) => {
 
       fetchStudentData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rowData, isOpen]);
 
   return (
